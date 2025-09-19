@@ -7,5 +7,14 @@
 *.dll
 *.exe
 *.gch
-/distribuables/
+distribuables/
 docs/
+latex/
+libs/
+DLLS/
+.idea/
+.vscode/
+*.lib
+*.a
+*.obj
+*.o
