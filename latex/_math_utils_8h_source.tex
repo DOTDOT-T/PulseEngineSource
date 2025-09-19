@@ -1,0 +1,69 @@
+\doxysection{Math\+Utils.\+h}
+\hypertarget{_math_utils_8h_source}{}\label{_math_utils_8h_source}\index{src/PulseEngine/core/Math/MathUtils.h@{src/PulseEngine/core/Math/MathUtils.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ MATH\_UTILS\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ MATH\_UTILS\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}PulseEngine/core/Math/Mat4.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}PulseEngine/core/Math/Vector.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{namespace\ }PulseEngine}
+\DoxyCodeLine{00009\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keyword}{namespace\ }MathUtils}
+\DoxyCodeLine{00011\ \ \ \ \ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{float}\ PI\ =\ 3.14159265358979323846f;}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ ToRadians(\textcolor{keywordtype}{float}\ degrees)}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ degrees\ *\ (PI\ /\ 180.0f);}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{float}\ ToDegrees(\textcolor{keywordtype}{float}\ radians)}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ radians\ *\ (180.0f\ /\ PI);}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ Mat4\ CreateRotationMatrix(\textcolor{keyword}{const}\ Vector3\&\ euler)}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ pitch\ =\ ToRadians(euler.x);\ \textcolor{comment}{//\ X-\/axis}}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ yaw\ \ \ =\ ToRadians(euler.y);\ \textcolor{comment}{//\ Y-\/axis}}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ roll\ \ =\ ToRadians(euler.z);\ \textcolor{comment}{//\ Z-\/axis}}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ cx\ =\ cosf(pitch),\ sx\ =\ sinf(pitch);}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ cy\ =\ cosf(yaw),\ \ \ sy\ =\ sinf(yaw);}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ cz\ =\ cosf(roll),\ \ sz\ =\ sinf(roll);}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ Mat4\ mat;}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ mat[0][0]\ =\ cy\ *\ cz;}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ mat[0][1]\ =\ sx\ *\ sy\ *\ cz\ -\/\ cx\ *\ sz;}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ mat[0][2]\ =\ cx\ *\ sy\ *\ cz\ +\ sx\ *\ sz;}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ mat[0][3]\ =\ 0.0f;}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ mat[1][0]\ =\ cy\ *\ sz;}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ mat[1][1]\ =\ sx\ *\ sy\ *\ sz\ +\ cx\ *\ cz;}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ mat[1][2]\ =\ cx\ *\ sy\ *\ sz\ -\/\ sx\ *\ cz;}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ mat[1][3]\ =\ 0.0f;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ mat[2][0]\ =\ -\/sy;}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ mat[2][1]\ =\ sx\ *\ cy;}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ mat[2][2]\ =\ cx\ *\ cy;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ mat[2][3]\ =\ 0.0f;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ mat[3][0]\ =\ 0.0f;}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ mat[3][1]\ =\ 0.0f;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ mat[3][2]\ =\ 0.0f;}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ mat[3][3]\ =\ 1.0f;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ mat;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \}}
+\DoxyCodeLine{00060\ \}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

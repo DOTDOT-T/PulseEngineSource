@@ -1,0 +1,113 @@
+
+  {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Build PulseEngine DLL",
+        "type": "shell",
+        "command": "scriptsGameGenerator/build_dll.bat",
+        "problemMatcher": ["$gcc"],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "detail": "Appelle le script batch pour compiler PulseEngine.dll"
+      },
+      {
+        "label": "Create directories GAME COMPILER",
+        "type": "shell",
+        "command": "scriptsGameGenerator/create_directories.bat",
+        "problemMatcher": []
+      },
+      {
+        "label": "Copy assets GAME COMPILER",
+        "type": "shell",
+        "command": "scriptsGameGenerator/copy_assets.bat",
+        "problemMatcher": []
+      },
+      {
+        "label": "Build Game Executable",
+        "type": "shell",
+        "command": "g++",
+        "args": [
+          "-Isrc",
+          "-Iinclude",
+          "src/main.cpp",
+          "-LBuild",
+          "-lPulseEngine",
+          "-LC:/path/to/glfw/lib",
+          "-lglfw3",
+          "-lgdi32",
+          "-lopengl32",
+          "-DPULSE_GRAPHIC_OPENGL",
+          "-DPULSE_WINDOWS",
+          "-o", "Build/Game.exe"
+        ],
+        "problemMatcher": ["$gcc"]
+      },
+      {
+        "label": "Full Game Build",
+        "dependsOrder": "sequence",
+        "dependsOn": [
+          "Create directories GAME COMPILER",
+          "Copy assets GAME COMPILER",
+          "Build PulseEngine DLL",
+          "Build Game Executable"
+        ]
+      },
+
+    {
+      "label": "Build PulseEngineEditor DLL",
+      "type": "shell",
+      "command": "cmd",
+      "args" : ["/c", "scriptsEngineGenerator\\build_dll.bat"],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "Build engine editor as DLL for integration"
+    },
+    {
+      "label": "Copy Engine Assets",
+      "type": "shell",
+      "command": "scriptsEngineGenerator\\copy_assets.bat",
+      "problemMatcher": []
+    },
+    {
+      "label": "Create Engine Directories",
+      "type": "shell",
+      "command": "scriptsEngineGenerator\\create_directories.bat",
+      "problemMatcher": []
+    },
+    
+    {
+      "label": "Prepare Editor Environment",
+      "type": "shell",
+      "command": "cmd",
+      "args": ["/c", "scriptsEngineGenerator\\create_directories.bat && scriptsEngineGenerator\\copy_assets.bat"],
+      "problemMatcher": []
+    },
+    {
+    
+     "label": "Build PulseEditor Executable",
+     "type": "shell",
+     "command": "cmd",
+     "args" : ["/c", "scriptsEngineGenerator\\build_exe.bat"],
+     "dependsOn": [
+       "Prepare Editor Environment",
+       "Build PulseEngineEditor DLL"
+     ],
+     "problemMatcher": []
+    },
+    {
+      "label": "Full Editor Build",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Create Engine Directories",
+        "Copy Engine Assets",
+        "Build PulseEditor Executable"
+      ]
+    }
+  ]
+}

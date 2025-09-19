@@ -1,0 +1,7 @@
+g++ -Isrc -Iinclude src/main.cpp -LBuild -lPulseEngine -LC:/path/to/glfw/lib -lglfw3 -lgdi32 -lopengl32 -o Build/Game.exe
+
+pour compiler la dll vers un exe (Game DLL)
+
+g++ -Isrc -Iimgui -Iimgui/backends -Iinclude -I. src/main.cpp imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_tables.cpp imgui/imgui_widgets.cpp imgui/imgui_demo.cpp imgui/backends/imgui_impl_glfw.cpp imgui/backends/imgui_impl_opengl3.cpp -LBuild -DENGINE_EDITOR -lPulseEngineEditor -LC:/path/to/glfw/lib -lglfw3 -lgdi32 -lopengl32 -o Build/PulseEditor.exe
+
+pour compiler la dll vers un exe (Editor DLL)

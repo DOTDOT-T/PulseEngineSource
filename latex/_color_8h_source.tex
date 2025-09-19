@@ -1,0 +1,43 @@
+\doxysection{Color.\+h}
+\hypertarget{_color_8h_source}{}\label{_color_8h_source}\index{src/PulseEngine/core/Math/Color.h@{src/PulseEngine/core/Math/Color.h}}
+\mbox{\hyperlink{_color_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ COLOR\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ COLOR\_H}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <stdexcept>}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}Common/dllExport.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{namespace\ }PulseEngine}
+\DoxyCodeLine{00021\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{struct\ }PULSE\_ENGINE\_DLL\_API\ \mbox{\hyperlink{struct_pulse_engine_1_1_color_a6cceb8c0a21e57534232d80862cc5110}{Color}}}
+\DoxyCodeLine{00027\ \ \ \ \ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ r;}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ g;}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ b;}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ a;}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_pulse_engine_1_1_color_a6cceb8c0a21e57534232d80862cc5110}{Color}}()\ :\ r(0),\ g(0),\ b(0),\ a(1)\ \{\}}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_pulse_engine_1_1_color_a82ff578e3c392c375fc94b26c32f67b0}{Color}}(\textcolor{keywordtype}{float}\ scalar)\ :\ r(scalar),\ g(scalar),\ b(scalar),\ a(1)\ \{\}}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_pulse_engine_1_1_color_a1508bfebf51d481d652ca84da1701be6}{Color}}(\textcolor{keywordtype}{float}\ r,\ \textcolor{keywordtype}{float}\ g,\ \textcolor{keywordtype}{float}\ b,\ \textcolor{keywordtype}{float}\ a\ =\ 1)\ :\ r(r),\ g(g),\ b(b),\ a(a)\ \{\}}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_pulse_engine_1_1_color_a8a9832da3b2fe054674df6b1894d9eb0}{Color}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_pulse_engine_1_1_color_a6cceb8c0a21e57534232d80862cc5110}{Color}}\&\ color)\ :\ r(color.r),\ g(color.g),\ b(color.b),\ a(color.a)\ \{\}}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_pulse_engine_1_1_color}{Color}}\&\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_pulse_engine_1_1_color}{Color}}\&\ color)}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{this}\ !=\ \&color)}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ r\ =\ color.r;}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ g\ =\ color.g;}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b\ =\ color.b;}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ a\ =\ color.a;}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00070\ \ \ \ \ \};}
+\DoxyCodeLine{00071\ \}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

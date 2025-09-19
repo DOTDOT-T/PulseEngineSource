@@ -1,0 +1,28 @@
+\doxysection{Engine\+Api.\+h}
+\hypertarget{_engine_api_8h_source}{}\label{_engine_api_8h_source}\index{src/PulseEngine/API/EngineApi.h@{src/PulseEngine/API/EngineApi.h}}
+\mbox{\hyperlink{_engine_api_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ ENGINEAPI\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ ENGINEAPI\_H}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}Common/common.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}Common/dllExport.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}PulseEngine/core/PulseEngineBackend.h"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{class\ }Entity;}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{namespace\ }PulseEngine}
+\DoxyCodeLine{00022\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{class\ }PULSE\_ENGINE\_DLL\_API\ \mbox{\hyperlink{class_pulse_engine_1_1_game_entity}{GameEntity}}}
+\DoxyCodeLine{00024\ \ \ \ \ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ Entity*\ Instantiate(\textcolor{keyword}{const}\ std::string\&\ path,\ \mbox{\hyperlink{struct_pulse_engine_1_1_vector3}{PulseEngine::Vector3}}\ position\ =\ \mbox{\hyperlink{struct_pulse_engine_1_1_vector3}{PulseEngine::Vector3}}(0.0f,\ 0.0f,\ 0.0f),\ \mbox{\hyperlink{struct_pulse_engine_1_1_vector3}{PulseEngine::Vector3}}\ rotation\ =\ \mbox{\hyperlink{struct_pulse_engine_1_1_vector3}{PulseEngine::Vector3}}(0.0f,\ 0.0f,\ 0.0f),\ \mbox{\hyperlink{struct_pulse_engine_1_1_vector3}{PulseEngine::Vector3}}\ scale\ =\ \mbox{\hyperlink{struct_pulse_engine_1_1_vector3}{PulseEngine::Vector3}}(1.0f,\ 1.0f,\ 1.0f));}
+\DoxyCodeLine{00027\ \ \ \ \ \};}
+\DoxyCodeLine{00028\ \}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

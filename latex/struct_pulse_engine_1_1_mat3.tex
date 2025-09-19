@@ -1,0 +1,118 @@
+\doxysection{Pulse\+Engine\+::Mat3 Struct Reference}
+\hypertarget{struct_pulse_engine_1_1_mat3}{}\label{struct_pulse_engine_1_1_mat3}\index{PulseEngine::Mat3@{PulseEngine::Mat3}}
+
+
+\doxylink{struct_pulse_engine_1_1_mat3}{Mat3} class represents a 3x3 matrix used for 3D transformations.  
+
+
+
+
+{\ttfamily \#include $<$Mat3.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_pulse_engine_1_1_mat3_a00a4d1c7d240e83a42da2df0ef7bf1c7}\label{struct_pulse_engine_1_1_mat3_a00a4d1c7d240e83a42da2df0ef7bf1c7} 
+{\bfseries Mat3} (float diag)
+\item 
+\Hypertarget{struct_pulse_engine_1_1_mat3_aaa22d75477d6665238bd7dcf3e6c48ec}\label{struct_pulse_engine_1_1_mat3_aaa22d75477d6665238bd7dcf3e6c48ec} 
+{\bfseries Mat3} (const float values\mbox{[}3\mbox{]}\mbox{[}3\mbox{]})
+\item 
+float \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_pulse_engine_1_1_mat3_a62da1b68d466f4e1d802f435d0ad87e0}{operator\mbox{[}$\,$\mbox{]}}} (int row)
+\begin{DoxyCompactList}\small\item\em Access operator to get a row of the matrix. \end{DoxyCompactList}\item 
+\Hypertarget{struct_pulse_engine_1_1_mat3_a30b6f071f1c2564d0e42e2db096b81f7}\label{struct_pulse_engine_1_1_mat3_a30b6f071f1c2564d0e42e2db096b81f7} 
+const float \texorpdfstring{$\ast$}{*} {\bfseries operator\mbox{[}$\,$\mbox{]}} (int row) const
+\item 
+\mbox{\hyperlink{struct_pulse_engine_1_1_vector3}{Vector3}} \mbox{\hyperlink{struct_pulse_engine_1_1_mat3_a76eea4a2a9628642d5ed1810e79bd99e}{operator\texorpdfstring{$\ast$}{*}}} (const \mbox{\hyperlink{struct_pulse_engine_1_1_vector3}{Vector3}} \&v) const
+\begin{DoxyCompactList}\small\item\em Easily multiply a matrix by a vector. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_pulse_engine_1_1_mat3}{Mat3}} \mbox{\hyperlink{struct_pulse_engine_1_1_mat3_a694b6b311b191110cffb56c20034c727}{Transpose}} () const
+\begin{DoxyCompactList}\small\item\em easily transpose a matrix. \end{DoxyCompactList}\item 
+\Hypertarget{struct_pulse_engine_1_1_mat3_a5c27c7226a92359d4ec631228e21e32a}\label{struct_pulse_engine_1_1_mat3_a5c27c7226a92359d4ec631228e21e32a} 
+\mbox{\hyperlink{struct_pulse_engine_1_1_mat3}{Mat3}} {\bfseries operator\texorpdfstring{$\ast$}{*}} (const \mbox{\hyperlink{struct_pulse_engine_1_1_mat3}{Mat3}} \&other) const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_pulse_engine_1_1_mat3_aca76dab3b74de3155c0e6194199c8139}\label{struct_pulse_engine_1_1_mat3_aca76dab3b74de3155c0e6194199c8139} 
+static \mbox{\hyperlink{struct_pulse_engine_1_1_mat3}{Mat3}} {\bfseries Identity} ()
+\item 
+\Hypertarget{struct_pulse_engine_1_1_mat3_a14b56c16b8b8b8b8dfd47700d9900fc8}\label{struct_pulse_engine_1_1_mat3_a14b56c16b8b8b8b8dfd47700d9900fc8} 
+static \mbox{\hyperlink{struct_pulse_engine_1_1_mat3}{Mat3}} {\bfseries RotationX} (float angle\+Radians)
+\item 
+\Hypertarget{struct_pulse_engine_1_1_mat3_aa58e9fdb8468b9d7d41163bd5496fd54}\label{struct_pulse_engine_1_1_mat3_aa58e9fdb8468b9d7d41163bd5496fd54} 
+static \mbox{\hyperlink{struct_pulse_engine_1_1_mat3}{Mat3}} {\bfseries RotationY} (float angle\+Radians)
+\item 
+\Hypertarget{struct_pulse_engine_1_1_mat3_acbeeeaf0fc584eb6345cae65131fd9f5}\label{struct_pulse_engine_1_1_mat3_acbeeeaf0fc584eb6345cae65131fd9f5} 
+static \mbox{\hyperlink{struct_pulse_engine_1_1_mat3}{Mat3}} {\bfseries RotationZ} (float angle\+Radians)
+\item 
+\Hypertarget{struct_pulse_engine_1_1_mat3_a1368d537c101db606f9ba13f6fedae7b}\label{struct_pulse_engine_1_1_mat3_a1368d537c101db606f9ba13f6fedae7b} 
+static \mbox{\hyperlink{struct_pulse_engine_1_1_mat3}{Mat3}} {\bfseries From\+Euler\+XYZ} (float rx, float ry, float rz)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_pulse_engine_1_1_mat3_a531ae68578e2c1d89eaa90009322720e}\label{struct_pulse_engine_1_1_mat3_a531ae68578e2c1d89eaa90009322720e} 
+float {\bfseries m} \mbox{[}3\mbox{]}\mbox{[}3\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxylink{struct_pulse_engine_1_1_mat3}{Mat3} class represents a 3x3 matrix used for 3D transformations. 
+
+\label{doc-func-members}
+\Hypertarget{struct_pulse_engine_1_1_mat3_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{struct_pulse_engine_1_1_mat3_a76eea4a2a9628642d5ed1810e79bd99e}\index{PulseEngine::Mat3@{PulseEngine::Mat3}!operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}}
+\index{operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}!PulseEngine::Mat3@{PulseEngine::Mat3}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}()}{operator*()}}
+{\footnotesize\ttfamily \label{struct_pulse_engine_1_1_mat3_a76eea4a2a9628642d5ed1810e79bd99e} 
+\mbox{\hyperlink{struct_pulse_engine_1_1_vector3}{Vector3}} Pulse\+Engine\+::\+Mat3\+::operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_pulse_engine_1_1_vector3}{Vector3}} \&}]{v}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Easily multiply a matrix by a vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v} & the actual vector to multiply with the matrix. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the result will be a vector3, which is the result of the multiplication of the matrix by the vector. 
+\end{DoxyReturn}
+\Hypertarget{struct_pulse_engine_1_1_mat3_a62da1b68d466f4e1d802f435d0ad87e0}\index{PulseEngine::Mat3@{PulseEngine::Mat3}!operator\mbox{[}\mbox{]}@{operator[]}}
+\index{operator\mbox{[}\mbox{]}@{operator[]}!PulseEngine::Mat3@{PulseEngine::Mat3}}
+\doxysubsubsection{\texorpdfstring{operator[]()}{operator[]()}}
+{\footnotesize\ttfamily \label{struct_pulse_engine_1_1_mat3_a62da1b68d466f4e1d802f435d0ad87e0} 
+float \texorpdfstring{$\ast$}{*} Pulse\+Engine\+::\+Mat3\+::operator\mbox{[}$\,$\mbox{]} (\begin{DoxyParamCaption}\item[{int}]{row}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Access operator to get a row of the matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em row} & which row to access (0, 1, or 2). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+float\texorpdfstring{$\ast$}{*} return a pointer to the specified row of the matrix. 
+\end{DoxyReturn}
+\Hypertarget{struct_pulse_engine_1_1_mat3_a694b6b311b191110cffb56c20034c727}\index{PulseEngine::Mat3@{PulseEngine::Mat3}!Transpose@{Transpose}}
+\index{Transpose@{Transpose}!PulseEngine::Mat3@{PulseEngine::Mat3}}
+\doxysubsubsection{\texorpdfstring{Transpose()}{Transpose()}}
+{\footnotesize\ttfamily \label{struct_pulse_engine_1_1_mat3_a694b6b311b191110cffb56c20034c727} 
+\mbox{\hyperlink{struct_pulse_engine_1_1_mat3}{Mat3}} Pulse\+Engine\+::\+Mat3\+::\+Transpose (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+easily transpose a matrix. 
+
+\begin{DoxyReturn}{Returns}
+\doxylink{struct_pulse_engine_1_1_mat3}{Mat3} transposed matrix. 
+\end{DoxyReturn}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Pulse\+Engine/core/\+Math/Mat3.\+h\end{DoxyCompactItemize}
