@@ -377,6 +377,8 @@ void InterfaceEditor::EntityAnalyzerWindow()
     if (selectedEntity)
     {
         ImGui::Text("Selected Entity: %s", selectedEntity->GetName().c_str());
+        ImGui::Text("guid : %s", selectedEntity->GetGuid());
+        ImGui::Text("Muid : %s", selectedEntity->GetMuid());
         ImGui::Separator();
 
         PulseEngine::Vector3 position = selectedEntity->GetPosition();

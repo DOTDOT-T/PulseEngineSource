@@ -42,6 +42,7 @@ src\PulseEngine\API\EntityAPI\EntityApi.cpp ^
 src\PulseEngine\core\Network\Request\Request.cpp ^
 PulseEngineEditor/InterfaceEditor/Account/Account.cpp ^
 src/PulseEngine/core/Input/InputSystem.cpp ^
+src\PulseEngine\core\FileManager\FileReader\FileReader.cpp ^
 -I. ^
 -Iinclude -Iinclude/imgui ^
 -I./src -Iexternal/assimp/include ^

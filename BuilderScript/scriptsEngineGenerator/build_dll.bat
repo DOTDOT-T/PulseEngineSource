@@ -60,6 +60,7 @@ include/imgui-node/imgui_node_editor_api.cpp ^
 include/imgui-node/imgui_canvas.cpp ^
 include/imgui-node/crude_json.cpp ^
 src\PulseEngine\core\Network\Request\Request.cpp ^
+src\PulseEngine\core\FileManager\FileReader\FileReader.cpp ^
 PulseEngineEditor/InterfaceEditor/Account/Account.cpp ^
 src/PulseEngine/core/Input/InputSystem.cpp ^
 -I. -Iinclude -Iinclude/websocketpp -Iinclude/asio -Iinclude/imgui -Iinclude/imgui-node -I./src -IE:/Editor/Include -Iexternal/assimp/include ^
