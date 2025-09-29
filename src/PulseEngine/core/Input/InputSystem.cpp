@@ -82,6 +82,11 @@ bool InputSystem::wasActionReleased(int actionId) const {
 double InputSystem::getMouseX() const { return mouseX; }
 double InputSystem::getMouseY() const { return mouseY; }
 
+OneBinding InputSystem::GetOneBinding(int actionId) const
+{
+    return OneBinding(keys[actionId].keyCode, mouseButtons[actionId].button);
+}
+
 void InputSystem::SaveBindingsToFile()
 {
     nlohmann::json js;

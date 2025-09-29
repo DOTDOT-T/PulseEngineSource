@@ -20,6 +20,14 @@
 #define LEFT_MOUSE_BUTTON 0
 #define RIGHT_MOUSE_BUTTON 1
 
+struct OneBinding {
+    int actionId;
+    int button;
+
+    OneBinding() : actionId(-1), button(-1) {}
+    OneBinding(int actionId, int button) : actionId(actionId), button(button) {}
+};
+
 class PULSE_ENGINE_DLL_API InputSystem {
 public:
     enum class KeyState {
@@ -46,6 +54,8 @@ public:
 
     double getMouseX() const;
     double getMouseY() const;
+
+    OneBinding GetOneBinding(int actionId) const;
 
     void SaveBindingsToFile();
 
