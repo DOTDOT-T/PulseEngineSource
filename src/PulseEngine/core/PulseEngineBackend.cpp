@@ -54,8 +54,12 @@ PulseEngineBackend::PulseEngineBackend()
 
 int PulseEngineBackend::Initialize()
 {
-    std::cout << "PulseEngineBackend::Initialize() called" << std::endl;
-    std::cout << "init" << std::endl;
+    EDITOR_LOG("Started the initialization of the engine.");
+    EDITOR_LOG("Engine version: " + version);
+    EDITOR_LOG("Development month: " + devMonth);
+    EDITOR_LOG("Project name : " + gameName);
+    EDITOR_LOG("Pulse Software © 2025");
+
     windowContext = new WindowContext();
     activeCamera = new Camera();
 
@@ -72,30 +76,21 @@ int PulseEngineBackend::Initialize()
 
     if(graphicsAPI == nullptr)
     {
-        std::cerr << "Error while initializing graphics API." << std::endl;
+        EDITOR_ERROR("No Graphics API found.");
         return -1;
     }
-    std::cout << "Graphics API loaded successfully." << std::endl;
     graphicsAPI->InitializeApi(GetWindowName("editor").c_str(), &width, &height, this);
     
     #ifdef PULSE_GRAPHIC_OPENGL
     windowContext->SetGLFWWindow(static_cast<GLFWwindow*>(graphicsAPI->GetNativeHandle()));
     #endif
 
-    // coroutine manager, give the possibility to add async tasks to the engine
-    coroutineManager = new CoroutineManager();
-    std::cout << "CoroutineManager created." << std::endl;
-
+    coroutineManager = new CoroutineManager;
     inputSystem = new InputSystem;
-
-
-    // lights.push_back(new DirectionalLight(1.0f, 10.0f, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f, 3.0f, 0.0f), glm::vec3(1.0f), 10, 1));
-    // lights.back()->InitShadowMap(DEFAULT_SHADOW_MAP_RES);
 
     shadowShader = new Shader(std::string(ASSET_PATH) + "shaders/directionalDepth/dirDepth.vert", std::string(ASSET_PATH) + "shaders/directionalDepth/dirDepth.frag");
     pointLightShadowShader = new Shader(std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.vert", std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.frag", std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.glsl");
     debugShader = new Shader(std::string(ASSET_PATH) +"shaders/debug.vert", std::string(ASSET_PATH) + "shaders/debug.frag");
-    std::cout << "Shaders loaded." << std::endl;
     
     // === insert base item to the collection ===
     GuidReader::InsertIntoCollection("Entities/simpleActor.pEntity");    
@@ -112,21 +107,19 @@ int PulseEngineBackend::Initialize()
     
     EDITOR_ONLY(
         ScriptsLoader::LoadDLL();
-        std::cout << "Scripts loaded." << std::endl;
     )
 
  
     engineConfig = FileManager::OpenEngineConfigFile(this);
-    std::cout << "Engine config loaded." << std::endl;
 
     std::string firstScene = engineConfig["GameData"]["FirstScene"];
-    std::cout << "Loading first scene: " << firstScene << std::endl;
     SceneLoader::LoadScene(firstScene, this);
 
     discordLauncher = new PulseExecutable ("DiscordPresence/DiscordPresence.exe", "DiscordPipeTest");
     Sleep(1500);
+    discordLauncher->SendExeMessage("[set_presence]In the editor");
 
-    std::cout << "Initialization complete." << std::endl;
+    EDITOR_LOG("Finished the initialization of the engine.");
     return 0;
 }
 
