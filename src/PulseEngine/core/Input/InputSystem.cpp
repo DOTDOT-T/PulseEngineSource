@@ -12,6 +12,23 @@ InputSystem::InputSystem() : mouseX(0.0), mouseY(0.0) {
         mouseButtons[i].state = KeyState::Up;
         actionToMouse[i] = -1;
     }
+
+    // read bindings from config file
+    FileReader reader("EngineConfig/inputConfig.pconfig");    
+    if(!reader.IsOpen()) EDITOR_LOG("No inputs config file found");     
+    
+    nlohmann::json js = reader.ToJson();
+    for(auto& el : js["keyBindings"].items()) 
+    {
+        int actionId = std::stoi(el.key());
+        int key = el.value();
+        bindAction(actionId, key);
+
+        EDITOR_LOG("Bound action\t" + std::to_string(actionId) + "\tto key\t" + (char)key);
+    }
+    
+
+    EDITOR_LOG("Input System load successfully")
 }
 
 InputSystem::~InputSystem() {}
@@ -65,18 +82,38 @@ bool InputSystem::wasActionReleased(int actionId) const {
 double InputSystem::getMouseX() const { return mouseX; }
 double InputSystem::getMouseY() const { return mouseY; }
 
-void InputSystem::pollKeyboard() {
-    for (int i = 0; i < MAX_KEYS; i++) {
+void InputSystem::SaveBindingsToFile()
+{
+    nlohmann::json js;
+    for(int i = 0; i < MAX_KEYS; i++)
+    {
+        if(actionToKey[i] != -1)
+            js["keyBindings"][std::to_string(i)] = actionToKey[i];
+    }
+
+    FileReader fileReader("EngineConfig/inputConfig.pconfig");
+    if(!fileReader.IsOpen()) EDITOR_LOG("Failed to save input config file");
+
+    fileReader.SaveJson(js);
+    fileReader.Close();
+}
+
+void InputSystem::pollKeyboard() 
+{
+    for (int i = 0; i < MAX_KEYS; i++) 
+    {
         int vk = keys[i].keyCode;
         if (vk < 0) continue;
 
         short state = GetAsyncKeyState(vk);
         bool down = (state & 0x8000) != 0;
 
-        if (down) {
+        if (down) 
+        {
             if (keys[i].state == KeyState::Up || keys[i].state == KeyState::Released)
                 keys[i].state = KeyState::Pressed;
-        } else {
+        } else 
+        {
             if (keys[i].state == KeyState::Down || keys[i].state == KeyState::Pressed)
                 keys[i].state = KeyState::Released;
         }

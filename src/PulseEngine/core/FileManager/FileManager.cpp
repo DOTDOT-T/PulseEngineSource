@@ -138,3 +138,50 @@ std::vector<std::filesystem::path> FileManager::GetFilesInDirectoryWithExtension
     }
     return files;
 }
+
+bool FileManager::CreateNewDirectories(const std::string &path)
+{
+    std::vector<std::string> dirs;
+    std::string temp;
+
+    std::string finalPath = std::string(ASSET_PATH) + path;
+
+    // get all the different directories from the path
+    for (char ch : finalPath)
+    {
+        if (ch == '/' || ch == '\\')
+        {
+            if (!temp.empty())
+            {
+                dirs.push_back(temp);
+                temp.clear();
+            }
+        }
+        else
+        {
+            temp += ch;
+        }
+    }
+
+    if (!temp.empty())
+    {
+        dirs.push_back(temp);
+    }
+
+    std::filesystem::path currentPath;
+
+    //generate directories by concatenating the last directory to the next one
+    for (const auto& dir : dirs)
+    {
+        currentPath /= dir;
+        if (!std::filesystem::exists(currentPath))
+        {
+            if (!std::filesystem::create_directory(currentPath))
+            {
+                return false; // Failed to create directory
+            }
+        }
+    }
+
+    return true;
+}

@@ -70,7 +70,15 @@ public:
      * @return std::vector<std::filesystem::path> List of matching files.
      */
     static std::vector<std::filesystem::path> GetFilesInDirectoryWithExtension(const std::string& directory, const std::string& extension);
-    
+
+    /**
+     * @brief Create New Directories recursively if they do not exist.
+     * 
+     * @param path 
+     * @return true if they got all created or already exist
+     * @return false if an error occurred
+     */
+    static bool CreateNewDirectories(const std::string& path);    
 };
 
 

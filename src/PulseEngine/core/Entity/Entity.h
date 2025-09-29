@@ -209,6 +209,8 @@ private:
     std::vector<Mesh*> meshes;
     std::vector<IScript*> scripts;
 
+    float internalClock = 0.0f;
+
     /// Updates the entity's world transformation matrix.
     void UpdateModelMatrix();
 };

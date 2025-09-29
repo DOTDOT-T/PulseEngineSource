@@ -127,7 +127,7 @@ private:
     std::string gameVersion = "0.0.1";
 
     std::string engine = "Pulse Engine";
-    std::string version = "V0.1.1";
+    std::string version = "V0.1.2";
     std::string devMonth = "September 2025";
     std::string company = "Pulse Software";
 

@@ -57,6 +57,7 @@ void Entity::SetMaterial(Material * material) { this->material = material; }
 
 void Entity::UpdateEntity(float deltaTime)
 {
+    internalClock += deltaTime;
     UpdateModelMatrix();
     collider->SetRotation(rotation);
     IN_GAME_ONLY(
@@ -78,6 +79,7 @@ void Entity::DrawEntity() const
     material->GetShader()->SetFloat("metallic", material ? material->specular : 1.0f);
     material->GetShader()->SetFloat("roughness", material ? material->roughness : 1.0f);
     material->GetShader()->SetVec3("objectColor", material ? material->color : PulseEngine::Vector3(0.5f));
+    material->GetShader()->SetFloat("internalClock", internalClock);
 
     // Convert to radians
     float rx = PulseEngine::MathUtils::ToRadians(rotation.x);

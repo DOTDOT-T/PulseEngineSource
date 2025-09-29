@@ -1,4 +1,19 @@
+/**
+ * @file InputSystem.h
+ * @author Dorian LEXTERIAQUE (dlexteriaque@gmail.com)
+ * @brief simple class to manage inputs for different platform
+ * @version 0.1
+ * @date 2025-09-29
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 #pragma once
+
+#include "pch.h"
+#include "PulseEngine/core/FileManager/FileManager.h"
+#include "PulseEngine/core/FileManager/FileReader/FileReader.h"
+
 #include <windows.h>
 #include "Common/dllExport.h"
 
@@ -31,6 +46,8 @@ public:
 
     double getMouseX() const;
     double getMouseY() const;
+
+    void SaveBindingsToFile();
 
 private:
     struct KeyInfo {

@@ -141,7 +141,19 @@
     "cinttypes": "cpp",
     "variant": "cpp",
     "set": "cpp",
-    "bitset": "cpp"
+    "bitset": "cpp",
+    "condition_variable": "cpp",
+    "coroutine": "cpp",
+    "csignal": "cpp",
+    "regex": "cpp",
+    "source_location": "cpp",
+    "future": "cpp",
+    "mutex": "cpp",
+    "queue": "cpp",
+    "semaphore": "cpp",
+    "stack": "cpp",
+    "stop_token": "cpp",
+    "thread": "cpp"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }

@@ -275,14 +275,15 @@ void PulseInterfaceAPI::EndTreeNode()
 
 void PulseInterfaceAPI::AddMaterialPreview(Material*& material, const PulseEngine::Vector2 &imageSize, const std::string &name)
 {
-    std::string childName = "MaterialPreviewChild###" + name;
-    ImGui::BeginChild(childName.c_str(), ImVec2(0, 0), true);
     if (material == nullptr )
     {
         ImGui::Text("No material to preview");
         MaterialPicker(material);
         return;
     }
+    
+    std::string childName = "MaterialPreviewChild###" + name;
+    ImGui::BeginChild(childName.c_str(), ImVec2(0, 0), true);
 
     ImGui::PushID(name.c_str());
 

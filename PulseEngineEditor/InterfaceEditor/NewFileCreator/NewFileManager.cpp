@@ -108,7 +108,7 @@ void NewFileManager::RenderPopup(const std::filesystem::path &currentDir, std::f
                         else if (extension == ".mat")
                         {
                             guid = PulseEngineInstance->guidCollections["guidCollectionMaterials.puid"]->InsertFile((sanitizedDir / fullFileName).string());
-                            ofs << "{\n    \"name\": " << fileNameStr << "\n\"guid\": \"" << guid << "\"\n}\n";
+                            ofs << "{\n    \"name\": " << fileNameStr << ",\n\"guid\": \"" << guid << "\"\n}\n";
                         }
                         else if (extension == ".pmap")
                             ofs << "{\n    \"guid\": \"" << guid << "\"\n}\n";
