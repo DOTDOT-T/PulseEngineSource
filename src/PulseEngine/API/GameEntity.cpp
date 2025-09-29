@@ -6,6 +6,8 @@
 #include "PulseEngine/core/Material/MaterialManager.h"
 #include "PulseEngine/core/Material/Material.h"
 #include "PulseEngine/CustomScripts/IScripts.h"
+#include "PulseEngine/core/GUID/GuidGenerator.h"
+#include "PulseEngine/core/GUID/GuidCollection.h"
 
 Entity *PulseEngine::GameEntity::Instantiate(const std::string &path, PulseEngine::Vector3 position, PulseEngine::Vector3 rotation, PulseEngine::Vector3 scale)
 {
@@ -29,6 +31,8 @@ Entity *PulseEngine::GameEntity::Instantiate(const std::string &path, PulseEngin
         entity->SetPosition(position);
         entity->SetRotation(rotation);
         entity->SetScale(scale);
+        std::size_t muid = GenerateGUIDFromPathAndMap(path, PulseEngineInstance->actualMapPath + std::to_string(std::time(nullptr)));
+        entity->SetMuid(muid);
         // entity->SetMaterial(MaterialManager::loadMaterial("Materials/cube.mat"));
         for(IScript* script : entity->GetScripts())
         {
