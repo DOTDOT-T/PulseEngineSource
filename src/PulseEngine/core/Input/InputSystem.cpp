@@ -84,17 +84,28 @@ double InputSystem::getMouseY() const { return mouseY; }
 
 OneBinding InputSystem::GetOneBinding(int actionId) const
 {
-    return OneBinding(keys[actionId].keyCode, mouseButtons[actionId].button);
+    return OneBinding(keys[actionId > MAX_KEYS ? MAX_KEYS -1 : actionId].keyCode, mouseButtons[actionId > MAX_MOUSE ? MAX_MOUSE - 1 : actionId].button);
+}
+
+void InputSystem::ChangeBinding(OneBinding newBinding, int actionId)
+{
+    if(actionId < 0 || actionId >= MAX_KEYS) return;
+    keys[actionId].keyCode = newBinding.actionId;
+    mouseButtons[actionId].button = newBinding.button;
+    SaveBindingsToFile();
 }
 
 void InputSystem::SaveBindingsToFile()
 {
     nlohmann::json js;
+    nlohmann::json keyBindings;
     for(int i = 0; i < MAX_KEYS; i++)
     {
-        if(actionToKey[i] != -1)
-            js["keyBindings"][std::to_string(i)] = actionToKey[i];
+        if(keys[i].keyCode != -1)
+            keyBindings[std::to_string(i)] = keys[i].keyCode;
     }
+
+    js["keyBindings"] = keyBindings;
 
     FileReader fileReader("EngineConfig/inputConfig.pconfig");
     if(!fileReader.IsOpen()) EDITOR_LOG("Failed to save input config file");

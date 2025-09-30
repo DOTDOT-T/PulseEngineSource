@@ -47,10 +47,10 @@ void FileReader::SaveJson(const nlohmann::json &js)
 {
 #ifdef PULSE_WINDOWS
     std::ofstream* file = ReinterprateFileType<std::ofstream>();
+    EDITOR_LOG("Saving json : \n" + js.dump(4));
     if(file->is_open())
     {
         (*file) << js.dump(4);
-        file->flush();
     }
 #endif
 }

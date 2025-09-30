@@ -56,6 +56,7 @@ public:
     double getMouseY() const;
 
     OneBinding GetOneBinding(int actionId) const;
+    void ChangeBinding(OneBinding newBinding, int actionId);
 
     void SaveBindingsToFile();
 

@@ -403,3 +403,30 @@ void PulseInterfaceAPI::OpenContextMenu(const char *popupId)
 {
     ImGui::OpenPopup(popupId);
 }
+
+
+void PulseInterfaceAPI::OpenTable(const std::string &name, int columns)
+{
+    ImGui::BeginTable(name.c_str(), columns, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg);
+}
+
+void PulseInterfaceAPI::DeclareTableColumn(const std::string &name)
+{
+    ImGui::TableSetupColumn(name.c_str());
+}
+void PulseInterfaceAPI::NextTableColumn()
+{
+    ImGui::TableNextColumn();
+}
+void PulseInterfaceAPI::DrawTableHeadersRow()
+{
+    ImGui::TableHeadersRow();
+}
+void PulseInterfaceAPI::SetTableColumnIndex(int columnN)
+{
+    ImGui::TableSetColumnIndex(columnN);
+}
+void PulseInterfaceAPI::EndTable()
+{
+    ImGui::EndTable();
+}

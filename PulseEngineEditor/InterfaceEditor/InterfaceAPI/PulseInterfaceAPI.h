@@ -272,6 +272,13 @@ public:
 
     static void ShowContextMenu(const char* popupId, const std::vector<ContextMenuItem>& items);
     static void OpenContextMenu(const char* popupId);
+
+    static void OpenTable(const std::string& name, int columns);
+    static void DeclareTableColumn(const std::string& name);
+    static void NextTableColumn();
+    static void DrawTableHeadersRow();
+    static void SetTableColumnIndex(int columnN);
+    static void EndTable();
 };
 
 #endif
