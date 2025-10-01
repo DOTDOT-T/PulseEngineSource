@@ -2,6 +2,7 @@
 
 FileReader::FileReader(const std::string &path)
 {
+    filePath = path;
     std::string definePath = std::string(ASSET_PATH) + path;
 
 #ifdef PULSE_WINDOWS
@@ -46,11 +47,12 @@ nlohmann::json FileReader::ToJson()
 void FileReader::SaveJson(const nlohmann::json &js)
 {
 #ifdef PULSE_WINDOWS
-    std::ofstream* file = ReinterprateFileType<std::ofstream>();
-    EDITOR_LOG("Saving json : \n" + js.dump(4));
-    if(file->is_open())
+    std::ifstream* file = ReinterprateFileType<std::ifstream>();
+    file->close();
+    std::ofstream outFile(std::string(ASSET_PATH) + filePath);
+    if(outFile.is_open())
     {
-        (*file) << js.dump(4);
+        outFile << js.dump(4);
     }
 #endif
 }

@@ -1,3 +1,4 @@
+
 #ifndef CAMERA_H
 #define CAMERA_H
 
@@ -43,6 +44,7 @@ public:
         float pitch = PITCH
     );
 
+    void LookAt(const PulseEngine::Vector3& target);
     PulseEngine::Mat4 GetViewMatrix();
     void ProcessKeyboard(Camera_Movement direction, float deltaTime);
     void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true);

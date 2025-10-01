@@ -153,12 +153,12 @@ namespace PulseEngine
             }
             inline PulseEngine::Mat4 Translate(const PulseEngine::Mat4& mat, const PulseEngine::Vector3& pos)
             {
-                PulseEngine::Mat4 result = mat;
-                float* m = result.Ptr();
-                m[12] += pos.x;
-                m[13] += pos.y;
-                m[14] += pos.z;
-                return result;
+                PulseEngine::Mat4 t = Identity();
+                float* m = t.Ptr();
+                m[12] = pos.x;
+                m[13] = pos.y;
+                m[14] = pos.z;
+                return mat * t;
             }
 
             inline PulseEngine::Mat4 RotateX(const PulseEngine::Mat4& mat, float angle)

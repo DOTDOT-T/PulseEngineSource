@@ -355,7 +355,7 @@ void TopBar::CompileUserScripts(InterfaceEditor * editor, std::string output )
                 std::string defines = "-DBUILDING_DLL -DPULSE_GRAPHIC_OPENGL -DPULSE_WINDOWS";
                 std::string flags = "-shared -Wall -g -mconsole " + defines;
                 std::string includeDirs = R"(-IUserScripts -Idist\src\PulseEngine\CustomScripts -Idist\include -Idist\src -Idist/src/dllexport -Ldist)";
-                std::string libs = "-lPulseEngine";
+                std::string libs = "-lPulseEngine -lws2_32 -lwinmm -lmswsock";
 
                 // Gather source files
                 std::string sources;

@@ -36,6 +36,7 @@ class PULSE_ENGINE_DLL_API FileReader
 
     private:
         void* fileData;
+        std::string filePath;
 
         /**
          * @brief This function reinterprate the void* fileData to the final type wanted.
