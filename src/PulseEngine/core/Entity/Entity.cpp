@@ -39,9 +39,9 @@ void Entity::UpdateModelMatrix()
 
     Mat4 localMat = PulseEngine::MathUtils::Matrix::Identity();
     localMat = PulseEngine::MathUtils::Matrix::Scale(localMat, scale);
-    localMat = PulseEngine::MathUtils::Matrix::RotateX(localMat, PulseEngine::MathUtils::ToRadians(rotation.x));
-    localMat = PulseEngine::MathUtils::Matrix::RotateY(localMat, PulseEngine::MathUtils::ToRadians(rotation.y));
     localMat = PulseEngine::MathUtils::Matrix::RotateZ(localMat, PulseEngine::MathUtils::ToRadians(rotation.z));
+    localMat = PulseEngine::MathUtils::Matrix::RotateY(localMat, PulseEngine::MathUtils::ToRadians(rotation.y));
+    localMat = PulseEngine::MathUtils::Matrix::RotateX(localMat, PulseEngine::MathUtils::ToRadians(rotation.x));
     localMat = PulseEngine::MathUtils::Matrix::Translate(localMat, position);
 
     this->entityMatrix = localMat;

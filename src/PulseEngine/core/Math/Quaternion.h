@@ -27,7 +27,21 @@ namespace PulseEngine
             y = axis.y * s;
             z = axis.z * s;
         }
-
+        static Quaternion FromEuler(const Vector3& euler) {
+            float cx = cos(euler.x * 0.5f);
+            float sx = sin(euler.x * 0.5f);
+            float cy = cos(euler.y * 0.5f);
+            float sy = sin(euler.y * 0.5f);
+            float cz = cos(euler.z * 0.5f);
+            float sz = sin(euler.z * 0.5f);
+        
+            return Quaternion(
+                cx * cy * cz + sx * sy * sz,
+                sx * cy * cz - cx * sy * sz,
+                cx * sy * cz + sx * cy * sz,
+                cx * cy * sz - sx * sy * cz
+            ).Normalized();
+        }
         // Length
         float Length() const
         {
