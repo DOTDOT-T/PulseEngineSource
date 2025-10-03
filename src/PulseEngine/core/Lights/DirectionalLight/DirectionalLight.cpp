@@ -12,7 +12,8 @@ void DirectionalLight::RenderShadowMap(Shader &shader, PulseEngineBackend &scene
 {
     PulseEngineGraphicsAPI->BindShadowFramebuffer(&depthMapFBO);
     RecalculateLightSpaceMatrix();
-    shader.SetMat4("shadowMatrix", lightSpaceMatrix);
+    shader.SetVec3("lightPos", position);
+    shader.SetVec3("target", target);
     for (Entity* obj : scene.entities)
     {
         shader.SetMat4("model", obj->GetMatrix());
@@ -25,21 +26,20 @@ void DirectionalLight::RenderShadowMap(Shader &shader, PulseEngineBackend &scene
 void DirectionalLight::BindToShader(Shader &shader, int index)
 {
     
-    PulseEngine::Vector3 direction = PulseEngine::Vector3(target.x - position.x, target.y - position.y, target.z - position.z).Normalized();
+    PulseEngine::Vector3 direction = (target - position).Normalized();
     
     shader.SetVec3("dirLight.direction", direction);
     shader.SetVec3("dirLight.color", PulseEngine::Vector3(color.r, color.g, color.b));
     shader.SetFloat("dirLight.intensity", intensity);
     shader.SetBool("dirLight.castsShadow", true);
-    shader.SetMat4("dirLight.lightSpaceMatrix", lightSpaceMatrix);
+    shader.SetVec3("dirLight.target", target);
+    shader.SetVec3("dirLight.position", position);
 }
 
 void DirectionalLight::RecalculateLightSpaceMatrix()
 {
-    PulseEngine::Mat4 lightProjection = PulseEngine::MathUtils::Matrix::Orthographic(-20.0f, 20.0f, -20.0f, 20.0f, 1.0f, 300.0f);
-    PulseEngine::Vector3 up = fabs(direction.y) > 0.9f 
-        ? PulseEngine::Vector3(0.0f, 0.0f, 1.0f)   // switch if too close
-        : PulseEngine::Vector3(0.0f, 1.0f, 0.0f);
+    PulseEngine::Mat4 lightProjection = PulseEngine::MathUtils::Matrix::Orthographic(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 40.0f);
+    PulseEngine::Vector3 up = PulseEngine::Vector3(0.0f, 1.0f, 0.0f);
     
     PulseEngine::Mat4 lightView = PulseEngine::MathUtils::Matrix::LookAt(position, target, up);
     lightSpaceMatrix = lightProjection * lightView;

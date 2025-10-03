@@ -197,23 +197,23 @@ void PulseEngineBackend::Render()
         shader->SetVec3("viewPos", GetActiveCamera()->Position);
 
         LightManager::BindLightsToShader(shader, this, entity);
-        // for (size_t i = 0; i < lights.size(); ++i)
-        // {
-        //     DirectionalLight* dLight = dynamic_cast<DirectionalLight*>(lights[i]);
-        //     if (!dLight)
-        //         continue;
-        
-        //     dLight->BindToShader(*shader, -1);
-        
-        //     if (dLight->castsShadow)
-        //     {            PulseEngineGraphicsAPI->ActivateTexture(0);
-        //         PulseEngineGraphicsAPI->BindTexture(TEXTURE_2D, dLight->depthMapTex);
-            
-        //         shader->SetInt("dirLight.shadowMap", 0);
-        //     }
-        
-        //     break; // Only one directional light supported
-        // }
+         for (size_t i = 0; i < lights.size(); ++i)
+         {
+             DirectionalLight* dLight = dynamic_cast<DirectionalLight*>(lights[i]);
+             if (!dLight)
+                 continue;
+    
+             dLight->BindToShader(*shader, -1);
+    
+             if (dLight->castsShadow)
+             {            PulseEngineGraphicsAPI->ActivateTexture(0);
+                 PulseEngineGraphicsAPI->BindTexture(TEXTURE_2D, dLight->depthMapTex);
+          
+                 shader->SetInt("dirLight.shadowMap", 0);
+             }
+    
+             break; // Only one directional light supported
+         }
         entity->DrawEntity();
     }
 

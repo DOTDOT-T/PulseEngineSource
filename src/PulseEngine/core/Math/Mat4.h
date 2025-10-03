@@ -106,18 +106,19 @@ namespace PulseEngine
         Mat4 operator*(const Mat4& other) const
         {
             Mat4 result(0.0f);
-            for (int row = 0; row < 4; ++row)
+            for (int col = 0; col < 4; ++col)
             {
-                for (int col = 0; col < 4; ++col)
+                for (int row = 0; row < 4; ++row)
                 {
                     for (int i = 0; i < 4; ++i)
                     {
-                        result.data[row][col] += data[row][i] * other.data[i][col];
+                        result.data[col][row] += data[i][row] * other.data[col][i];
                     }
                 }
             }
             return result;
         }
+
 
         /**
          * @brief Multiply this matrix by a vector.
