@@ -200,40 +200,24 @@ void Entity::CalculateMeshMatrix(Mesh *const & mesh) const
 {
     using namespace PulseEngine;
     Mat4 parentRot = MathUtils::Matrix::Identity();
-    parentRot = MathUtils::Matrix::RotateX(parentRot, MathUtils::ToRadians(rotation.x));
-    parentRot = MathUtils::Matrix::RotateY(parentRot, MathUtils::ToRadians(rotation.y));
     parentRot = MathUtils::Matrix::RotateZ(parentRot, MathUtils::ToRadians(rotation.z));
+    parentRot = MathUtils::Matrix::RotateY(parentRot, MathUtils::ToRadians(rotation.y));
+    parentRot = MathUtils::Matrix::RotateX(parentRot, MathUtils::ToRadians(rotation.x));
 
-    // Scale child’s local position by parent scale
-    Vector3 scaledLocalPos = {
-        mesh->position.x * scale.x,
-        mesh->position.y * scale.y,
-        mesh->position.z * scale.z
-    };
-
-    // Rotate the scaled local position by parent rotation
-    Vector3 rotatedLocalPos = MathUtils::MultiplyPoint(parentRot, scaledLocalPos);
+    Vector3 rotatedLocalPos = MathUtils::MultiplyPoint(parentRot, mesh->position);
 
     // Add parent world position
-    Vector3 worldPos = rotatedLocalPos + position;
+    Vector3 worldPos = rotatedLocalPos;
 
     Mat4 meshMat = MathUtils::Matrix::Identity();
-    meshMat = MathUtils::Matrix::Translate(meshMat, worldPos);
-    meshMat = MathUtils::Matrix::RotateX(meshMat, MathUtils::ToRadians(mesh->rotation.x));
-    meshMat = MathUtils::Matrix::RotateY(meshMat, MathUtils::ToRadians(mesh->rotation.y));
-    meshMat = MathUtils::Matrix::RotateZ(meshMat, MathUtils::ToRadians(mesh->rotation.z));
     meshMat = MathUtils::Matrix::Scale(meshMat, mesh->scale);
-
-    // Parent world matrix
-    Mat4 entityMat = MathUtils::Matrix::Identity();
-    entityMat = MathUtils::Matrix::Translate(entityMat, position);
-    entityMat = MathUtils::Matrix::RotateX(entityMat, MathUtils::ToRadians(rotation.x));
-    entityMat = MathUtils::Matrix::RotateY(entityMat, MathUtils::ToRadians(rotation.y));
-    entityMat = MathUtils::Matrix::RotateZ(entityMat, MathUtils::ToRadians(rotation.z));
-    entityMat = MathUtils::Matrix::Scale(entityMat, scale);
+    meshMat = MathUtils::Matrix::RotateZ(meshMat, MathUtils::ToRadians(mesh->rotation.z));
+    meshMat = MathUtils::Matrix::RotateY(meshMat, MathUtils::ToRadians(mesh->rotation.y));
+    meshMat = MathUtils::Matrix::RotateX(meshMat, MathUtils::ToRadians(mesh->rotation.x));
+    meshMat = MathUtils::Matrix::Translate(meshMat, worldPos);
 
     // Final world matrix (parent × child local)
-    Mat4 finalModelMat = entityMat * meshMat;
+    Mat4 finalModelMat = meshMat * entityMatrix;
     mesh->matrix = finalModelMat;
 }
 
