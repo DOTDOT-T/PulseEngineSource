@@ -95,6 +95,10 @@ namespace PulseEngine
             return Vector3(vec.x * scalar, vec.y * scalar, vec.z * scalar);
         }
 
+        float GetMagnitude() const
+        {
+            return std::sqrt(x * x + y * y + z * z);
+        }   
 
 
         Vector3 Normalized() const
