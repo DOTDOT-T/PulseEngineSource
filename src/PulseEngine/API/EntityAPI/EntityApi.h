@@ -6,12 +6,15 @@
 #include "PulseEngine/core/Entity/Entity.h"
 #include "PulseEngine/CustomScripts/IScripts.h"
 
+class MaterialApi;
+
 namespace PulseEngine
 {
     class PULSE_ENGINE_DLL_API EntityApi
     {
         private:
             Entity* entity;
+            MaterialApi* materialApi;
         public:
             EntityApi(Entity* e);
     
@@ -39,6 +42,7 @@ namespace PulseEngine
                 }
                 return nullptr;
             }
+
         
             /**
              * @brief To easily add a component into the entity. 
@@ -57,6 +61,8 @@ namespace PulseEngine
             }
         
             void AddScript(IScript* script) {entity->AddScript(script); }
+
+            MaterialApi* GetMaterialApi();
         
     };
 }

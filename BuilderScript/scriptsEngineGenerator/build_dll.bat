@@ -63,6 +63,7 @@ src\PulseEngine\core\Network\Request\Request.cpp ^
 src\PulseEngine\core\FileManager\FileReader\FileReader.cpp ^
 PulseEngineEditor/InterfaceEditor/Account/Account.cpp ^
 src/PulseEngine/core/Input/InputSystem.cpp ^
+src\PulseEngine\API\MaterialAPI\MaterialApi.cpp ^
 -I. -Iinclude -Iinclude/websocketpp -Iinclude/asio -Iinclude/imgui -Iinclude/imgui-node -I./src -IE:/Editor/Include -Iexternal/assimp/include ^
 -Lexternal/assimp/lib ^
 -Lexternal/assimp/lib/x64 ^

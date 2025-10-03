@@ -43,6 +43,7 @@ src\PulseEngine\core\Network\Request\Request.cpp ^
 PulseEngineEditor/InterfaceEditor/Account/Account.cpp ^
 src/PulseEngine/core/Input/InputSystem.cpp ^
 src\PulseEngine\core\FileManager\FileReader\FileReader.cpp ^
+src\PulseEngine\API\MaterialAPI\MaterialApi.cpp ^
 -I. ^
 -Iinclude -Iinclude/imgui ^
 -I./src -Iexternal/assimp/include ^
@@ -65,5 +66,5 @@ if %errorlevel% neq 0 (
   echo ✅ Compilation réussie de PulseEngine.dll
 )
 
-copy distribuables\PulseEngine.dll PulseEngineBuild\dist\
-copy distribuables\PulseEngine.dll PulseEngineBuild\Build\
+copy distribuables\PulseEngine.dll Build\dist\
+copy distribuables\PulseEngine.dll Build\Build\
