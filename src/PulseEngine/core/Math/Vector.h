@@ -22,6 +22,12 @@ namespace PulseEngine
         Vector2(float scalar) : x(scalar), y(scalar) {}
         Vector2(float x, float y) : x(x), y(y) {}
         Vector2(const Vector2& vect) : x(vect.x), y(vect.y) {}
+
+
+        Vector2 operator-(const Vector2& other) const
+        {
+            return Vector2(x - other.x, y - other.y);
+        }
     };
 
     /**

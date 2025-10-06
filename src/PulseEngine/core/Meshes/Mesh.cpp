@@ -130,6 +130,26 @@ Mesh* Mesh::LoadFromAssimp(const aiMesh* mesh, const aiScene* scene)
             {
                 vertex.TexCoords = PulseEngine::Vector2(0.0f);
             }
+            // === Compute Tangents & Bitangents ===
+            if (mesh->HasTangentsAndBitangents())
+            {
+                vertex.Tangent = PulseEngine::Vector3(
+                    mesh->mTangents[i].x,
+                    mesh->mTangents[i].y,
+                    mesh->mTangents[i].z
+                );
+                vertex.Bitangent = PulseEngine::Vector3(
+                    mesh->mBitangents[i].x,
+                    mesh->mBitangents[i].y,
+                    mesh->mBitangents[i].z
+                );
+            }
+            else
+            {
+                vertex.Tangent = PulseEngine::Vector3(0.0f);
+                vertex.Bitangent = PulseEngine::Vector3(0.0f);
+            }
+
 
             // Initialisation à zéro pour les bones (sera rempli plus tard si bones)
             vertex.BoneIDs = PulseEngine::iVector4(0);

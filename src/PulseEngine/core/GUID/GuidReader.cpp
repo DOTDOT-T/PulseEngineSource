@@ -269,10 +269,14 @@ Mesh* GuidReader::GetMeshFromGuid(std::size_t guid)
     //);
     const aiScene* scene = importer->ReadFile(
         meshPath,
-        aiProcess_Triangulate |
-        aiProcess_FlipUVs |
-        aiProcess_GenNormals |
-        aiProcess_CalcTangentSpace
+    aiProcess_Triangulate | 
+    aiProcess_GenSmoothNormals |
+    aiProcess_CalcTangentSpace | 
+    aiProcess_JoinIdenticalVertices |
+    aiProcess_ImproveCacheLocality |
+    aiProcess_LimitBoneWeights |
+    aiProcess_OptimizeMeshes |
+    aiProcess_OptimizeGraph
     );
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)

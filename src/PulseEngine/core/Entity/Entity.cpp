@@ -38,11 +38,11 @@ void Entity::UpdateModelMatrix()
     using namespace PulseEngine;
 
     Mat4 localMat = PulseEngine::MathUtils::Matrix::Identity();
-    localMat = PulseEngine::MathUtils::Matrix::Scale(localMat, scale);
+    localMat = PulseEngine::MathUtils::Matrix::Translate(localMat, position);
     localMat = PulseEngine::MathUtils::Matrix::RotateZ(localMat, PulseEngine::MathUtils::ToRadians(rotation.z));
     localMat = PulseEngine::MathUtils::Matrix::RotateY(localMat, PulseEngine::MathUtils::ToRadians(rotation.y));
     localMat = PulseEngine::MathUtils::Matrix::RotateX(localMat, PulseEngine::MathUtils::ToRadians(rotation.x));
-    localMat = PulseEngine::MathUtils::Matrix::Translate(localMat, position);
+    localMat = PulseEngine::MathUtils::Matrix::Scale(localMat, scale);
 
     this->entityMatrix = localMat;
 
@@ -199,26 +199,18 @@ void Entity::SimplyDrawMesh() const
 void Entity::CalculateMeshMatrix(Mesh *const & mesh) const
 {
     using namespace PulseEngine;
-    Mat4 parentRot = MathUtils::Matrix::Identity();
-    parentRot = MathUtils::Matrix::RotateZ(parentRot, MathUtils::ToRadians(rotation.z));
-    parentRot = MathUtils::Matrix::RotateY(parentRot, MathUtils::ToRadians(rotation.y));
-    parentRot = MathUtils::Matrix::RotateX(parentRot, MathUtils::ToRadians(rotation.x));
+    Mat4 entityTransform = entityMatrix; // parent/world transform
 
-    Vector3 rotatedLocalPos = MathUtils::MultiplyPoint(parentRot, mesh->position);
+    Mat4 localTransform = MathUtils::Matrix::Identity();
+    localTransform = MathUtils::Matrix::Translate(localTransform, mesh->position);
+    localTransform = MathUtils::Matrix::RotateX(localTransform, MathUtils::ToRadians(mesh->rotation.x));
+    localTransform = MathUtils::Matrix::RotateY(localTransform, MathUtils::ToRadians(mesh->rotation.y));
+    localTransform = MathUtils::Matrix::RotateZ(localTransform, MathUtils::ToRadians(mesh->rotation.z));
+    localTransform = MathUtils::Matrix::Scale(localTransform, mesh->scale);
 
-    // Add parent world position
-    Vector3 worldPos = rotatedLocalPos;
+    // Correct order: local × parent
+    mesh->matrix = entityTransform * localTransform;
 
-    Mat4 meshMat = MathUtils::Matrix::Identity();
-    meshMat = MathUtils::Matrix::Scale(meshMat, mesh->scale);
-    meshMat = MathUtils::Matrix::RotateZ(meshMat, MathUtils::ToRadians(mesh->rotation.z));
-    meshMat = MathUtils::Matrix::RotateY(meshMat, MathUtils::ToRadians(mesh->rotation.y));
-    meshMat = MathUtils::Matrix::RotateX(meshMat, MathUtils::ToRadians(mesh->rotation.x));
-    meshMat = MathUtils::Matrix::Translate(meshMat, worldPos);
-
-    // Final world matrix (parent × child local)
-    Mat4 finalModelMat = meshMat * entityMatrix;
-    mesh->matrix = finalModelMat;
 }
 
 void Entity::BindTexturesToShader() const

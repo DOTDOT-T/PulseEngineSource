@@ -374,6 +374,8 @@ void OpenGLAPI::SetupMesh(unsigned int *VAO, unsigned int *VBO, unsigned int* EB
 
     glEnableVertexAttribArray(3);
     glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
 
     // Attribut 3 : Weights (vec4)
     glEnableVertexAttribArray(5);

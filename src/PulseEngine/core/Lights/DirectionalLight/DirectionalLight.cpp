@@ -34,13 +34,15 @@ void DirectionalLight::BindToShader(Shader &shader, int index)
     shader.SetBool("dirLight.castsShadow", true);
     shader.SetVec3("dirLight.target", target);
     shader.SetVec3("dirLight.position", position);
+    shader.SetFloat("dirLight.near", nearPlane);
+    shader.SetFloat("dirLight.far", farPlane);
 }
 
 void DirectionalLight::RecalculateLightSpaceMatrix()
 {
-    PulseEngine::Mat4 lightProjection = PulseEngine::MathUtils::Matrix::Orthographic(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 40.0f);
-    PulseEngine::Vector3 up = PulseEngine::Vector3(0.0f, 1.0f, 0.0f);
+    // PulseEngine::Mat4 lightProjection = PulseEngine::MathUtils::Matrix::Orthographic(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 40.0f);
+    // PulseEngine::Vector3 up = PulseEngine::Vector3(0.0f, 1.0f, 0.0f);
     
-    PulseEngine::Mat4 lightView = PulseEngine::MathUtils::Matrix::LookAt(position, target, up);
-    lightSpaceMatrix = lightProjection * lightView;
+    // PulseEngine::Mat4 lightView = PulseEngine::MathUtils::Matrix::LookAt(position, target, up);
+    // lightSpaceMatrix = lightProjection * lightView;
 }
