@@ -13,10 +13,15 @@
 #include "PulseEngine/core/Material/Texture.h"
 #include "PulseEngine/core/Material/MaterialManager.h"
 #include "PulseEngine/API/EntityAPI/EntityApi.h"
+#include "PulseEngine/core/Meshes/RenderableMesh.h"
+#include "PulseEngine/core/Meshes/StaticMesh.h"
+#include "PulseEngine/core/Meshes/SkeletalMesh.h"
 
 #include <assimp/Importer.hpp>      // Assimp::Importer
 #include <assimp/scene.h>           // aiScene
 #include <assimp/postprocess.h>     // postprocessing flags
+
+#include <set>
 
 Entity *GuidReader::GetEntityFromGuid(std::size_t guid)
 {
@@ -98,7 +103,7 @@ Entity *GuidReader::GetEntityFromJson(nlohmann::json_abi_v3_12_0::json &entityDa
                     continue;
                 }
 
-                Mesh *msh = GetMeshFromGuid(meshGuid);
+                RenderableMesh* msh = GetMeshFromGuid(meshGuid);
                 msh->position.x = mesh["Position"][0].get<float>();
                 msh->position.y = mesh["Position"][1].get<float>();
                 msh->position.z = mesh["Position"][2].get<float>();
@@ -202,7 +207,7 @@ Material* GuidReader::GetMaterialFromJson(nlohmann::json_abi_v3_12_0::json &mate
 }
 
 
-Mesh* GuidReader::GetMeshFromGuid(std::size_t guid)
+RenderableMesh* GuidReader::GetMeshFromGuid(std::size_t guid)
 {
     std::string path = "";
     std::string meshPath = "";
@@ -285,13 +290,54 @@ Mesh* GuidReader::GetMeshFromGuid(std::size_t guid)
         return nullptr;
     }
 
-    
-    Mesh* msh = Mesh::LoadFromAssimp(scene->mMeshes[0], scene); // OK: importer toujours vivant ici
+    EDITOR_LOG("number of meshes " << scene->mNumMeshes);
 
-    msh->importer = importer;
-    msh->SetGuid(guid);
-    msh->SetName(meshPath);
-    return msh;
+    RenderableMesh* meshsObj = nullptr;
+
+    if(scene->mNumAnimations > 0)
+    {
+        meshsObj = new SkeletalMesh(scene->mName.C_Str());
+        SkeletalMesh* cst = dynamic_cast<SkeletalMesh*>(meshsObj);
+
+        LoadSkeletonFromAssimp(cst, scene);
+
+        // for (unsigned int i = 0; i < scene->mNumAnimations; i++)
+        // {
+        //     const aiAnimation* anim = scene->mAnimations[i];
+        //     AnimationClip clip = SkeletalMesh::LoadAnimationSimplified(anim);
+        //     cst->animations.push_back(clip);
+        // }
+
+        LoadAnimationsFromAssimp(cst, scene);
+
+        for (unsigned int i = 0; i < scene->mNumMeshes; i++)
+        {
+            Mesh* msh = Mesh::LoadFromAssimp(scene->mMeshes[i], scene, cst); // OK: importer toujours vivant ici
+
+            msh->importer = importer;
+            msh->SetGuid(guid);
+            msh->SetName(meshPath);
+            meshsObj->AddMesh(msh);
+        }
+
+
+        cst->finalBoneMatrices.resize(cst->skeleton.size(), PulseEngine::Mat4(1.0f));
+    }
+    else
+    {
+        meshsObj = new StaticMesh(scene->mName.C_Str());
+        for (unsigned int i = 0; i < scene->mNumMeshes; i++)
+        {
+            Mesh* msh = Mesh::LoadFromAssimp(scene->mMeshes[i], scene, nullptr); // OK: importer toujours vivant ici
+
+            msh->importer = importer;
+            msh->SetGuid(guid);
+            msh->SetName(meshPath);
+            meshsObj->AddMesh(msh);
+        }
+    }
+
+    return meshsObj;
 }
 
 std::size_t GuidReader::InsertIntoCollection(const std::string &filePath)
@@ -361,3 +407,157 @@ std::vector<std::pair<std::string, std::string>> GuidReader::GetAllAvailableFile
 
     return std::vector<std::pair<std::string, std::string>>();
 }
+
+void GuidReader::LoadSkeletonFromAssimp(SkeletalMesh* skel, const aiScene* scene)
+{
+
+    // Step 1: collect all bones from all meshes
+    int boneCounter = 0;
+    for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
+    {
+        aiMesh* mesh = scene->mMeshes[i];
+        for (unsigned int b = 0; b < mesh->mNumBones; ++b)
+        {
+            aiBone* aiBonePtr = mesh->mBones[b];
+            std::string boneName = aiBonePtr->mName.C_Str();
+            if (skel->boneNameToIndex.find(boneName) == skel->boneNameToIndex.end())
+            {
+                Bone bone;
+                bone.name = boneName;
+                bone.index = boneCounter++;
+                bone.offsetMatrix = SkeletalMesh::ConvertAiMatrix(aiBonePtr->mOffsetMatrix);
+                skel->skeleton.push_back(bone);
+                skel->boneNameToIndex[boneName] = bone.index;
+            }
+        }
+    }
+
+    // Step 2: build hierarchy from scene root node
+    std::function<void(aiNode*, int)> recurse = [&](aiNode* node, int parentIndex)
+    {
+        std::string nodeName = node->mName.C_Str();
+        auto it = skel->boneNameToIndex.find(nodeName);
+        int currentIndex = (it != skel->boneNameToIndex.end()) ? it->second : -1;
+
+        if (currentIndex != -1)
+        {
+            skel->skeleton[currentIndex].parentIndex = parentIndex;
+            skel->skeleton[currentIndex].localTransform = SkeletalMesh::ConvertAiMatrix(node->mTransformation);
+        }
+
+        for (unsigned int i = 0; i < node->mNumChildren; ++i)
+            recurse(node->mChildren[i], currentIndex != -1 ? currentIndex : parentIndex);
+    };
+
+    recurse(scene->mRootNode, -1);
+}
+
+void GuidReader::LoadAnimationsFromAssimp(SkeletalMesh* skel, const aiScene* scene)
+{
+    for (unsigned int a = 0; a < scene->mNumAnimations; ++a)
+    {
+        aiAnimation* anim = scene->mAnimations[a];
+        AnimationClip clip;
+        clip.name = anim->mName.C_Str();
+        clip.duration = anim->mDuration;
+        clip.tickPerSeconds = anim->mTicksPerSecond != 0.0 ? anim->mTicksPerSecond : 30.0;
+
+        // Step 1: Collect all unique timestamps
+        std::set<double> allTimes;
+        for (unsigned int c = 0; c < anim->mNumChannels; ++c)
+        {
+            aiNodeAnim* channel = anim->mChannels[c];
+
+            for (unsigned int i = 0; i < channel->mNumPositionKeys; ++i)
+                allTimes.insert(channel->mPositionKeys[i].mTime);
+            for (unsigned int i = 0; i < channel->mNumRotationKeys; ++i)
+                allTimes.insert(channel->mRotationKeys[i].mTime);
+            for (unsigned int i = 0; i < channel->mNumScalingKeys; ++i)
+                allTimes.insert(channel->mScalingKeys[i].mTime);
+        }
+
+        // Step 2: Initialize last known transform for each bone
+        std::unordered_map<std::string, TransformAnimation> lastTransform;
+        for (const Bone& bone : skel->skeleton)
+        {
+            lastTransform[bone.name] = {
+                PulseEngine::Vector3(0.0f),          // position fallback
+                PulseEngine::Vector3(1.0f),          // scale fallback
+                PulseEngine::Vector4(0,0,0,1)        // rotation fallback (identity quaternion)
+            };
+        }
+
+        // Step 3: Build keyframes for each timestamp
+        for (double t : allTimes)
+        {
+            KeyFrame frame;
+            frame.time = t;
+
+            for (unsigned int c = 0; c < anim->mNumChannels; ++c)
+            {
+                aiNodeAnim* channel = anim->mChannels[c];
+                std::string boneName = channel->mNodeName.C_Str();
+                TransformAnimation& transform = lastTransform[boneName];
+
+                // Update position if there’s a key at this time
+                for (unsigned int i = 0; i < channel->mNumPositionKeys; ++i)
+                {
+                    if (channel->mPositionKeys[i].mTime == t)
+                    {
+                        transform.position = {
+                            channel->mPositionKeys[i].mValue.x,
+                            channel->mPositionKeys[i].mValue.y,
+                            channel->mPositionKeys[i].mValue.z
+                        };
+                        break;
+                    }
+                }
+
+                // Update rotation if there’s a key at this time
+                for (unsigned int i = 0; i < channel->mNumRotationKeys; ++i)
+                {
+                    if (channel->mRotationKeys[i].mTime == t)
+                    {
+                        transform.rotation = {
+                            channel->mRotationKeys[i].mValue.x,
+                            channel->mRotationKeys[i].mValue.y,
+                            channel->mRotationKeys[i].mValue.z,
+                            channel->mRotationKeys[i].mValue.w
+                        };
+                        break;
+                    }
+                }
+
+                // Update scale if there’s a key at this time
+                for (unsigned int i = 0; i < channel->mNumScalingKeys; ++i)
+                {
+                    if (channel->mScalingKeys[i].mTime == t)
+                    {
+                        transform.scale = {
+                            channel->mScalingKeys[i].mValue.x,
+                            channel->mScalingKeys[i].mValue.y,
+                            channel->mScalingKeys[i].mValue.z
+                        };
+                        break;
+                    }
+                }
+
+                frame.boneTransforms[boneName] = transform;
+            }
+
+            // Step 4: Make sure all bones have a transform
+            for (const Bone& bone : skel->skeleton)
+            {
+                if (frame.boneTransforms.find(bone.name) == frame.boneTransforms.end())
+                    frame.boneTransforms[bone.name] = lastTransform[bone.name];
+            }
+
+            clip.keyframes.push_back(frame);
+        }
+
+        skel->animations.push_back(clip);
+    }
+}
+
+
+

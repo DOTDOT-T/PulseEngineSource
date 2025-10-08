@@ -14,10 +14,15 @@
 #include "Common/common.h"
 #include "Common/dllExport.h"
 
+#include <assimp/Importer.hpp>      // Assimp::Importer
+#include <assimp/scene.h>           // aiScene
+#include <assimp/postprocess.h>     // postprocessing flags
+
 class Entity;
 class Mesh;
 class Material;
-
+class RenderableMesh;
+class SkeletalMesh;
 
 
 class PULSE_ENGINE_DLL_API GuidReader
@@ -38,7 +43,7 @@ class PULSE_ENGINE_DLL_API GuidReader
          * @param Guid actual GUID (unique identifier) of the mesh saved in the engine
          * @return Mesh* a new mesh from your wanted one.
          */
-        static Mesh* GetMeshFromGuid(std::size_t guid);
+        static RenderableMesh* GetMeshFromGuid(std::size_t guid);
         
         /**
          * @brief If you have the path to the entity, use this one. It's way faster than using the GUID since it didn't need to find it in the engine.
@@ -69,6 +74,10 @@ class PULSE_ENGINE_DLL_API GuidReader
          * @return std::vector<std::pair<std::string, std::string>> you've got all the path available inside a collection.
          */
         static std::vector<std::pair<std::string, std::string>> GetAllAvailableFiles(const std::string& guidFile = ".pEntity");
+        static void LoadSkeletonFromAssimp(SkeletalMesh* skel, const aiScene* scene);
+
+        static void LoadAnimationsFromAssimp(SkeletalMesh* skel, const aiScene* scene);
+
 };
 
 #endif
