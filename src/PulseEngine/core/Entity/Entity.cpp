@@ -16,7 +16,7 @@ Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position, Me
 {
     //actually is it possible to be nullptr, because of loadScene, we need to load an entity with a material but no mesh before reading it.
     //so mesh can nullptr, and if it is pushed back into the meshes vector, it will cause a crash.
-    if(mesh) meshes.push_back(mesh);
+    // if(mesh) meshes.push_back(mesh);
 
     BaseConstructor();
 }
@@ -68,7 +68,7 @@ void Entity::UpdateEntity(float deltaTime)
     )
     for (const auto &mesh : meshes)
     {
-        mesh->UpdateMesh(deltaTime);
+        mesh->Update();
     }
 
 }
@@ -192,11 +192,11 @@ void Entity::SimplyDrawMesh() const
 
         BindTexturesToShader();
 
-        mesh->Draw(material->GetShader()->getProgramID());
+        mesh->Render(material->GetShader());
     }
 }
 
-void Entity::CalculateMeshMatrix(Mesh *const & mesh) const
+void Entity::CalculateMeshMatrix(RenderableMesh* const & mesh) const
 {
     using namespace PulseEngine;
     Mat4 entityTransform = entityMatrix; // parent/world transform
@@ -238,7 +238,7 @@ void Entity::DrawMeshWithShader(unsigned int shaderProgram) const
     for (const auto &mesh : meshes)
     {        
         material->GetShader()->SetMat4("model", mesh->matrix);
-        mesh->Draw(shaderProgram);
+        mesh->Render(material->GetShader());
     }
 }
 

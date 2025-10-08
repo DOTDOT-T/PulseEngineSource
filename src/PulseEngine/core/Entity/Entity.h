@@ -19,6 +19,8 @@
 #include "Common/common.h"
 #include "Common/dllExport.h"
 
+#include "PulseEngine/core/Meshes/RenderableMesh.h"
+
 #include <string>
 #include <vector>
 #include <iostream> // Temporary: consider wrapping with logging macros.
@@ -108,7 +110,7 @@ public:
      * 
      * @param mesh 
      */
-    void CalculateMeshMatrix(Mesh *const &mesh) const;
+    void CalculateMeshMatrix(RenderableMesh *const &mesh) const;
 
     /**
      * @brief Automaticaly bind all the textures of the material to the shader that is actual used.
@@ -127,7 +129,7 @@ public:
     // ------------------------------------------------------------------------
 
     /// Adds a mesh to the entity.
-    void AddMesh(Mesh* mesh) {meshes.push_back(mesh); }
+    void AddMesh(RenderableMesh* mesh) {meshes.push_back(mesh); }
         
     /// Attaches a behavior script to the entity.
     void AddScript(IScript* script);
@@ -153,7 +155,7 @@ public:
     std::string GetName() const {return name;}
     Material* GetMaterial() {return material; }
     std::vector<IScript*>& GetScripts() {return scripts; }
-    std::vector<Mesh*>& GetMeshes() {return meshes; }
+    std::vector<RenderableMesh*>& GetMeshes() {return meshes; }
 
     // ------------------------------------------------------------------------
     // Setters
@@ -206,7 +208,7 @@ private:
     std::size_t guid = 0;
     std::size_t muid = 0;
 
-    std::vector<Mesh*> meshes;
+    std::vector<RenderableMesh*> meshes;
     std::vector<IScript*> scripts;
 
     float internalClock = 0.0f;
