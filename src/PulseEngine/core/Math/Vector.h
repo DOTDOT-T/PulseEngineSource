@@ -127,6 +127,8 @@ namespace PulseEngine
         {
             return x * other.x + y * other.y + z * other.z;
         }
+
+        
     };
 
     struct Vector4

@@ -124,6 +124,33 @@ namespace PulseEngine
             return mat;
         }
 
+
+            // Unary minus
+            Quaternion operator-() const {
+                return Quaternion{-x, -y, -z, -w};
+            }
+            Quaternion operator*(float scalar) const {
+                return Quaternion{x * scalar, y * scalar, z * scalar, w * scalar};
+            }
+        
+            Quaternion operator+(const Quaternion& other) const {
+                return Quaternion{x + other.x, y + other.y, z + other.z, w + other.w};
+            }
+        
+            Quaternion& operator+=(const Quaternion& other) {
+                x += other.x; y += other.y; z += other.z; w += other.w;
+                return *this;
+            }
+            
+            friend Quaternion operator*(float scalar, const Quaternion& q) {
+                return Quaternion{q.x * scalar, q.y * scalar, q.z * scalar, q.w * scalar};
+            }
+
+        
+            Quaternion Normalize() const {
+                float len = std::sqrt(x*x + y*y + z*z + w*w);
+                return Quaternion{x/len, y/len, z/len, w/len};
+            }
     };
 
 }

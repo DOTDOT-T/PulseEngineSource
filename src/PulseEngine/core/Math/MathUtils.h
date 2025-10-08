@@ -141,6 +141,32 @@ namespace PulseEngine
             return result;
         }
 
+        // inline Vector3 Lerp(const Vector3& a, const Vector3& b, float t)
+        // {
+        //     return a * (1.0f - t) + b * t;
+        // }
+        // inline Quaternion LerpQ(const Quaternion& q1, const Quaternion& q2, float t)
+        // {
+        //     return Normalize(q1 * (1.0f - t) + q2 * t);
+        // }
+
+        // inline Quaternion Slerp(const Quaternion& q1, const Quaternion& q2, float t)
+        // {
+        //     float cosTheta = Dot(q1, q2);
+        //     Quaternion q2Copy = q2;
+        
+        //     // If cosTheta < 0, take the shorter path
+        //     if (cosTheta < 0.0f) { q2Copy = -q2Copy; cosTheta = -cosTheta; }
+        
+        //     if (cosTheta > 0.9995f)
+        //         return Normalize(LerpQ(q1, q2Copy, t)); // almost identical → linear
+        
+        //     float angle = acos(cosTheta);
+        //     return (sin((1-t)*angle)/sin(angle)) * q1 + (sin(t*angle)/sin(angle)) * q2Copy;
+        // }
+
+
+
         namespace Matrix
         {
             inline PulseEngine::Mat4 Identity()
@@ -403,6 +429,37 @@ namespace PulseEngine
                     return result;
                 }
 
+                inline PulseEngine::Mat4 ComposeMatrix(const PulseEngine::Vector3& position,
+                                                const PulseEngine::Vector4& rotation, // quaternion
+                                                const PulseEngine::Vector3& scale)
+                {
+                    float x = rotation.x, y = rotation.y, z = rotation.z, w = rotation.a;
+                    float sx = scale.x, sy = scale.y, sz = scale.z;
+                
+                    PulseEngine::Mat4 result(1.0f);
+                
+                    result[0][0] = (1 - 2*y*y - 2*z*z) * sx;
+                    result[0][1] = (2*x*y + 2*w*z) * sx;
+                    result[0][2] = (2*x*z - 2*w*y) * sx;
+                    result[0][3] = 0.0f;
+                
+                    result[1][0] = (2*x*y - 2*w*z) * sy;
+                    result[1][1] = (1 - 2*x*x - 2*z*z) * sy;
+                    result[1][2] = (2*y*z + 2*w*x) * sy;
+                    result[1][3] = 0.0f;
+                
+                    result[2][0] = (2*x*z + 2*w*y) * sz;
+                    result[2][1] = (2*y*z - 2*w*x) * sz;
+                    result[2][2] = (1 - 2*x*x - 2*y*y) * sz;
+                    result[2][3] = 0.0f;
+                
+                    result[3][0] = position.x;
+                    result[3][1] = position.y;
+                    result[3][2] = position.z;
+                    result[3][3] = 1.0f;
+                
+                    return result;
+                }
 
         }
     }
