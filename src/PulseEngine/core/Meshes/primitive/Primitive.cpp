@@ -86,7 +86,7 @@ Mesh *Primitive::Sphere()
     }
 
     std::cout << "Modèle chargé avec succès : " << path << std::endl;
-    Mesh* msh = Mesh::LoadFromAssimp(scene->mMeshes[0], scene); // OK: importer toujours vivant ici
+    Mesh* msh = Mesh::LoadFromAssimp(scene->mMeshes[0], scene, nullptr); // OK: importer toujours vivant ici
 
     msh->importer = importer;
     return msh;

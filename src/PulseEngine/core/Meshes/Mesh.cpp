@@ -19,11 +19,11 @@ Mesh::Mesh()
 Mesh::~Mesh()
 {
     PulseEngineGraphicsAPI->DeleteMesh(&VAO, &VBO);
-    if (skeleton)
-    {
-        delete skeleton;
-        skeleton = nullptr;
-    }
+    // if (skeleton)
+    // {
+    //     delete skeleton;
+    //     skeleton = nullptr;
+    // }
     if(importer)
     {
         delete importer;
@@ -36,47 +36,21 @@ void Mesh::SetupMesh()
     PulseEngineGraphicsAPI->SetupMesh(&VAO, &VBO, &EBO, vertices, indices);
 }
 
-void Mesh::Draw(unsigned int shaderProgram)
+void Mesh::Draw(Shader* shader)
 {
-    // PulseEngineGraphicsAPI->UseShader(shaderProgram);
-
-    // // 1. Envoie à l'uniform 'hasSkeleton'
-    // std::cout << "getting hasSkeleton uniform location" << std::endl;
-    // GLint hasSkeletonLoc = glGetUniformLocation(shaderProgram, "hasSkeleton");
-    // std::cout << "hasSkeletonLoc = " << hasSkeletonLoc << std::endl;
-    // glUniform1i(hasSkeletonLoc, skeleton != nullptr);
-    // std::cout << "set hasSkeleton uniform" << std::endl;
-
-    // // 2. Envoie les bone transforms si le mesh a un squelette
-    // if (skeleton)
-    // {
-    //     std::cout << "mesh has skeleton, getting bone matrices" << std::endl;
-    //     const auto& boneMats = skeleton->GetFinalBoneMatrices();
-    //     std::cout << "boneMats.size() = " << boneMats.size() << std::endl;
-
-    //     int boneCount = std::min((int)boneMats.size(), 100);
-    //     std::cout << "boneCount = " << boneCount << std::endl;
-    //     GLint boneMatrixLoc = glGetUniformLocation(shaderProgram, "boneTransforms[0]");
-    //     std::cout << "boneMatrixLoc = " << boneMatrixLoc << std::endl;
-    //     std::cout << "calling glUniformMatrix4fv" << std::endl;
-    //     glUniformMatrix4fv(boneMatrixLoc, boneCount, GL_FALSE, glm::value_ptr(boneMats[0]));
-    //     std::cout << "set bone transforms uniform" << std::endl;
-    // }
-
-    // 3. Bind VAO et dessiner
-    
     PulseEngineGraphicsAPI->RenderMesh(&VAO, &VBO, vertices, indices);
 }
 
-Mesh* Mesh::LoadFromAssimp(const aiMesh* mesh, const aiScene* scene)
+Mesh* Mesh::LoadFromAssimp(const aiMesh* mesh, const aiScene* scene, SkeletalMesh* skel)
 {
     Mesh* newMesh = new Mesh();
     std::cout << "chargement du mesh" << std::endl;
 
     if (mesh->HasBones())
     {
-        Skeleton* skel = new Skeleton(mesh, scene);
-        newMesh->skeleton = skel;
+        EDITOR_LOG("Bones founded")
+        // Skeleton* skel = new Skeleton(mesh, scene);
+        // newMesh->skeleton = skel;
     }
 
     try
@@ -157,7 +131,7 @@ Mesh* Mesh::LoadFromAssimp(const aiMesh* mesh, const aiScene* scene)
 
             newMesh->vertices.push_back(vertex);
         }
-        if (mesh->HasBones())
+        if (mesh->HasBones() && skel)
         {
             std::map<std::string, int> boneMapping;
             int boneCounter = 0;
@@ -167,15 +141,14 @@ Mesh* Mesh::LoadFromAssimp(const aiMesh* mesh, const aiScene* scene)
                 std::string boneName(mesh->mBones[i]->mName.C_Str());
             
                 int boneID = 0;
-                if (boneMapping.find(boneName) == boneMapping.end())
+                if (skel->boneNameToIndex.find(boneName) == skel->boneNameToIndex.end())
                 {
                     boneID = boneCounter;
-                    boneMapping[boneName] = boneCounter;
                     boneCounter++;
                 }
                 else
                 {
-                    boneID = boneMapping[boneName];
+                    boneID = skel->boneNameToIndex[boneName];
                 }
             
                 const aiBone* bone = mesh->mBones[i];
@@ -189,6 +162,14 @@ Mesh* Mesh::LoadFromAssimp(const aiMesh* mesh, const aiScene* scene)
                         AddBoneDataToVertex(newMesh->vertices[vertexID], boneID, weight);
                     }
                 }
+            }
+        }
+        for (Vertex &v : newMesh->vertices)
+        {
+            if (v.Weights.a == 0.0f && v.Weights.x == 0.0f && v.Weights.y == 0.0f && v.Weights.z == 0.0f)
+            {
+                v.BoneIDs[0] = 0;
+                v.Weights[0] = 1.0f;
             }
         }
 
@@ -221,22 +202,50 @@ Mesh* Mesh::LoadFromAssimp(const aiMesh* mesh, const aiScene* scene)
 
 void Mesh::UpdateMesh(float deltaTime)
 {
-    if(skeleton)
-    {
-        skeleton->UpdateSkeleton(deltaTime);
-    }
+    // if(skeleton)
+    // {
+    //     skeleton->UpdateSkeleton(deltaTime);
+    // }
 }
 
 void Mesh::AddBoneDataToVertex(Vertex &vertex, int boneID, float weight)
 {
+    // Step 1: Add the bone
+    int smallestWeightIndex = 0;
+    float smallestWeight = vertex.Weights[0];
+
+    // Find a slot with zero weight or the smallest weight
     for (int i = 0; i < 4; ++i)
     {
         if (vertex.Weights[i] == 0.0f)
         {
             vertex.BoneIDs[i] = boneID;
             vertex.Weights[i] = weight;
-            return;
+            goto normalize; // Early exit, normalize later
+        }
+
+        if (vertex.Weights[i] < smallestWeight)
+        {
+            smallestWeight = vertex.Weights[i];
+            smallestWeightIndex = i;
         }
     }
-    // Si on a déjà 4 poids, on ignore les suivants
+
+    // Step 2: Replace the smallest weight if new weight is bigger
+    if (weight > smallestWeight)
+    {
+        vertex.BoneIDs[smallestWeightIndex] = boneID;
+        vertex.Weights[smallestWeightIndex] = weight;
+    }
+
+normalize:
+    // Step 3: Normalize the weights so they sum to 1
+    float sum = vertex.Weights[0] + vertex.Weights[1] + vertex.Weights[2] + vertex.Weights[3];
+    if (sum > 0.0f)
+    {
+        vertex.Weights.a /= sum;
+        vertex.Weights.x /= sum;
+        vertex.Weights.y /= sum;
+        vertex.Weights.z /= sum;
+    }
 }

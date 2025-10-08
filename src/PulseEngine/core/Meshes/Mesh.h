@@ -9,7 +9,8 @@
 #include "Common/dllExport.h"
 
 class Skeleton;
-
+class Shader;
+class SkeletalMesh;
 /**
  * @brief Structure representing a single vertex in 3D space.
  * Includes position, normal, texture coordinates, bone IDs, and weights.
@@ -59,7 +60,7 @@ public:
      * @brief Draws the mesh using the specified shader program.
      * @param shaderProgram OpenGL shader program ID.
      */
-    void Draw(unsigned int shaderProgram);
+    void Draw(Shader* shader);
 
     /**
      * @brief Loads mesh data from an Assimp mesh object.
@@ -67,7 +68,7 @@ public:
      * @param scene Assimp scene containing the mesh.
      * @return Pointer to a new Mesh object.
      */
-    static Mesh* LoadFromAssimp(const aiMesh* mesh, const aiScene* scene);
+    static Mesh* LoadFromAssimp(const aiMesh* mesh, const aiScene* scene, SkeletalMesh* skel = nullptr);
 
     /**
      * @brief Updates the mesh state (for animation or other time-based effects).

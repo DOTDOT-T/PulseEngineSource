@@ -1,241 +1,214 @@
 #include "SkeletalMesh.h"
+#include "PulseEngine/core/Meshes/Mesh.h"
+#include "PulseEngine/core/Graphics/IGraphicsApi.h"
 
-
-Skeleton::Skeleton(const aiMesh *mesh, const aiScene *scene)
+void SkeletalMesh::Update()
 {
-    boneCount = 0;
+    if (actualAnimationIndex >= animations.size()) return;
+    internalClock += PulseEngineInstance->GetDeltaTime();
 
-    rootNode = scene->mRootNode;
-    if (scene->mNumAnimations > 0)
+    const AnimationClip& clip = animations[actualAnimationIndex];
+    double ticksPerSecond = (clip.tickPerSeconds > 0.0) ? clip.tickPerSeconds : 30.0;
+
+    double timeInTicks = internalClock * ticksPerSecond;
+    double animTime = fmod(timeInTicks, clip.duration);
+
+    const KeyFrame* frame = FindKeyframeAtTime(animTime);
+    if(!frame) return;
+
+    EDITOR_LOG("animtime : " << animTime << " frame : " << frame->time);
+
+    for (Bone& bone : skeleton)
     {
-        animation = scene->mAnimations[0];
-    }
-    else
-    {
-        animation = nullptr;
-        std::cerr << "[Skeleton] No animations found in scene." << std::endl;
-    }
-    
-    for (unsigned int i = 0; i < mesh->mNumBones; ++i)
-    {
-        aiBone* aiBone = mesh->mBones[i];
-        std::string boneName(aiBone->mName.C_Str());
+        auto it = frame->boneTransforms.find(bone.name);
+        if (it == frame->boneTransforms.end())
+            continue;
 
-        AddBone(boneName, aiBone->mOffsetMatrix);
-    }
-    globalInverseTransform = PulseEngine::MathUtils::Matrix::Inverse(ConvertMatrix(scene->mRootNode->mTransformation));
-    finalBoneMatrices.resize(100, PulseEngine::Mat4(1.0f));
+        const TransformAnimation& localTransform = it->second;
 
-}
+        PulseEngine::Mat4 local = PulseEngine::MathUtils::Matrix::ComposeMatrix(
+            localTransform.position,
+            localTransform.rotation,
+            localTransform.scale
+        );
 
-void Skeleton::AddBone(const std::string &name, const aiMatrix4x4 &offset)
-{
-    if (boneMapping.find(name) == boneMapping.end()) {
-        boneMapping[name] = boneCount++;
-        BoneInfo bone;
-        bone.offsetMatrix = ConvertMatrix(offset);
-        bones.push_back(bone);
-    }
-}
+        PulseEngine::Mat4 global = (bone.parentIndex >= 0)
+            ? skeleton[bone.parentIndex].globalTransform * local
+            : local;
 
-PulseEngine::Mat4 Skeleton::GetBoneOffset(const std::string &name) const
-{
-    auto it = boneMapping.find(name);
-    if (it != boneMapping.end()) {
-        return bones[it->second].offsetMatrix;
-    }
-    return PulseEngine::Mat4(1.0f);
-}
+        bone.globalTransform = global;
 
-void Skeleton::ApplyAnimation(float timeInSeconds, const aiAnimation* animation, const aiNode* node, const PulseEngine::Mat4& parentTransform)
-{
-    std::string nodeName(node->mName.C_Str());
+        // if (bone.index >= finalBoneMatrices.size())
+        //     finalBoneMatrices.resize(skeleton.size());
 
-    const aiNodeAnim* nodeAnim = FindNodeAnim(animation, nodeName);
-
-    PulseEngine::Mat4 nodeTransform = ConvertMatrix(node->mTransformation);
-
-    if (nodeAnim)
-    {
-        PulseEngine::Vector3 scaling = InterpolateScaling(timeInSeconds, nodeAnim);
-        PulseEngine::Quaternion rotation = InterpolateRotation(timeInSeconds, nodeAnim);
-        PulseEngine::Vector3 position = InterpolatePosition(timeInSeconds, nodeAnim);
-
-        nodeTransform = PulseEngine::MathUtils::Matrix::Translate(PulseEngine::Mat4(1.0f), position)
-                      * rotation.ToMat4()
-                      * PulseEngine::MathUtils::Matrix::Scale(PulseEngine::Mat4(1.0f), scaling);
-    }
-
-    PulseEngine::Mat4 globalTransform = parentTransform * nodeTransform;
-
-    if (boneMapping.find(nodeName) != boneMapping.end())
-    {
-        int index = boneMapping[nodeName];
-
-        bones[index].finalTransform = globalInverseTransform * globalTransform * bones[index].offsetMatrix;
-        PulseEngine::Mat4 offsetMatrix = PulseEngine::MathUtils::Matrix::Transpose(bones[index].offsetMatrix);
-        finalBoneMatrices[index] = globalTransform * offsetMatrix;
-
-    }
-
-    for (unsigned int i = 0; i < node->mNumChildren; i++)
-    {
-        ApplyAnimation(timeInSeconds, animation, node->mChildren[i], globalTransform);
+        finalBoneMatrices[bone.index] = bone.globalTransform * bone.offsetMatrix;
     }
 }
 
 
-const aiNodeAnim* Skeleton::FindNodeAnim(const aiAnimation* animation, const std::string& nodeName)
+void SkeletalMesh::Render(Shader *shader) const
 {
-    if (!animation)
+    shader->SetBool("hasSkeleton", true);
+    PulseEngineGraphicsAPI->SetShaderMat4Array(shader, "u_BoneMatrices", finalBoneMatrices);
+
+    for(Mesh* msh : meshes)
     {
+        msh->Draw(shader);
+    }
+}
+
+AnimationClip SkeletalMesh::LoadAnimationSimplified(const aiAnimation* anim)
+{
+    AnimationClip clip;
+    clip.name = anim->mName.C_Str();
+
+    double duration = anim->mDuration;
+    double ticksPerSecond = anim->mTicksPerSecond != 0 ? anim->mTicksPerSecond : 30.0;
+    unsigned int frameCount = static_cast<unsigned int>(duration);
+
+    clip.duration = duration;
+    clip.tickPerSeconds = ticksPerSecond;
+
+    // Generate per-frame snapshot
+    for (unsigned int f = 0; f <= frameCount; f++)
+    {
+        KeyFrame frame;
+        frame.time = (double)f;
+
+        for (unsigned int c = 0; c < anim->mNumChannels; c++)
+        {
+            aiNodeAnim* channel = anim->mChannels[c];
+            std::string boneName = channel->mNodeName.C_Str();
+
+            // Find interpolated transforms for this bone at time f
+            aiVector3D pos;
+            aiQuaternion rot;
+            aiVector3D scale;
+            channel->mNumPositionKeys > 0
+                ? pos = channel->mPositionKeys[0].mValue
+                : pos = aiVector3D(0, 0, 0);
+            channel->mNumRotationKeys > 0
+                ? rot = channel->mRotationKeys[0].mValue
+                : rot = aiQuaternion(1, 0, 0, 0);
+            channel->mNumScalingKeys > 0
+                ? scale = channel->mScalingKeys[0].mValue
+                : scale = aiVector3D(1, 1, 1);
+
+            frame.boneTransforms[boneName] = {
+                {pos.x, pos.y, pos.z},
+                {scale.x, scale.y, scale.z},
+                {rot.x, rot.y, rot.z, rot.w}
+            };
+        }
+
+        clip.keyframes.push_back(std::move(frame));
+    }
+
+    return clip;
+}
+
+const KeyFrame* SkeletalMesh::FindKeyframeAtTime(double time)
+{
+    if (actualAnimationIndex >= animations.size()) return nullptr;
+    const AnimationClip& clip = animations[actualAnimationIndex];
+    if (clip.keyframes.empty())
         return nullptr;
-    }
 
+    // Clamp time to the duration
+    if (time <= clip.keyframes.front().time)
+        return &clip.keyframes.front();
+    if (time >= clip.keyframes.back().time)
+        return &clip.keyframes.back();
 
-    for (unsigned int i = 0; i < animation->mNumChannels; i++)
+    // Find the two keyframes between which 'time' falls
+    for (size_t i = 0; i < clip.keyframes.size() - 1; ++i)
     {
-        aiNodeAnim* channel = animation->mChannels[i];
-        if (!channel) continue;
-    
-        const aiString& nodeNameString = channel->mNodeName;
-        if (nodeNameString.length == 0 || !nodeNameString.C_Str()) continue;
-    
-        std::string animNodeName = nodeNameString.C_Str();
-    
-        if (nodeName == animNodeName)
+        const KeyFrame& current = clip.keyframes[i];
+        const KeyFrame& next = clip.keyframes[i + 1];
+        if (time >= current.time && time <= next.time)
         {
-            return channel;
-        }
-    }
-    return nullptr;
-}
+            // For now, just return the current keyframe (no interpolation)
+            return &current;
 
-
-void Skeleton::UpdateSkeleton(float deltaTime)
-{
-    
-    if (!animation)
-    {
-        return;
-    }
-
-    if (!rootNode)
-    {
-        return;
-    }
-
-    animationTime += deltaTime;
-    float durationInTicks = animation->mDuration;
-    float ticksPerSecond = animation->mTicksPerSecond != 0 ? animation->mTicksPerSecond : 25.0f;
-
-    float timeInTicks = fmod(animationTime * ticksPerSecond, durationInTicks);
-    ApplyAnimation(timeInTicks, animation, rootNode, PulseEngine::Mat4(1.0f));
-}
-
-const std::vector<PulseEngine::Mat4> &Skeleton::GetFinalBoneMatrices() const
-{
-    return finalBoneMatrices;
-}
-
-PulseEngine::Mat4 Skeleton::ConvertMatrix(const aiMatrix4x4 &m)
-{
-    return PulseEngine::MathUtils::Matrix::Transpose(PulseEngine::MathUtils::Matrix::MakeMat4(&m.a1));
-}
-
-PulseEngine::Vector3 Skeleton::InterpolatePosition(float time, const aiNodeAnim* channel)
-{
-    if (channel->mNumPositionKeys == 1)
-    {
-        return PulseEngine::Vector3(channel->mPositionKeys[0].mValue.x,
-                         channel->mPositionKeys[0].mValue.y,
-                         channel->mPositionKeys[0].mValue.z);
-    }
-
-    for (unsigned int i = 0; i < channel->mNumPositionKeys - 1; ++i)
-    {
-        if (time < static_cast<float>(channel->mPositionKeys[i + 1].mTime))
-        {
-            float t1 = static_cast<float>(channel->mPositionKeys[i].mTime);
-            float t2 = static_cast<float>(channel->mPositionKeys[i + 1].mTime);
-            float factor = (time - t1) / (t2 - t1);
-
-            const aiVector3D& start = channel->mPositionKeys[i].mValue;
-            const aiVector3D& end = channel->mPositionKeys[i + 1].mValue;
-
-            aiVector3D delta = end - start;
-            aiVector3D result = start + factor * delta;
-
-            return PulseEngine::Vector3(result.x, result.y, result.z);
+            // Optional: could do linear interpolation here
         }
     }
 
-    // fallback (dernier keyframe)
-    const aiVector3D& last = channel->mPositionKeys[channel->mNumPositionKeys - 1].mValue;
-    return PulseEngine::Vector3(last.x, last.y, last.z);
+    return &clip.keyframes.back();
 }
 
 
-PulseEngine::Quaternion Skeleton::InterpolateRotation(float time, const aiNodeAnim* channel)
+PulseEngine::Mat4 SkeletalMesh::ConvertAiMatrix(const aiMatrix4x4& from)
 {
-    if (channel->mNumRotationKeys == 1)
-    {
-        const aiQuaternion& q = channel->mRotationKeys[0].mValue;
-        return PulseEngine::Quaternion(q.w, q.x, q.y, q.z);
-    }
-
-    for (unsigned int i = 0; i < channel->mNumRotationKeys - 1; ++i)
-    {
-        if (time < static_cast<float>(channel->mRotationKeys[i + 1].mTime))
-        {
-            float t1 = static_cast<float>(channel->mRotationKeys[i].mTime);
-            float t2 = static_cast<float>(channel->mRotationKeys[i + 1].mTime);
-            float factor = (time - t1) / (t2 - t1);
-
-            const aiQuaternion& start = channel->mRotationKeys[i].mValue;
-            const aiQuaternion& end = channel->mRotationKeys[i + 1].mValue;
-
-            aiQuaternion result;
-            aiQuaternion::Interpolate(result, start, end, factor);
-            result.Normalize();
-
-            return PulseEngine::Quaternion(result.w, result.x, result.y, result.z);
-        }
-    }
-
-    // fallback
-    const aiQuaternion& q = channel->mRotationKeys[channel->mNumRotationKeys - 1].mValue;
-    return PulseEngine::Quaternion(q.w, q.x, q.y, q.z);
+    PulseEngine::Mat4 to;
+    to.data[0][0] = from.a1; to.data[1][0] = from.a2; to.data[2][0] = from.a3; to.data[3][0] = from.a4;
+    to.data[0][1] = from.b1; to.data[1][1] = from.b2; to.data[2][1] = from.b3; to.data[3][1] = from.b4;
+    to.data[0][2] = from.c1; to.data[1][2] = from.c2; to.data[2][2] = from.c3; to.data[3][2] = from.c4;
+    to.data[0][3] = from.d1; to.data[1][3] = from.d2; to.data[2][3] = from.d3; to.data[3][3] = from.d4;
+    return to;
 }
 
-PulseEngine::Vector3 Skeleton::InterpolateScaling(float time, const aiNodeAnim* channel)
+TransformAnimation SkeletalMesh::InterpolateBoneAtTime(aiNodeAnim *channel, double time)
 {
-    if (channel->mNumScalingKeys == 1)
-    {
-        const aiVector3D& s = channel->mScalingKeys[0].mValue;
-        return PulseEngine::Vector3(s.x, s.y, s.z);
-    }
+    TransformAnimation result;
 
-    for (unsigned int i = 0; i < channel->mNumScalingKeys - 1; ++i)
-    {
-        if (time < static_cast<float>(channel->mScalingKeys[i + 1].mTime))
-        {
-            float t1 = static_cast<float>(channel->mScalingKeys[i].mTime);
-            float t2 = static_cast<float>(channel->mScalingKeys[i + 1].mTime);
-            float factor = (time - t1) / (t2 - t1);
+    // // --- Position ---
+    // if (channel->mNumPositionKeys == 1)
+    //     result.position = PulseEngine::Vector3(channel->mPositionKeys[0].mValue.x,channel->mPositionKeys[0].mValue.y,channel->mPositionKeys[0].mValue.z);
+    // else
+    // {
+    //     for (unsigned int i = 0; i < channel->mNumPositionKeys - 1; ++i)
+    //     {
+    //         if (time < channel->mPositionKeys[i + 1].mTime)
+    //         {
+    //             double delta = channel->mPositionKeys[i + 1].mTime - channel->mPositionKeys[i].mTime;
+    //             double factor = (time - channel->mPositionKeys[i].mTime) / delta;
+    //             result.position = PulseEngine::MathUtils::Lerp(PulseEngine::Vector3(channel->mPositionKeys[i].mValue.x,channel->mPositionKeys[i].mValue.y,channel->mPositionKeys[i].mValue.z),
+    //                                    PulseEngine::Vector3(channel->mPositionKeys[i+1].mValue.x,channel->mPositionKeys[i+1].mValue.y,channel->mPositionKeys[i+1].mValue.z),
+    //                                    factor);
+    //             break;
+    //         }
+    //     }
+    // }
 
-            const aiVector3D& start = channel->mScalingKeys[i].mValue;
-            const aiVector3D& end = channel->mScalingKeys[i + 1].mValue;
+    // // --- Rotation ---
+    // if (channel->mNumRotationKeys == 1)
+    //     result.rotation = PulseEngine::Vector4(channel->mRotationKeys[0].mValue.x,channel->mRotationKeys[0].mValue.y,channel->mRotationKeys[0].mValue.z,channel->mRotationKeys[0].mValue.w);
+    // else
+    // {
+    //     for (unsigned int i = 0; i < channel->mNumRotationKeys - 1; ++i)
+    //     {
+    //         if (time < channel->mRotationKeys[i + 1].mTime)
+    //         {
+    //             double delta = channel->mRotationKeys[i + 1].mTime - channel->mRotationKeys[i].mTime;
+    //             double factor = (time - channel->mRotationKeys[i].mTime) / delta;
+    //             result.rotation = PulseEngine::MathUtils::Slerp(PulseEngine::Vector4(channel->mRotationKeys[i].mValue.x,channel->mRotationKeys[i].mValue.y,channel->mRotationKeys[i].mValue.z,channel->mRotationKeys[i].mValue.w),
+    //                                     PulseEngine::Vector4(channel->mRotationKeys[i+1].mValue.x,channel->mRotationKeys[i+1].mValue.y,channel->mRotationKeys[i+1].mValue.z,channel->mRotationKeys[i+1].mValue.w),
+    //                                     factor);
+    //             break;
+    //         }
+    //     }
+    // }
 
-            aiVector3D delta = end - start;
-            aiVector3D result = start + factor * delta;
+    // // --- Scale ---
+    // if (channel->mNumScalingKeys == 1)
+    //     result.scale = PulseEngine::Vector3(channel->mScalingKeys[0].mValue.x,channel->mScalingKeys[0].mValue.y,channel->mScalingKeys[0].mValue.z);
+    // else
+    // {
+    //     for (unsigned int i = 0; i < channel->mNumScalingKeys - 1; ++i)
+    //     {
+    //         if (time < channel->mScalingKeys[i + 1].mTime)
+    //         {
+    //             double delta = channel->mScalingKeys[i + 1].mTime - channel->mScalingKeys[i].mTime;
+    //             double factor = (time - channel->mScalingKeys[i].mTime) / delta;
+    //             result.scale = PulseEngine::MathUtils::Lerp(PulseEngine::Vector3(channel->mScalingKeys[i].mValue.x,channel->mScalingKeys[i].mValue.y,channel->mScalingKeys[i].mValue.z),
+    //                                 PulseEngine::Vector3(channel->mScalingKeys[i+1].mValue.x,channel->mScalingKeys[i+1].mValue.y,channel->mScalingKeys[i+1].mValue.z),
+    //                                 factor);
+    //             break;
+    //         }
+    //     }
+    // }
 
-            return PulseEngine::Vector3(result.x, result.y, result.z);
-        }
-    }
-
-    // fallback
-    const aiVector3D& last = channel->mScalingKeys[channel->mNumScalingKeys - 1].mValue;
-    return PulseEngine::Vector3(last.x, last.y, last.z);
+    return result;
 }
 

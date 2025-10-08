@@ -14,144 +14,63 @@
 
 #include "Common/dllExport.h"
 
-/**
- * @brief Contains offset and final transformation matrices for a bone.
- */
-struct BoneInfo 
-{
-    PulseEngine::Mat4 offsetMatrix;     ///< Matrix to transform from model space to bone space.
-    PulseEngine::Mat4 finalTransform;   ///< Final transform to apply during skinning.
-};
+#include "PulseEngine/core/Meshes/RenderableMesh.h"
 
-/**
- * @brief Represents a bone with name, ID, and offset transform.
- */
 struct Bone
 {
-    std::string name;           ///< Name of the bone.
-    int id;                     ///< Unique ID used in the skeleton.
-    PulseEngine::Mat4 offsetMatrix;     ///< Offset matrix from bind pose.
+    std::string name;                 // Bone name, matches aiBone->mName
+    int index;                        // Bone index in the skeleton (for GPU)
+    int parentIndex;                  // Index of parent bone (-1 if root)
+    
+    PulseEngine::Mat4 offsetMatrix;   // Inverse bind pose
+    PulseEngine::Mat4 localTransform; // From animation (position/rot/scale composed)
+    PulseEngine::Mat4 globalTransform; // Computed world-space transform
+
+    Bone() : index(-1), parentIndex(-1) {}
 };
 
-/**
- * @brief Represents a single keyframe for a bone in an animation.
- */
-struct Keyframe 
+struct PULSE_ENGINE_DLL_API TransformAnimation 
 {
-    float time;                 ///< Time in seconds.
-    PulseEngine::Vector3 position;         ///< Position of the bone.
-    PulseEngine::Quaternion rotation;         ///< Rotation of the bone.
-    PulseEngine::Vector3 scale;            ///< Scaling of the bone.
+    PulseEngine::Vector3 position;
+    PulseEngine::Vector3 scale;
+    PulseEngine::Vector4 rotation; // quaternion (x, y, z, w)
 };
 
-/**
- * @brief Contains all keyframes for a specific bone animation.
- */
-struct BoneAnimation 
+struct PULSE_ENGINE_DLL_API KeyFrame 
 {
-    std::string name;                   ///< Name of the bone.
-    std::vector<Keyframe> keyframes;   ///< All keyframes for this bone.
+    double time; // in ticks or seconds
+    std::unordered_map<std::string, TransformAnimation> boneTransforms;
 };
 
-/**
- * @brief Represents a complete skeletal structure for skinning and animation.
- * 
- * Handles the bone hierarchy, transformations, and animation playback.
- */
-class PULSE_ENGINE_DLL_API Skeleton 
+struct PULSE_ENGINE_DLL_API AnimationClip 
 {
-public:
-    /**
-     * @brief Constructs a skeleton from an Assimp mesh and scene.
-     * @param mesh Pointer to the Assimp mesh.
-     * @param scene Pointer to the Assimp scene.
-     */
-    Skeleton(const aiMesh* mesh, const aiScene* scene);
+    std::string name;
+    std::vector<KeyFrame> keyframes;
+    double duration;
+    int tickPerSeconds;
+};
 
-    std::map<std::string, int> boneMapping;        ///< Map from bone name to index.
-    std::vector<BoneInfo> bones;                   ///< All bone data.
-    PulseEngine::Mat4 globalInverseTransform;              ///< Inverse of the root node transform.
-    const aiAnimation* animation = nullptr;        ///< Pointer to the animation data.
-    aiNode* rootNode;                              ///< Root node of the Assimp scene hierarchy.
-    int boneCount = 0;                             ///< Total number of bones.
-    std::vector<PulseEngine::Mat4> finalBoneMatrices;      ///< Final transforms to be passed to the vertex shader.
+class PULSE_ENGINE_DLL_API SkeletalMesh : public RenderableMesh
+{
+    public:
+    SkeletalMesh(const std::string& name) : RenderableMesh(name) {}
 
-    /**
-     * @brief Adds a new bone to the skeleton.
-     * @param name Name of the bone.
-     * @param offset Offset matrix from the bind pose.
-     */
-    void AddBone(const std::string& name, const aiMatrix4x4& offset);
+    void Update() override;
+    void Render(Shader* shader) const override;
+    const KeyFrame* FindKeyframeAtTime(double time);
 
-    /**
-     * @brief Retrieves the offset matrix of a bone by name.
-     * @param name Name of the bone.
-     * @return The offset matrix of the bone.
-     */
-    PulseEngine::Mat4 GetBoneOffset(const std::string& name) const;
+    static AnimationClip LoadAnimationSimplified(const aiAnimation* anim);
+    static PulseEngine::Mat4 ConvertAiMatrix(const aiMatrix4x4& from);
+    static TransformAnimation InterpolateBoneAtTime(aiNodeAnim* channel, double time);
 
-    /**
-     * @brief Applies the animation to the skeleton recursively.
-     * @param timeInSeconds Current animation time.
-     * @param animation Pointer to the animation data.
-     * @param rootNode Root node of the Assimp hierarchy.
-     * @param parentTransform Parent transform matrix.
-     */
-    void ApplyAnimation(float timeInSeconds, const aiAnimation* animation, const aiNode* rootNode, const PulseEngine::Mat4& parentTransform);
+    std::vector<AnimationClip> animations;
+    std::vector<Bone> skeleton;
+    std::vector<PulseEngine::Mat4> finalBoneMatrices;
+    std::unordered_map<std::string, int> boneNameToIndex;
+    private:
+    int actualAnimationIndex = 0;
 
-    /**
-     * @brief Finds the animation channel for a given node.
-     * @param animation Pointer to the animation data.
-     * @param nodeName Name of the node.
-     * @return Pointer to the node's animation channel, or nullptr if not found.
-     */
-    const aiNodeAnim* FindNodeAnim(const aiAnimation* animation, const std::string& nodeName);
-
-    /**
-     * @brief Updates the skeleton by advancing the animation.
-     * @param deltaTime Time elapsed since the last update.
-     */
-    void UpdateSkeleton(float deltaTime);
-
-    /**
-     * @brief Returns the final bone matrices after animation.
-     * @return Vector of final bone transformation matrices.
-     */
-    const std::vector<PulseEngine::Mat4>& GetFinalBoneMatrices() const;
-
-private:
-    /**
-     * @brief Converts an Assimp matrix to a glm matrix.
-     * @param m Assimp matrix.
-     * @return Converted glm matrix.
-     */
-    PulseEngine::Mat4 ConvertMatrix(const aiMatrix4x4& m);
-
-    /**
-     * @brief Interpolates the position for a given animation time.
-     * @param time Current animation time.
-     * @param channel Pointer to the animation channel.
-     * @return Interpolated position.
-     */
-    PulseEngine::Vector3 InterpolatePosition(float time, const aiNodeAnim* channel);
-
-    /**
-     * @brief Interpolates the rotation for a given animation time.
-     * @param time Current animation time.
-     * @param channel Pointer to the animation channel.
-     * @return Interpolated quaternion rotation.
-     */
-    PulseEngine::Quaternion InterpolateRotation(float time, const aiNodeAnim* channel);
-
-    /**
-     * @brief Interpolates the scale for a given animation time.
-     * @param time Current animation time.
-     * @param channel Pointer to the animation channel.
-     * @return Interpolated scale vector.
-     */
-    PulseEngine::Vector3 InterpolateScaling(float time, const aiNodeAnim* channel);
-
-    float animationTime = 0.0f; ///< Internal time counter for animation playback.
+    float internalClock = 0.0f;
 };
 
 #endif // SKELETAL_MESH_H
