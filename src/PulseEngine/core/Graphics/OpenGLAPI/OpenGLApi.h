@@ -51,6 +51,7 @@ public:
     void SetShaderIntArray(const Shader* shader, const std::string& name, const int* values, int count) const override;
     void SetShaderVec3Array(const Shader* shader, const std::string& name, const std::vector<PulseEngine::Vector3>& vecArray) const override;
     void SetShaderFloatArray(const Shader* shader, const std::string& name, const std::vector<float>& floatArray) const override;
+    void SetShaderMat4Array(const Shader* shader, const std::string& name, const std::vector<PulseEngine::Mat4>& array) const override;
     void ActivateTexture(unsigned int textureID) const override;
     void BindTexture(TextureType type, unsigned int textureID) const override;
 

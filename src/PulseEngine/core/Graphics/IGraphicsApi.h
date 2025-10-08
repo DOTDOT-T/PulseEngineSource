@@ -141,6 +141,7 @@ public:
     virtual void SetShaderIntArray(const Shader* shader, const std::string& name, const int* values, int count) const = 0;
     virtual void SetShaderVec3Array(const Shader* shader, const std::string& name, const std::vector<PulseEngine::Vector3>& vecArray) const = 0;
     virtual void SetShaderFloatArray(const Shader* shader, const std::string& name, const std::vector<float>& floatArray) const = 0;
+    virtual void SetShaderMat4Array(const Shader* shader, const std::string& name, const std::vector<PulseEngine::Mat4>& array) const = 0;
 
     // ===== Texture and map =====
     virtual void GenerateDepthCubeMap(unsigned int* FBO, unsigned int* depthCubeMap) const = 0;

@@ -169,6 +169,28 @@ void OpenGLAPI::SetShaderFloatArray(const Shader *shader, const std::string &nam
     glUniform1fv(location, static_cast<GLsizei>(floatArray.size()), floatArray.data());
 }
 
+void OpenGLAPI::SetShaderMat4Array(const Shader* shader, const std::string& name, const std::vector<PulseEngine::Mat4>& array) const
+{
+
+    // Get uniform location
+    GLint location = glGetUniformLocation(shader->getProgramID(), name.c_str());
+    if (location == -1)
+    {
+        return;
+    }
+    GLsizei count = static_cast<GLsizei>(std::min<size_t>(array.size(), 128));
+
+    // Upload the matrix array
+    // Assuming PulseEngine::Mat4 is compatible with float[16] (column-major)
+    glUniformMatrix4fv(
+        location,                       // uniform location
+        count, // number of matrices
+        GL_FALSE,                        // do not transpose
+        reinterpret_cast<const float*>(array.data()) // pointer to first matrix
+    );
+}
+
+
 void OpenGLAPI::ActivateTexture(unsigned int textureID) const
 {
     glActiveTexture(GL_TEXTURE0 + textureID);
