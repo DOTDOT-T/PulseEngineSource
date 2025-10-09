@@ -54,6 +54,7 @@ PulseEngineBackend::PulseEngineBackend()
 
 int PulseEngineBackend::Initialize()
 {
+    PROFILE_TIMER_FUNCTION;
     EDITOR_LOG("Started the initialization of the engine.");
     EDITOR_LOG("Engine version: " + version);
     EDITOR_LOG("Development month: " + devMonth);
@@ -153,6 +154,7 @@ void PulseEngineBackend::PollEvents()
 
 void PulseEngineBackend::Update()
 {
+    PROFILE_TIMER_FUNCTION;
     float currentFrame = PulseEngineGraphicsAPI->GetTime();
     inputSystem->newFrame();
     deltaTime = currentFrame - lastFrame;
@@ -184,6 +186,7 @@ void PulseEngineBackend::Update()
 
 void PulseEngineBackend::Render()
 {
+    PROFILE_TIMER_FUNCTION;
     graphicsAPI->StartFrame();
 
     for (Entity* entity : entities)
@@ -333,6 +336,7 @@ void PulseEngineBackend::DrawGridQuad(PulseEngine::Mat4 viewCam,const PulseEngin
 
 void PulseEngineBackend::SpecificRender(Camera *cam, int specificVBO, std::vector<Entity*> entitiesToRender, PulseEngine::Vector2 viewportSize,Shader* specificShader)
 {
+    PROFILE_TIMER_FUNCTION;
     if (!cam) return;
 
     // Calculate view and projection matrices for the specific camera

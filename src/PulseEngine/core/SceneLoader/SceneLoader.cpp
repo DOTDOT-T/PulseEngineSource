@@ -21,6 +21,7 @@
 #pragma region SceneLoader
 void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* backend)
 {
+    PROFILE_TIMER_FUNCTION;
     std::ifstream scene(std::string(ASSET_PATH) + mapName);
     if (!scene.is_open())
     {
@@ -274,6 +275,7 @@ std::vector<std::string> SceneLoader::GetSceneFiles(const std::string &directory
 
 const aiScene* SceneLoader::LoadSceneFromAssimp(std::string path)
 {    
+    PROFILE_TIMER_FUNCTION;
     Assimp::Importer importer;
 
     const aiScene* scene = importer.ReadFile(

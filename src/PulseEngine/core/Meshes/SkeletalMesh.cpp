@@ -4,6 +4,7 @@
 
 void SkeletalMesh::Update()
 {
+    PROFILE_TIMER_FUNCTION;
     if (actualAnimationIndex >= animations.size()) return;
     internalClock += PulseEngineInstance->GetDeltaTime();
 
@@ -48,6 +49,7 @@ void SkeletalMesh::Update()
 
 void SkeletalMesh::Render(Shader *shader) const
 {
+    PROFILE_TIMER_FUNCTION;
     shader->SetBool("hasSkeleton", true);
     PulseEngineGraphicsAPI->SetShaderMat4Array(shader, "u_BoneMatrices", finalBoneMatrices);
 

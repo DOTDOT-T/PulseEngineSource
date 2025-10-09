@@ -57,6 +57,7 @@ void Entity::SetMaterial(Material * material) { this->material = material; }
 
 void Entity::UpdateEntity(float deltaTime)
 {
+    PROFILE_TIMER_FUNCTION;
     internalClock += deltaTime;
     UpdateModelMatrix();
     collider->SetRotation(rotation);
@@ -75,6 +76,7 @@ void Entity::UpdateEntity(float deltaTime)
 
 void Entity::DrawEntity() const
 {
+    PROFILE_TIMER_FUNCTION;
     material->GetShader()->SetMat4("model", GetMatrix());
     material->GetShader()->SetFloat("metallic", material ? material->specular : 1.0f);
     material->GetShader()->SetFloat("roughness", material ? material->roughness : 1.0f);
