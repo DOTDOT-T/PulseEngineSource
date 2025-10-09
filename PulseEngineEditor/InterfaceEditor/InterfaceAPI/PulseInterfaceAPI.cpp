@@ -12,6 +12,9 @@
 #include "PulseEngine/ModuleLoader/IModuleInterface/IModuleInterface.h"
 #include "shader.h"
 #include "json.hpp"
+#include "PulseEngine/core/Meshes/RenderableMesh.h"
+#include "PulseEngine/core/Meshes/SkeletalMesh.h"
+#include "PulseEngine/core/Meshes/StaticMesh.h"
 
 #include <memory>
 #include <unordered_map>
@@ -213,7 +216,7 @@ void PulseInterfaceAPI::AddTransformModifier(Entity *entity, const std::string &
         }
 }
 
-void PulseInterfaceAPI::AddTransformModifierForMesh(Mesh *mesh, const std::string &modifierName)
+void PulseInterfaceAPI::AddTransformModifierForMesh(RenderableMesh *mesh, const std::string &modifierName)
 {
         
     if (ImGui::TreeNode("Transform"))
@@ -388,9 +391,10 @@ void PulseInterfaceAPI::ShowContextMenu(const char* popupId, const std::vector<C
 {
     if (ImGui::BeginPopup(popupId))
     {
-        for (const auto& item : items)
+        for (auto item : items)
         {
-            if (ImGui::MenuItem(item.label.c_str()))
+            ComponentBasedOnEnum(item);
+            if(item.output.isClicked)
             {
                 if (item.onClick) item.onClick();
             }
@@ -404,6 +408,42 @@ void PulseInterfaceAPI::OpenContextMenu(const char *popupId)
     ImGui::OpenPopup(popupId);
 }
 
+void PulseInterfaceAPI::ComponentBasedOnEnum(ContextMenuItem &item)
+{
+
+
+    switch (item.type)
+    {
+    case EditorWidgetComponent::TEXT:
+        if(item.style.contains("color"))
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(
+            item.style["color"]["r"].get<float>(),
+            item.style["color"]["g"].get<float>(),
+            item.style["color"]["b"].get<float>(),
+            item.style["color"]["a"].get<float>()));
+        ImGui::Text(item.label.c_str());
+        if(item.style.contains("color")) ImGui::PopStyleColor();
+        break;
+    case EditorWidgetComponent::BUTTON:
+        if(ImGui::Button(item.label.c_str())) item.output.isClicked = true;
+        else item.output.isClicked = false;
+        break;
+    case EditorWidgetComponent::SELECTABLE:
+        if(ImGui::Selectable(item.label.c_str())) item.output.isClicked = true;
+        else item.output.isClicked = false;
+        break;
+    case EditorWidgetComponent::MENU_ITEM:
+        if(ImGui::MenuItem(item.label.c_str())) item.output.isClicked = true;
+        else item.output.isClicked = false;
+        break;
+    case  EditorWidgetComponent::SEPARATOR:
+        ImGui::Separator();
+        break;
+    case EditorWidgetComponent::SPACE:
+        AddSpace(item.style.contains("amount") ? item.style["amount"].get<int>() : 1);
+        break;
+    }
+}
 
 void PulseInterfaceAPI::OpenTable(const std::string &name, int columns)
 {

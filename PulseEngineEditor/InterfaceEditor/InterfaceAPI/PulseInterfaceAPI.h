@@ -19,13 +19,36 @@ class Mesh;
 class Material;
 class IScript;
 class IModuleInterface;
+class RenderableMesh;
 
+enum EditorWidgetComponent
+{
+    TEXT,
+    BUTTON,
+    SELECTABLE,
+    MENU_ITEM,
+    SEPARATOR,
+    SPACE,
+
+    EDITOR_WIDGET__COMP_COUNT
+};
+
+struct OutputContextMenuType
+{
+    bool isClicked = false;
+};
 
 struct ContextMenuItem
 {
     std::string label;
     std::function<void()> onClick;
+    EditorWidgetComponent type;
+    nlohmann::json style;
+
+    OutputContextMenuType output;
 };
+
+
 
 /**
  * @brief All the style needed to modify (push/pop) style for the element of the UI of the editor.
@@ -253,7 +276,7 @@ public:
     static bool Selectable(const std::string& label, bool selected = false, const PulseEngine::Vector2& size = PulseEngine::Vector2(0, 0));
 
     static void AddTransformModifier(Entity* entity, const std::string& modifierName);
-    static void AddTransformModifierForMesh(Mesh* mesh, const std::string& modifierName);
+    static void AddTransformModifierForMesh(RenderableMesh* mesh, const std::string& modifierName);
 
     static bool StartTreeNode(const std::string &name, bool *open);
     static void EndTreeNode();
@@ -273,12 +296,15 @@ public:
     static void ShowContextMenu(const char* popupId, const std::vector<ContextMenuItem>& items);
     static void OpenContextMenu(const char* popupId);
 
+    static void ComponentBasedOnEnum(ContextMenuItem &item);
+
     static void OpenTable(const std::string& name, int columns);
     static void DeclareTableColumn(const std::string& name);
     static void NextTableColumn();
     static void DrawTableHeadersRow();
     static void SetTableColumnIndex(int columnN);
     static void EndTable();
+
 };
 
 #endif

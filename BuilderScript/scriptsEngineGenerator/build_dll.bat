@@ -73,7 +73,7 @@ src\PulseEngine\core\Profiler\ProfileTimer.cpp ^
 -Lexternal/assimp/lib/x64 ^
 -LD:/MSYS2/mingw64/lib ^
 -lglfw3 -lopengl32 -lm -lassimp -lcomdlg32 -lws2_32 -lwinmm -lmswsock ^
--DBUILDING_DLL -DENGINE_EDITOR -DPULSE_GRAPHIC_OPENGL -DPULSE_WINDOWS -DIMGUI_IMPL_OPENGL_LOADER_GLAD -DPULSE_PROFILING
+-DBUILDING_DLL -DENGINE_EDITOR -DPULSE_GRAPHIC_OPENGL -DPULSE_WINDOWS -DIMGUI_IMPL_OPENGL_LOADER_GLAD
 
 if %errorlevel% neq 0 (
     echo DLL build failed!
