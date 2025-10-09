@@ -149,6 +149,11 @@
 
 
 #include "PulseEngine/core/WindowContext/WindowContext.h"
+#include "PulseEngine/core/Profiler/Profiler.h"
+#include "PulseEngine/core/Profiler/TraceEvent.h"
+#include "PulseEngine/core/Profiler/ProfileTimer.h"
+
+
 
 // --------------------
 // Asset Path Configuration
@@ -172,4 +177,6 @@ struct ClickedFileData
     fs::path path;
     fs::path name;
 };
+
+
 #endif // COMMON_H

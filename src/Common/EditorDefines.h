@@ -81,6 +81,14 @@
 
 #endif // ENGINE_EDITOR
 
+#ifdef PULSE_PROFILING 
+    #define PROFILE_TIMER_SCOPE(name) ProfileTimer profileTimer##__LINE__(name)
+    #define PROFILE_TIMER_FUNCTION PROFILE_TIMER_SCOPE(__func__)
+#else
+    #define PROFILE_TIMER_SCOPE(name) 
+    #define PROFILE_TIMER_FUNCTION 
+#endif
+
 #define PulseEngineInstance PulseEngineBackend::GetInstance()
 #define PulseEngineGraphicsAPI PulseEngineBackend::graphicsAPI
 #define PulseEngineDeltaTime PulseEngineBackend::GetDeltaTime()

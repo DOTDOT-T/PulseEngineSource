@@ -66,12 +66,14 @@ src/PulseEngine/core/Input/InputSystem.cpp ^
 src\PulseEngine\API\MaterialAPI\MaterialApi.cpp ^
 src\PulseEngine\core\Meshes\RenderableMesh.cpp ^
 src\PulseEngine\core\Meshes\StaticMesh.cpp ^
+src\PulseEngine\core\Profiler\Profiler.cpp ^
+src\PulseEngine\core\Profiler\ProfileTimer.cpp ^
 -I. -Iinclude -Iinclude/websocketpp -Iinclude/asio -Iinclude/imgui -Iinclude/imgui-node -I./src -IE:/Editor/Include -Iexternal/assimp/include ^
 -Lexternal/assimp/lib ^
 -Lexternal/assimp/lib/x64 ^
 -LD:/MSYS2/mingw64/lib ^
 -lglfw3 -lopengl32 -lm -lassimp -lcomdlg32 -lws2_32 -lwinmm -lmswsock ^
--DBUILDING_DLL -DENGINE_EDITOR -DPULSE_GRAPHIC_OPENGL -DPULSE_WINDOWS -DIMGUI_IMPL_OPENGL_LOADER_GLAD
+-DBUILDING_DLL -DENGINE_EDITOR -DPULSE_GRAPHIC_OPENGL -DPULSE_WINDOWS -DIMGUI_IMPL_OPENGL_LOADER_GLAD -DPULSE_PROFILING
 
 if %errorlevel% neq 0 (
     echo DLL build failed!
