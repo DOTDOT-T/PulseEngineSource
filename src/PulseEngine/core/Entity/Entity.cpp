@@ -234,11 +234,11 @@ void Entity::BindTexturesToShader() const
     }
 }
 
-void Entity::DrawMeshWithShader(unsigned int shaderProgram) const
+void Entity::DrawMeshWithShader(Shader* shader) const
 {
     for (const auto &mesh : meshes)
     {        
-        material->GetShader()->SetMat4("model", mesh->matrix);
+        shader->SetMat4("model", mesh->matrix);
         mesh->Render(material->GetShader());
     }
 }

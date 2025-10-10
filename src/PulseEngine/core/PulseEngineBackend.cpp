@@ -368,7 +368,7 @@ void PulseEngineBackend::SpecificRender(Camera *cam, int specificVBO, std::vecto
         {
             entity->BindTexturesToShader();
             shader->SetMat4("model", entity->GetMatrix());
-            entity->DrawMeshWithShader(shader->getProgramID());
+            entity->DrawMeshWithShader(shader);
         } 
     }
         // Draw grid quad in editor only

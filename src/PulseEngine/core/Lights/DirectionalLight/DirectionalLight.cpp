@@ -16,8 +16,7 @@ void DirectionalLight::RenderShadowMap(Shader &shader, PulseEngineBackend &scene
     shader.SetVec3("target", target);
     for (Entity* obj : scene.entities)
     {
-        shader.SetMat4("model", obj->GetMatrix());
-        obj->DrawMeshWithShader(shader.getProgramID());
+        obj->DrawMeshWithShader(&shader);
     }
 
     PulseEngineGraphicsAPI->UnbindShadowFramebuffer();

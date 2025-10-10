@@ -122,7 +122,7 @@ public:
      * @brief Specifically draws the mesh using a provided shader program, usefull for shadow or others drawing style
      * @param shaderProgram 
      */
-    void DrawMeshWithShader(unsigned int shaderProgram) const;
+    void DrawMeshWithShader(Shader* shader) const;
 
     // ------------------------------------------------------------------------
     // Component Addition

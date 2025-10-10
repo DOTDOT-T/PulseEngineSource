@@ -65,7 +65,7 @@ void PointLight::RenderShadowMap(Shader &shader, PulseEngineBackend& scene)
     {
         scene.pointLightShadowShader->SetMat4("model", obj->GetMatrix());
     
-        obj->DrawMeshWithShader(scene.pointLightShadowShader->getProgramID());
+        obj->DrawMeshWithShader(scene.pointLightShadowShader);
     }
 
     PulseEngineGraphicsAPI->ActivateBackCull();
