@@ -8,7 +8,7 @@ void StaticMesh::Update()
 void StaticMesh::Render(Shader *shader) const
 {
     shader->SetBool("hasSkeleton", false);
-    EDITOR_LOG("render a static mesh")
+    shader->SetInt("boneLength", 0);
     for(Mesh* msh : meshes)
     {
         msh->Draw(shader);

@@ -163,7 +163,6 @@ Mesh* Mesh::LoadFromAssimp(const aiMesh* mesh, const aiScene* scene, SkeletalMes
                     }
                 }
             }
-        }
         for (Vertex &v : newMesh->vertices)
         {
             if (v.Weights.a == 0.0f && v.Weights.x == 0.0f && v.Weights.y == 0.0f && v.Weights.z == 0.0f)
@@ -171,6 +170,7 @@ Mesh* Mesh::LoadFromAssimp(const aiMesh* mesh, const aiScene* scene, SkeletalMes
                 v.BoneIDs[0] = 0;
                 v.Weights[0] = 1.0f;
             }
+        }
         }
 
         std::cout << "vertices construits ! " << std::endl;

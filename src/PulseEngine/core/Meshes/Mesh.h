@@ -21,7 +21,7 @@ struct Vertex
     PulseEngine::Vector3 Normal;      ///< Vertex normal vector.
     PulseEngine::Vector2 TexCoords;   ///< Texture coordinates (UV).
     PulseEngine::iVector4 BoneIDs;    ///< IDs of the bones affecting this vertex.
-    PulseEngine::Vector4 Weights;     ///< Weights corresponding to each bone.
+    PulseEngine::Vector4 Weights = PulseEngine::Vector4(0.0f);     ///< Weights corresponding to each bone.
     PulseEngine::Vector3 Tangent;
     PulseEngine::Vector3 Bitangent;
 };
