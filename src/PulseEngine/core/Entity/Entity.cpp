@@ -187,10 +187,9 @@ void Entity::SimplyDrawMesh() const
 {
     using namespace PulseEngine;
 
-    for (const auto& mesh : meshes)
+    for (RenderableMesh* mesh : meshes)
     {
-        
-        material->GetShader()->SetMat4("model", entityMatrix);
+        material->GetShader()->SetMat4("model", mesh->matrix);
 
         BindTexturesToShader();
 
