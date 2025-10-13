@@ -59,6 +59,7 @@ json FileManager::OpenEngineConfigFile(PulseEngineBackend* engine)
         engineConfig["Engine"]["DevMonth"] = engine->GetDevMonth();
         engineConfig["Engine"]["Author"]   = engine->GetCompanyName();
         engineConfig["Engine"]["License"]  = "None";
+        engineConfig["Engine"]["discord"] = false;
         
 
         std::ofstream outFile(configPath);
