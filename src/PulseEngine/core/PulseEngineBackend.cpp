@@ -116,9 +116,12 @@ int PulseEngineBackend::Initialize()
     std::string firstScene = engineConfig["GameData"]["FirstScene"];
     SceneLoader::LoadScene(firstScene, this);
 
-    discordLauncher = new PulseExecutable ("DiscordPresence/DiscordPresence.exe", "DiscordPipeTest");
-    Sleep(1500);
-    discordLauncher->SendExeMessage("[set_presence]In the editor");
+    if(engineConfig["Engine"]["discord"].get<bool>())
+    {
+        discordLauncher = new PulseExecutable ("DiscordPresence/DiscordPresence.exe", "DiscordPipeTest");
+        Sleep(1500);
+        discordLauncher->SendExeMessage("[set_presence]In the editor");
+    }
 
     EDITOR_LOG("Finished the initialization of the engine.");
     return 0;
@@ -395,7 +398,7 @@ void PulseEngineBackend::RenderShadow()
 void PulseEngineBackend::Shutdown()
 {    
     graphicsAPI->ShutdownApi();
-    discordLauncher->Terminate();
+    if(discordLauncher) discordLauncher->Terminate();
 }
 
 void PulseEngineBackend::ClearScene()
