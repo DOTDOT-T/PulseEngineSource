@@ -286,7 +286,7 @@ void PulseInterfaceAPI::AddMaterialPreview(Material*& material, const PulseEngin
     }
     
     std::string childName = "MaterialPreviewChild###" + name;
-    ImGui::BeginChild(childName.c_str(), ImVec2(0, 0), true);
+    ImGui::BeginChild(childName.c_str(), ImVec2(0, imageSize.y + 100.0f), true);
 
     ImGui::PushID(name.c_str());
 
