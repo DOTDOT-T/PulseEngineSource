@@ -1,13 +1,30 @@
 /**
  * @file PulseInterfaceAPI.h
  * @author Dorian LEXTERIAQUE (dlexteriaque@gmail.com)
- * @brief API of the interface of the editor. give all the methods to easily make module for the engine.
- * @version 0.1
- * @date 2025-07-18
+ * @brief Defines the public API for the editor interface layer.
+ * 
+ * This header exposes all the necessary methods to extend, customize, 
+ * or integrate modules into the engine’s editor environment. It abstracts 
+ * UI-level interactions, ensuring a consistent and decoupled design between 
+ * the editor and engine core.
+ * 
+ * Typical usage includes:
+ * - Creating custom editor panels and windows
+ * - Binding engine systems to UI components
+ * - Extending the editor through modular plug-ins
+ * 
+ * @version 0.2
+ * @date 2025-10-14
+ * 
+ * @par Dependencies
+ * Requires core engine headers.
+ * 
+ * @see PulseEngineBackend
+ * 
  * 
  * @copyright Copyright (c) 2025
- * 
  */
+
 #ifndef PULSEINTERFACEAPI_H
 #define PULSEINTERFACEAPI_H
 
@@ -275,35 +292,158 @@ public:
      */
     static bool Selectable(const std::string& label, bool selected = false, const PulseEngine::Vector2& size = PulseEngine::Vector2(0, 0));
 
+    /**
+     * @brief Create a transform modifier inside the GUI
+     * 
+     * @param entity The actual entity where we should pick the transform tool
+     * @param modifierName Name to display on top of the modifier GUI
+     */
     static void AddTransformModifier(Entity* entity, const std::string& modifierName);
+    /**
+     * @brief Specific transform modifier for renderable mesh, also create a transform modifier on the GUI
+     * 
+     * @param mesh the actual mesh where we should pick the transform tool
+     * @param modifierName  Name to display on top of the modifier GUI
+     */
     static void AddTransformModifierForMesh(RenderableMesh* mesh, const std::string& modifierName);
 
+    /**
+     * @brief Create a simple tree node to display content inside.
+     * @note need to use EndTreeNode() if its open !
+     * 
+     * @param name The tree name
+     * @param open a pointer to the bool, that will be changed by open/close
+     * @return return if the tree is open or close.
+     */
     static bool StartTreeNode(const std::string &name, bool *open);
+    /**
+     * @brief Actual static method to make a tree end. 
+     * @note need to be call only if a StartTreeNode() is already called ! 
+     */
     static void EndTreeNode();
 
+    /**
+     * @brief A material preview give only the possibility to see data from a material on a GUI. its not possible to modify it.
+     * @brief It will display the name of the material, and the textures used inside in a tree node.
+     * 
+     * @param material 
+     * @param imageSize 
+     * @param name 
+     */
     static void AddMaterialPreview(Material *&material, const PulseEngine::Vector2 &imageSize, const std::string &name = "Material Preview");
 
+    /**
+     * @brief The material picker will display the material selected but will give the possibility to choose a material.
+     * 
+     * @param material 
+     */
     static void MaterialPicker(Material *&material);
 
+    /**
+     * @brief Get the Actual Window Size object
+     * 
+     * @return x and y of the window wrap in the Vector2 of the engine.
+     */
     static PulseEngine::Vector2 GetActualWindowSize();
 
+    /**
+     * @brief an easy to use "drag" to modify the value of a float, between min/max.
+     * 
+     * @param label the name of the drag
+     * @param value the pointer to where the value is saved
+     * @param speed the increment amount on each "tick" of displacement of the drag.
+     * @param minVal the minimum value that couldn't be exceeds
+     * @param maxVal the maximum value that couldn't be exceeds
+     * @param format the format to display , how much decimal we want to show on screen.
+     */
     static bool DragFloat(const char* label, float* value, float speed = 1.0f, float minVal = 0.0f, float maxVal = 0.0f, const char* format = "%.3f");
 
+    
+    /**
+     * @brief an easy to use "drag" to modify the value of a float3 structure, between min/max.
+     * 
+     * @param label the name of the drag
+     * @param value the pointer to where the value is saved (of the first float in the vector3/list)
+     * @param speed the increment amount on each "tick" of displacement of the drag.
+     * @param minVal the minimum value that couldn't be exceeds
+     * @param maxVal the maximum value that couldn't be exceeds
+     * @param format the format to display , how much decimal we want to show on screen.
+     */
     static bool DragFloat3(const char* label, float* values, float speed = 1.0f, float minVal = 0.0f, float maxVal = 0.0f, const char* format = "%.3f");
 
+    /**
+     * @brief give the possibility to open/close window wrap in the editor.
+     * 
+     * @param script the window to close/open.
+     * @param state is the window open ?
+     */
     static void ChangeWindowState(IModuleInterface* script, bool state);
 
     static bool ShowContextMenu(const char* popupId, const std::vector<ContextMenuItem>& items);
     static void OpenContextMenu(const char* popupId);
 
+    /**
+     * @brief automaticly create a component in an editor window with base data.
+     * 
+     * @param item the data for the component to be displayed on screen.
+     */
     static void ComponentBasedOnEnum(ContextMenuItem &item);
 
-    static void OpenTable(const std::string& name, int columns);
-    static void DeclareTableColumn(const std::string& name);
-    static void NextTableColumn();
-    static void DrawTableHeadersRow();
-    static void SetTableColumnIndex(int columnN);
-    static void EndTable();
+/**
+ * @brief Opens a new table for UI rendering.
+ * 
+ * Initializes an internal table context with the specified number of columns.
+ * This must be followed by calls to DeclareTableColumn() for each column,
+ * and finally closed with EndTable().
+ * 
+ * @param name     Unique name of the table (used for identification/layout persistence).
+ * @param columns  Number of columns to create in the table.
+ */
+static void OpenTable(const std::string& name, int columns);
+
+/**
+ * @brief Declares a new column within the currently active table.
+ * 
+ * Must be called between OpenTable() and EndTable(). The declared columns
+ * define headers and alignment for subsequent row content.
+ * 
+ * @param name  Name of the column header.
+ */
+static void DeclareTableColumn(const std::string& name);
+
+/**
+ * @brief Advances the cursor to the next table column.
+ * 
+ * Moves the rendering context horizontally to the next column in the current row.
+ * Should be called between row cell render calls.
+ */
+static void NextTableColumn();
+
+/**
+ * @brief Draws the table header row.
+ * 
+ * Renders all previously declared column headers. This should typically be called
+ * immediately after declaring all columns and before populating row data.
+ */
+static void DrawTableHeadersRow();
+
+/**
+ * @brief Sets the current active column index.
+ * 
+ * Allows random access to a specific column for rendering rather than sequential traversal.
+ * 
+ * @param columnN  Zero-based index of the target column.
+ */
+static void SetTableColumnIndex(int columnN);
+
+/**
+ * @brief Ends the current table.
+ * 
+ * Finalizes rendering and releases the internal table state.
+ * Must be called once after all rows and columns have been populated.
+ */
+static void EndTable();
+
 
 };
 

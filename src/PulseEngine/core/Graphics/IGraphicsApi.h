@@ -1,11 +1,52 @@
 /**
  * @file IGraphicsApi.h
  * @author Dorian LEXTERIAQUE (dlexteriaque@gmail.com)
- * @brief The most important part of the Pulse Engine, the graphics API interface.
- * @brief This interface defines all the necessary methods required to initialize, manage, and use a rendering backend for the Pulse engine.
- * @brief It is used by the PulseEngineBackend to communicate with the graphics API.
- * @version 0.1
- * @date 2025-06-28
+* @brief The central abstraction layer of the Pulse Engine rendering system.
+ *
+ * @details
+ * IGraphicsAPI defines the unified graphics backend interface used by the Pulse Engine.
+ * It provides an abstraction over specific rendering APIs (OpenGL, Vulkan, DirectX, etc.)
+ * and exposes a consistent contract for rendering, shader management, texture operations,
+ * and frame orchestration.
+ * 
+ * This interface is the backbone of the rendering architecture — it ensures that the
+ * engine and editor can operate independently of any specific graphics backend.
+ *
+ * @section Architecture Architecture Overview
+ * 
+ * ┌──────────────────────────┐
+ * │      Pulse Engine        │
+ * │  (Scene, ECS, Renderer)  │
+ * └───────────┬──────────────┘
+ *             │
+ *             ▼
+ *   ┌────────────────────┐
+ *   │   IGraphicsAPI     │  ← Abstract interface (this file)
+ *   └────────────────────┘
+ *             │
+ *   ┌─────────┴──────────┐  ┌───────────────────┐ ┌───────────────────┐
+ *   │   OpenGLBackend    │  │   VulkanBackend   │ │  DirectXBackend   │  
+ *   └────────────────────┘  └───────────────────┘ └───────────────────┘
+ * 
+ * Each backend implements this interface and registers itself through
+ * the PulseEngineBackend during engine initialization.
+ *
+ * @section Responsibilities
+ * - Abstract rendering API calls.
+ * - Manage GPU resources and synchronization.
+ * - Provide frame lifecycle control (StartFrame/EndFrame).
+ * - Act as the bridge between engine logic and graphics drivers.
+ *
+ * @section Extension Adding a New Backend
+ * To implement a new backend:
+ *  1. Create a subclass inheriting from IGraphicsAPI.
+ *  2. Implement all pure virtual methods.
+ *  3. Register the backend in the PulseEngineBackend factory.
+ *
+ * @warning This interface must remain API-stable. Breaking changes
+ * will affect all rendering backends.
+ * @version 0.2
+ * @date 2025-10-14
  * 
  * @copyright Copyright (c) 2025
  * 
@@ -24,6 +65,10 @@
 
 class PulseEngineBackend;
 
+/**
+ * @enum TextureType
+ * @brief Defines texture binding targets used by rendering backends.
+ */
 enum TextureType
 {
     TEXTURE_2D,
@@ -31,10 +76,19 @@ enum TextureType
 };
 
 /**
- * @brief Interface for any graphics API backend (OpenGL, Vulkan, DirectX, etc.).
- * 
- * This abstract class defines all the necessary methods required to initialize,
- * manage, and use a rendering backend for the Pulse engine.
+ * @class IGraphicsAPI
+ * @brief Core rendering interface of the Pulse Engine.
+ *
+ * @details
+ * Defines the abstract contract that all graphics backends must implement.
+ * This includes initialization, window handling, frame management,
+ * shader and texture control, and mesh rendering.
+ *
+ * @note
+ * All concrete implementations (e.g., OpenGLAPI, VulkanAPI)
+ * should inherit from this class and override every pure virtual method.
+ *
+ * @see PulseEngineBackend
  */
 class PULSE_ENGINE_DLL_API IGraphicsAPI : public IModule
 {
@@ -43,9 +97,16 @@ public:
 
     virtual std::string GetName() const override { return "IGraphicsAPI"; }
     virtual std::string GetVersion() const override { return "0.1"; }
-    virtual void Initialize() override {}
-    virtual void Shutdown() override {}
 
+    // ============================================================================
+    //  Initialization & Lifecycle
+    // ============================================================================
+    // These methods handle API setup, teardown, and synchronization with the
+    // PulseEngineBackend. Initialization should create the rendering context,
+    // main window, and essential GPU states.
+
+    virtual void Initialize() override {}
+    
     // ===== Initialization & Shutdown =====
 
     /**
@@ -58,13 +119,12 @@ public:
      * @return true if initialization succeeds, false otherwise.
      */
     virtual bool InitializeApi(const char* title, int* width, int* height, PulseEngineBackend* engine) = 0;
-
+    virtual void Shutdown() override {}
     /**
      * @brief Shuts down the graphics API and releases all resources.
      */
     virtual void ShutdownApi() = 0;
 
-    // ===== Window Management =====
 
     /**
      * @brief Polls input and window events (e.g., key presses, window resize).
@@ -130,7 +190,13 @@ public:
     virtual unsigned int CreateShader(const std::string& vertexPath, const std::string& fragmentPath) = 0;
     virtual unsigned int CreateShader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath) = 0;
 
-    // ===== Shader Management =====
+    // ============================================================================
+    //  Shader Management
+    // ============================================================================
+    // Abstracts shader compilation and parameter binding.
+    // Every backend must ensure shader uniform consistency with the engine's
+    // material and render pipeline definitions.
+
     virtual void UseShader(unsigned int shaderID) const = 0;
     virtual void SetShaderMat4(const Shader* shader, const std::string& name, const PulseEngine::Mat4& mat) const = 0;
     virtual void SetShaderMat3(const Shader* shader, const std::string& name, const PulseEngine::Mat3& mat) const = 0;
@@ -143,7 +209,11 @@ public:
     virtual void SetShaderFloatArray(const Shader* shader, const std::string& name, const std::vector<float>& floatArray) const = 0;
     virtual void SetShaderMat4Array(const Shader* shader, const std::string& name, const std::vector<PulseEngine::Mat4>& array) const = 0;
 
-    // ===== Texture and map =====
+    // ============================================================================
+    //  Texture & Shadow Mapping
+    // ============================================================================
+    // Responsible for GPU texture creation, shadow map management, and cube map
+    // initialization. Backends must support depth-based rendering pipelines.
     virtual void GenerateDepthCubeMap(unsigned int* FBO, unsigned int* depthCubeMap) const = 0;
     virtual bool IsFrameBufferComplete() const = 0;
     virtual void InitCubeMapFaceForRender(unsigned int* CubeMap, unsigned int faceIndex) const = 0;
@@ -151,8 +221,16 @@ public:
     virtual void GenerateShadowMap(unsigned int* shadowMap, unsigned int* FBO, int width, int height) const = 0;
     virtual void BindShadowFramebuffer(unsigned int* FBO) const = 0;
     virtual void UnbindShadowFramebuffer() const = 0;
+    virtual void ActivateTexture(unsigned int textureID) const = 0;
+    virtual void BindTexture(TextureType type, unsigned int textureID) const = 0;
+    virtual void SetupMesh(unsigned int* VAO, unsigned int* VBO, unsigned int* EBO, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) const = 0;
+    virtual void RenderMesh(unsigned int* VAO, unsigned int* VBO, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) const = 0;
 
-    // ===== Mesh and vertex =====
+    // ============================================================================
+    //  Mesh & Vertex Management
+    // ============================================================================
+    // Defines vertex array, buffer, and index setup routines.
+    // Used by the engine renderer to stream geometry to the GPU.
     virtual void DeleteMesh(unsigned int* VAO, unsigned int* VBO) const = 0;
 
     virtual void SetupSimpleSquare(unsigned int* VAO, unsigned int* VBO , unsigned int* EBO) const = 0;
@@ -160,11 +238,6 @@ public:
 
     virtual float GetTime() const = 0; 
 
-    // ===== Texture management =====
-    virtual void ActivateTexture(unsigned int textureID) const = 0;
-    virtual void BindTexture(TextureType type, unsigned int textureID) const = 0;
-    virtual void SetupMesh(unsigned int* VAO, unsigned int* VBO, unsigned int* EBO, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) const = 0;
-    virtual void RenderMesh(unsigned int* VAO, unsigned int* VBO, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) const = 0;
 
     // ===== Shared Context Variables =====
 
