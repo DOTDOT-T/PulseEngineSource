@@ -387,7 +387,7 @@ void PulseInterfaceAPI::ChangeWindowState(IModuleInterface* script, bool state)
     PulseEngineInstance->editor->windowStates[script->GetName()] = state;
 }
 
-void PulseInterfaceAPI::ShowContextMenu(const char* popupId, const std::vector<ContextMenuItem>& items)
+bool PulseInterfaceAPI::ShowContextMenu(const char* popupId, const std::vector<ContextMenuItem>& items)
 {
     if (ImGui::BeginPopup(popupId))
     {
@@ -400,7 +400,9 @@ void PulseInterfaceAPI::ShowContextMenu(const char* popupId, const std::vector<C
             }
         }
         ImGui::EndPopup();
+        return true;
     }
+    return false;
 }
 
 void PulseInterfaceAPI::OpenContextMenu(const char *popupId)

@@ -293,7 +293,7 @@ public:
 
     static void ChangeWindowState(IModuleInterface* script, bool state);
 
-    static void ShowContextMenu(const char* popupId, const std::vector<ContextMenuItem>& items);
+    static bool ShowContextMenu(const char* popupId, const std::vector<ContextMenuItem>& items);
     static void OpenContextMenu(const char* popupId);
 
     static void ComponentBasedOnEnum(ContextMenuItem &item);
