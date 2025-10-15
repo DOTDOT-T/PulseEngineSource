@@ -44,6 +44,7 @@ PulseEngineEditor/InterfaceEditor/Account/Account.cpp ^
 src/PulseEngine/core/Input/InputSystem.cpp ^
 src\PulseEngine\core\FileManager\FileReader\FileReader.cpp ^
 src\PulseEngine\API\MaterialAPI\MaterialApi.cpp ^
+src\PulseEngine\core\PulseObject\PulseObject.cpp ^
 -I. ^
 -Iinclude -Iinclude/imgui ^
 -I./src -Iexternal/assimp/include ^

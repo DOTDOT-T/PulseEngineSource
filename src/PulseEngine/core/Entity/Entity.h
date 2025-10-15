@@ -20,6 +20,7 @@
 #include "Common/dllExport.h"
 
 #include "PulseEngine/core/Meshes/RenderableMesh.h"
+#include "PulseEngine/core/PulseObject/PulseObject.h"
 
 #include <string>
 #include <vector>
@@ -31,6 +32,7 @@ class Material;
 class IScript;
 class Collider;
 class BoxCollider;
+class Archive;
 
 /**
  * @class Entity
@@ -39,9 +41,14 @@ class BoxCollider;
  * Entities are the core unit of composition in the scene and may hold meshes,
  * materials, scripts, and colliders.
  */
-class PULSE_ENGINE_DLL_API Entity
+class PULSE_ENGINE_DLL_API Entity : public PulseObject
 {
 public:
+    PULSE_GEN_BODY(Entity)
+
+    void Serialize(Archive& ar) override;
+    void Deserialize(Archive& ar) override;
+
     // ------------------------------------------------------------------------
     // Constructors & Destructor
     // ------------------------------------------------------------------------

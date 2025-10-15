@@ -68,6 +68,7 @@ src\PulseEngine\core\Meshes\RenderableMesh.cpp ^
 src\PulseEngine\core\Meshes\StaticMesh.cpp ^
 src\PulseEngine\core\Profiler\Profiler.cpp ^
 src\PulseEngine\core\Profiler\ProfileTimer.cpp ^
+src\PulseEngine\core\PulseObject\PulseObject.cpp ^
 -I. -Iinclude -Iinclude/websocketpp -Iinclude/asio -Iinclude/imgui -Iinclude/imgui-node -I./src -IE:/Editor/Include -Iexternal/assimp/include ^
 -Lexternal/assimp/lib ^
 -Lexternal/assimp/lib/x64 ^

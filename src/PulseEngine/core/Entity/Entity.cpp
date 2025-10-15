@@ -9,10 +9,26 @@
 #include "PulseEngine/core/Material/Material.h"
 #include "PulseEngine/core/Math/MathUtils.h"
 #include "PulseEngine/API/EntityAPI/EntityApi.h"
+#include "PulseEngine/core/FileManager/FileReader/FileReader.h"
+#include "PulseEngine/core/FileManager/Archive/Archive.h"
 
 #include <algorithm>
 
-Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position, Mesh* mesh, Material* material) :name(name), material(material)
+
+void Entity::Serialize(Archive &ar)
+{
+    ar.Serialize("position.x", transform.position.x);
+    ar.Serialize("position.y", transform.position.y);
+    ar.Serialize("position.z", transform.position.z);
+    
+}
+
+void Entity::Deserialize(Archive &ar)
+{
+    EDITOR_LOG("deserialization is implemented")
+}
+
+Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position, Mesh *mesh, Material *material) : PulseObject(name.c_str()), material(material)
 {
     //actually is it possible to be nullptr, because of loadScene, we need to load an entity with a material but no mesh before reading it.
     //so mesh can nullptr, and if it is pushed back into the meshes vector, it will cause a crash.
@@ -30,7 +46,7 @@ void Entity::BaseConstructor()
     collider->owner = new PulseEngine::EntityApi(this);
 }
 
-Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position) : name(name)
+Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position) : PulseObject(name.c_str())
 {
     transform.position = position;
     BaseConstructor();

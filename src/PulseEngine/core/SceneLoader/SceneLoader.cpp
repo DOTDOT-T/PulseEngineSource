@@ -12,6 +12,7 @@
 #include "PulseEngine/core/Lights/DirectionalLight/DirectionalLight.h"
 #include "PulseEngine/core/Lights/PointLight/PointLight.h"
 #include "PulseEngine/API/EntityAPI/EntityApi.h"
+#include "PulseEngine/core/FileManager/Archive/DiskArchive.h"
 
 #include <iostream>
 #include <assimp/Importer.hpp>      // Assimp::Importer
@@ -30,98 +31,106 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
     }
     backend->ClearScene();
 
-    nlohmann::json sceneData;
-    scene >> sceneData;
+    // nlohmann::json sceneData;
+    // scene >> sceneData;
 
-    backend->SetWindowName(sceneData["sceneName"]);
-
-    for (const auto& entityData : sceneData["entities"])
-    {        
-
-        std::cout << "creating a new entity" << std::endl;
-
-        Entity* entity = LoadEntityBaseData(entityData);
-
-        std::cout << "loaded entity base data " << std::endl;
-
-        if(entity)
-        {
-            for(auto& script : entityData["Scripts"])
-            {
-                IScript* existingScript = nullptr;
-                if(script["isEntityLinked"].get<bool>())
-                {
-                    for(auto& entityScript : entity->GetScripts())
-                    {
-                        if(entityScript->GetGUID() == script["guid"].get<std::size_t>())
-                        {
-                            existingScript = entityScript;
-                            break;
-                        }
-                    }
-                }
-                LoadEntityScript(script, entity, existingScript);
-                
-            }
-            std::cout << "adding the entity to the backend" << std::endl;
-            std::cout << "entity guid: " << entity->GetGuid() << std::endl;
-            std::cout << "entity muid: " << entity->GetMuid() << std::endl;
-            backend->entities.push_back(entity);
-        }
-        else
-        {
-            std::cout << "entity is not valid !" << std::endl;
-        }
-    }
-
-    for (const auto& lightData : sceneData["lights"])
+    
+    DiskArchive dar(mapName, Archive::Mode::Loading);
+    int entityCount;
+    dar.Serialize("entitiesCount", entityCount);
+    for(unsigned int i = 0; i < entityCount; i++)
     {
-        LightData* light = nullptr;
-        std::string type = lightData["type"].get<std::string>();
-        if (type == "DirectionalLight")
+        std::string typeName;
+        dar.Serialize("typeName", typeName);
+        if(typeName == "Entity")
         {
-            light = new DirectionalLight(lightData["nearPlane"].get<float>(),
-                                         lightData["farPlane"].get<float>(),
-                                         PulseEngine::Vector3(lightData["target"][0].get<float>(), 
-                                                              lightData["target"][1].get<float>(),
-                                                              lightData["target"][2].get<float>()),
-                                         PulseEngine::Vector3(lightData["position"][0].get<float>(),
-                                                              lightData["position"][1].get<float>(),
-                                                              lightData["position"][2].get<float>()),
-                                         PulseEngine::Color(lightData["color"][0].get<float>(),
-                                                              lightData["color"][1].get<float>(),
-                                                              lightData["color"][2].get<float>()),
-                                        lightData["intensity"].get<float>(), lightData["attenuation"].get<float>());
-        }
-        else if (type == "PointLight")
-        {
-            light = new PointLight(PulseEngine::Vector3(lightData["position"][0].get<float>(),
-                                                        lightData["position"][1].get<float>(),
-                                                        lightData["position"][2].get<float>()),
-                                    PulseEngine::Color(lightData["color"][0].get<float>(),
-                                                        lightData["color"][1].get<float>(),
-                                                        lightData["color"][2].get<float>()),
-                                    lightData["intensity"].get<float>(), lightData["attenuation"].get<float>(), lightData["farPlane"].get<float>());
-        }
+            Entity* po = new Entity("test", PulseEngine::Vector3(0.0f));
 
-        if (light)
-        {
-            light->SetName(lightData["name"].get<std::string>());
-            light->SetMuid(lightData["muid"].get<std::size_t>());
-            backend->lights.push_back(light);
-            std::cout << "Light " << light->GetName() << " loaded." << std::endl;
+            po->Serialize(dar);
+            backend->entities.push_back(po);
         }
     }
 
-    std::cout << "Scene " << mapName << " loaded successfully." << std::endl;
-    PulseEngineInstance->actualMapPath = mapName;
-    // Set actualMapName to the substring after the last "/"
-    size_t lastSlash = mapName.find_last_of("/\\");
-    if (lastSlash != std::string::npos && lastSlash + 1 < mapName.size()) {
-        PulseEngineInstance->actualMapName = mapName.substr(lastSlash + 1);
-    } else {
-        PulseEngineInstance->actualMapName = mapName;
-    }
+    // backend->SetWindowName(sceneData["sceneName"]);
+    // for (const auto& entityData : sceneData["entities"])
+    // {        
+    //     std::cout << "creating a new entity" << std::endl;
+    //     Entity* entity = LoadEntityBaseData(entityData);
+    //     std::cout << "loaded entity base data " << std::endl;
+    //     if(entity)
+    //     {
+    //         for(auto& script : entityData["Scripts"])
+    //         {
+    //             IScript* existingScript = nullptr;
+    //             if(script["isEntityLinked"].get<bool>())
+    //             {
+    //                 for(auto& entityScript : entity->GetScripts())
+    //                 {
+    //                     if(entityScript->GetGUID() == script["guid"].get<std::size_t>())
+    //                     {
+    //                         existingScript = entityScript;
+    //                         break;
+    //                     }
+    //                 }
+    //             }
+    //             LoadEntityScript(script, entity, existingScript);              
+    //         }
+    //         std::cout << "adding the entity to the backend" << std::endl;
+    //         std::cout << "entity guid: " << entity->GetGuid() << std::endl;
+    //         std::cout << "entity muid: " << entity->GetMuid() << std::endl;
+    //         backend->entities.push_back(entity);
+    //     }
+    //     else
+    //     {
+    //         std::cout << "entity is not valid !" << std::endl;
+    //     }
+    // }
+    // for (const auto& lightData : sceneData["lights"])
+    // {
+    //     LightData* light = nullptr;
+    //     std::string type = lightData["type"].get<std::string>();
+    //     if (type == "DirectionalLight")
+    //     {
+    //         light = new DirectionalLight(lightData["nearPlane"].get<float>(),
+    //                                      lightData["farPlane"].get<float>(),
+    //                                      PulseEngine::Vector3(lightData["target"][0].get<float>(), 
+    //                                                           lightData["target"][1].get<float>(),
+    //                                                           lightData["target"][2].get<float>()),
+    //                                      PulseEngine::Vector3(lightData["position"][0].get<float>(),
+    //                                                           lightData["position"][1].get<float>(),
+    //                                                           lightData["position"][2].get<float>()),
+    //                                      PulseEngine::Color(lightData["color"][0].get<float>(),
+    //                                                           lightData["color"][1].get<float>(),
+    //                                                           lightData["color"][2].get<float>()),
+    //                                     lightData["intensity"].get<float>(), lightData["attenuation"].get<float>());
+    //     }
+    //     else if (type == "PointLight")
+    //     {
+    //         light = new PointLight(PulseEngine::Vector3(lightData["position"][0].get<float>(),
+    //                                                     lightData["position"][1].get<float>(),
+    //                                                     lightData["position"][2].get<float>()),
+    //                                 PulseEngine::Color(lightData["color"][0].get<float>(),
+    //                                                     lightData["color"][1].get<float>(),
+    //                                                     lightData["color"][2].get<float>()),
+    //                                 lightData["intensity"].get<float>(), lightData["attenuation"].get<float>(), lightData["farPlane"].get<float>());
+    //     }
+    //     if (light)
+    //     {
+    //         light->SetName(lightData["name"].get<std::string>());
+    //         light->SetMuid(lightData["muid"].get<std::size_t>());
+    //         backend->lights.push_back(light);
+    //         std::cout << "Light " << light->GetName() << " loaded." << std::endl;
+    //     }
+    // }
+    // std::cout << "Scene " << mapName << " loaded successfully." << std::endl;
+    // PulseEngineInstance->actualMapPath = mapName;
+    // // Set actualMapName to the substring after the last "/"
+    // size_t lastSlash = mapName.find_last_of("/\\");
+    // if (lastSlash != std::string::npos && lastSlash + 1 < mapName.size()) {
+    //     PulseEngineInstance->actualMapName = mapName.substr(lastSlash + 1);
+    // } else {
+    //     PulseEngineInstance->actualMapName = mapName;
+    // }
 
     PulseEngineInstance->SetWindowName(PulseEngineInstance->actualMapName);
 }
@@ -311,62 +320,81 @@ const aiScene* SceneLoader::LoadSceneFromAssimp(std::string path)
 #pragma region SaveScene
 void SceneLoader::SaveSceneToFile(const std::string &mapName, const std::string& mapPath, PulseEngineBackend *backend)
 {
-    nlohmann::json sceneData;
+    //~second implementation with pulseobject for test
 
-    // Set the scene name
-    sceneData["sceneName"] = mapName;
-
-    // Save entities
-    for (const auto& entity : backend->entities)
+    DiskArchive dar(mapPath, Archive::Mode::Saving);
+    int entitiesSize = (int)backend->entities.size();
+    std::string map = mapName;
+    dar.Serialize("sceneName", map);
+    dar.Serialize("entitiesCount", entitiesSize);
+    for(Entity* en : backend->entities)
     {
-        SaveEntities(entity, sceneData);
+        std::string typeName(en->GetTypeName());
+        dar.Serialize("typeName", typeName);
+        en->Serialize(dar);
     }
 
-    for (const auto& light : backend->lights)
-    {
-        nlohmann::json lightData;
-        if(DirectionalLight* dirLight = dynamic_cast<DirectionalLight*>(light))
-        {
-            lightData["type"] = "DirectionalLight";
-            lightData["position"] = {dirLight->GetPosition().x, dirLight->GetPosition().y, dirLight->GetPosition().z};
-            lightData["color"] = {dirLight->color.r, dirLight->color.g, dirLight->color.b};
-            lightData["intensity"] = dirLight->intensity;
-            lightData["attenuation"] = dirLight->attenuation;
-            lightData["farPlane"] = dirLight->farPlane;
-            lightData["nearPlane"] = dirLight->nearPlane;
-            lightData["target"] = {dirLight->target.x, dirLight->target.y, dirLight->target.z};
-            lightData["castsShadow"] = dirLight->castsShadow;
-        }
-        else if(PointLight* pointLight = dynamic_cast<PointLight*>(light))
-        {
-            lightData["type"] = "PointLight";
-            lightData["position"] = {pointLight->GetPosition().x, pointLight->GetPosition().y, pointLight->GetPosition().z};
-            lightData["color"] = {pointLight->color.r, pointLight->color.g, pointLight->color.b};
-            lightData["intensity"] = pointLight->intensity;
-            lightData["attenuation"] = pointLight->attenuation;
-            lightData["farPlane"] = pointLight->farPlane;
-            lightData["castsShadow"] = pointLight->castsShadow;
-        }
-        else
-        {
-            std::cout << "Unknown light type, skipping." << std::endl;
-            continue;
-        }
-        lightData["name"] = light->GetName();
-        lightData["muid"] = light->GetMuid();
-        sceneData["lights"].push_back(lightData);
-    }
+    dar.Finalize();
 
-    // Write to file
-    std::ofstream sceneFile(std::string(ASSET_PATH) + mapPath);
-    if (!sceneFile.is_open())
-    {
-        std::cout << "Couldn't open file to save map " << mapPath << std::endl;
-        return;
-    }
 
-    sceneFile << sceneData.dump(4); // Pretty print with 4 spaces
-    sceneFile.close();
+    //~first implementation of saving without pulseobject 
+
+    // nlohmann::json sceneData;
+
+    // // Set the scene name
+    // sceneData["sceneName"] = mapName;
+
+    // // Save entities
+    // for (const auto& entity : backend->entities)
+    // {
+    //     SaveEntities(entity, sceneData);
+    // }
+
+    // for (const auto& light : backend->lights)
+    // {
+    //     nlohmann::json lightData;
+    //     if(DirectionalLight* dirLight = dynamic_cast<DirectionalLight*>(light))
+    //     {
+    //         lightData["type"] = "DirectionalLight";
+    //         lightData["position"] = {dirLight->GetPosition().x, dirLight->GetPosition().y, dirLight->GetPosition().z};
+    //         lightData["color"] = {dirLight->color.r, dirLight->color.g, dirLight->color.b};
+    //         lightData["intensity"] = dirLight->intensity;
+    //         lightData["attenuation"] = dirLight->attenuation;
+    //         lightData["farPlane"] = dirLight->farPlane;
+    //         lightData["nearPlane"] = dirLight->nearPlane;
+    //         lightData["target"] = {dirLight->target.x, dirLight->target.y, dirLight->target.z};
+    //         lightData["castsShadow"] = dirLight->castsShadow;
+    //     }
+    //     else if(PointLight* pointLight = dynamic_cast<PointLight*>(light))
+    //     {
+    //         lightData["type"] = "PointLight";
+    //         lightData["position"] = {pointLight->GetPosition().x, pointLight->GetPosition().y, pointLight->GetPosition().z};
+    //         lightData["color"] = {pointLight->color.r, pointLight->color.g, pointLight->color.b};
+    //         lightData["intensity"] = pointLight->intensity;
+    //         lightData["attenuation"] = pointLight->attenuation;
+    //         lightData["farPlane"] = pointLight->farPlane;
+    //         lightData["castsShadow"] = pointLight->castsShadow;
+    //     }
+    //     else
+    //     {
+    //         std::cout << "Unknown light type, skipping." << std::endl;
+    //         continue;
+    //     }
+    //     lightData["name"] = light->GetName();
+    //     lightData["muid"] = light->GetMuid();
+    //     sceneData["lights"].push_back(lightData);
+    // }
+
+    // // Write to file
+    // std::ofstream sceneFile(std::string(ASSET_PATH) + mapPath);
+    // if (!sceneFile.is_open())
+    // {
+    //     std::cout << "Couldn't open file to save map " << mapPath << std::endl;
+    //     return;
+    // }
+
+    // sceneFile << sceneData.dump(4); // Pretty print with 4 spaces
+    // sceneFile.close();
 }
 
 void SceneLoader::SaveEntities(Entity *const &entity, nlohmann::json_abi_v3_12_0::json &sceneData)

@@ -31,7 +31,8 @@ class PULSE_ENGINE_DLL_API FileReader
 
         bool IsOpen();
         void Close();
-        
+        std::vector<char> ReadAll();
+        void WriteAll(const std::vector<char>& buffer);
 
 
     private:

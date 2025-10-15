@@ -75,3 +75,45 @@ void FileReader::Close()
         file->close();
 #endif
 }
+
+std::vector<char> FileReader::ReadAll()
+{
+#ifdef PULSE_WINDOWS
+    std::ifstream* file = new std::ifstream(filePath, std::ios::binary);
+    
+    // Ensure file is open in binary mode
+    if (!file->is_open())
+        return {};
+
+    // Get file size
+    file->seekg(0, std::ios::end);
+    std::streamsize size = file->tellg();
+    file->seekg(0, std::ios::beg);
+
+    std::vector<char> buffer(size);
+
+    if (size > 0)
+        file->read(buffer.data(), size);
+
+    return buffer;
+#endif
+}
+
+void FileReader::WriteAll(const std::vector<char>& buffer)
+{
+#ifdef PULSE_WINDOWS
+    std::ofstream* file = new std::ofstream(filePath, std::ios::binary);
+
+    // Ensure the file is open and ready
+    if (!file || !file->is_open())
+        return;
+
+    // Write the entire buffer
+    if (!buffer.empty())
+        file->write(buffer.data(), static_cast<std::streamsize>(buffer.size()));
+
+    // Flush to make sure everything is written to disk
+    file->flush();
+#endif
+}
+
