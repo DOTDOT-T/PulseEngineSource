@@ -15,7 +15,7 @@ PointLight::PointLight(PulseEngine::Vector3 position, PulseEngine::Color color, 
 void PointLight::RecalculateLightSpaceMatrix()
 {
     PulseEngine::Mat4 shadowProj = PulseEngine::MathUtils::PerspectiveMat(PulseEngine::MathUtils::ToRadians(90.0f), 1.0f, 0.1f, farPlane);
-    PulseEngine::Vector3 pos(position.x, position.y, position.z);
+    PulseEngine::Vector3 pos(transform.position.x, transform.position.y, transform.position.z);
 
     
     shadowTransforms[0] = shadowProj * PulseEngine::MathUtils::Matrix::LookAt(pos, pos + PulseEngine::Vector3( 1, 0, 0), PulseEngine::Vector3(0, -1, 0));
@@ -35,7 +35,7 @@ void PointLight::BindToShader(Shader& shader, int index)
 {
     std::string prefix = "pointLights[" + std::to_string(index) + "].";
 
-    shader.SetVec3(prefix + "position", position);
+    shader.SetVec3(prefix + "position", transform.position);
     shader.SetVec3(prefix + "color", PulseEngine::Vector3(color.r, color.g, color.b));
     shader.SetFloat(prefix + "intensity", intensity);
     shader.SetFloat(prefix + "attenuation", attenuation);
@@ -50,7 +50,7 @@ void PointLight::RenderShadowMap(Shader &shader, PulseEngineBackend& scene)
     PulseEngineGraphicsAPI->SpecificStartFrame(depthMapFBO, PulseEngine::Vector2(2048, 2048));
 
     scene.pointLightShadowShader->Use();
-    scene.pointLightShadowShader->SetVec3("lightPos", position);
+    scene.pointLightShadowShader->SetVec3("lightPos", transform.position);
     scene.pointLightShadowShader->SetFloat("farPlane", farPlane);
 
     // upload all 6 shadow matrices

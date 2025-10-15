@@ -12,24 +12,27 @@
 
 #include <algorithm>
 
-Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position, Mesh* mesh, Material* material) :name(name), position(position), rotation(0.0f, 0.0f, 0.0f), scale(1.0f, 1.0f, 1.0f), material(material)
+Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position, Mesh* mesh, Material* material) :name(name), material(material)
 {
     //actually is it possible to be nullptr, because of loadScene, we need to load an entity with a material but no mesh before reading it.
     //so mesh can nullptr, and if it is pushed back into the meshes vector, it will cause a crash.
     // if(mesh) meshes.push_back(mesh);
-
+    transform.position = position;
+    transform.rotation = PulseEngine::Vector3(0.0f, 0.0f, 0.0f);
+    transform.scale = PulseEngine::Vector3(1.0f, 1.0f, 1.0f);
     BaseConstructor();
 }
 
 void Entity::BaseConstructor()
 {
     UpdateModelMatrix();
-    collider = new BoxCollider(&this->position, &this->rotation, PulseEngine::Vector3(1.0f, 1.0f, 1.0f));
+    collider = new BoxCollider(&this->transform.position, &this->transform.rotation, PulseEngine::Vector3(1.0f, 1.0f, 1.0f));
     collider->owner = new PulseEngine::EntityApi(this);
 }
 
-Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position) : name(name), position(position)
+Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position) : name(name)
 {
+    transform.position = position;
     BaseConstructor();
 }
 
@@ -38,11 +41,11 @@ void Entity::UpdateModelMatrix()
     using namespace PulseEngine;
 
     Mat4 localMat = PulseEngine::MathUtils::Matrix::Identity();
-    localMat = PulseEngine::MathUtils::Matrix::Translate(localMat, position);
-    localMat = PulseEngine::MathUtils::Matrix::RotateZ(localMat, PulseEngine::MathUtils::ToRadians(rotation.z));
-    localMat = PulseEngine::MathUtils::Matrix::RotateY(localMat, PulseEngine::MathUtils::ToRadians(rotation.y));
-    localMat = PulseEngine::MathUtils::Matrix::RotateX(localMat, PulseEngine::MathUtils::ToRadians(rotation.x));
-    localMat = PulseEngine::MathUtils::Matrix::Scale(localMat, scale);
+    localMat = PulseEngine::MathUtils::Matrix::Translate(localMat, transform.position);
+    localMat = PulseEngine::MathUtils::Matrix::RotateZ(localMat, PulseEngine::MathUtils::ToRadians(transform.rotation.z));
+    localMat = PulseEngine::MathUtils::Matrix::RotateY(localMat, PulseEngine::MathUtils::ToRadians(transform.rotation.y));
+    localMat = PulseEngine::MathUtils::Matrix::RotateX(localMat, PulseEngine::MathUtils::ToRadians(transform.rotation.x));
+    localMat = PulseEngine::MathUtils::Matrix::Scale(localMat, transform.scale);
 
     this->entityMatrix = localMat;
 
@@ -60,7 +63,7 @@ void Entity::UpdateEntity(float deltaTime)
     PROFILE_TIMER_FUNCTION;
     internalClock += deltaTime;
     UpdateModelMatrix();
-    collider->SetRotation(rotation);
+    collider->SetRotation(transform.rotation);
     IN_GAME_ONLY(
         for (size_t i = 0; i < scripts.size(); ++i)
         {
@@ -84,9 +87,9 @@ void Entity::DrawEntity() const
     material->GetShader()->SetFloat("internalClock", internalClock);
 
     // Convert to radians
-    float rx = PulseEngine::MathUtils::ToRadians(rotation.x);
-    float ry = PulseEngine::MathUtils::ToRadians(rotation.y);
-    float rz = PulseEngine::MathUtils::ToRadians(rotation.z);
+    float rx = PulseEngine::MathUtils::ToRadians(transform.rotation.x);
+    float ry = PulseEngine::MathUtils::ToRadians(transform.rotation.y);
+    float rz = PulseEngine::MathUtils::ToRadians(transform.rotation.z);
 
     // Build rotation matrices
     float cx = cos(rx), sx = sin(rx);
@@ -138,9 +141,9 @@ void Entity::DrawEntity() const
     }
 
     // Apply scale (multiply columns)
-    rotMat[0][0] *= scale.x; rotMat[1][0] *= scale.x; rotMat[2][0] *= scale.x;
-    rotMat[0][1] *= scale.y; rotMat[1][1] *= scale.y; rotMat[2][1] *= scale.y;
-    rotMat[0][2] *= scale.z; rotMat[1][2] *= scale.z; rotMat[2][2] *= scale.z;
+    rotMat[0][0] *= transform.scale.x; rotMat[1][0] *= transform.scale.x; rotMat[2][0] *= transform.scale.x;
+    rotMat[0][1] *= transform.scale.y; rotMat[1][1] *= transform.scale.y; rotMat[2][1] *= transform.scale.y;
+    rotMat[0][2] *= transform.scale.z; rotMat[1][2] *= transform.scale.z; rotMat[2][2] *= transform.scale.z;
 
     // Invert the 3×3
     float det = rotMat[0][0]*(rotMat[1][1]*rotMat[2][2] - rotMat[2][1]*rotMat[1][2]) -
@@ -285,10 +288,10 @@ bool Entity::HasTag(const std::string & tag) const
 
 void Entity::Move(const PulseEngine::Vector3 &direction)
 {
-    position = position + (direction * PulseEngineInstance->GetDeltaTime());
+    transform.position = transform.position + (direction * PulseEngineInstance->GetDeltaTime());
 }
 
 void Entity::Rotate(const PulseEngine::Vector3 &rotation)
 {
-    this->rotation = this->rotation + (rotation * PulseEngineInstance->GetDeltaTime());
+    this->transform.rotation = this->transform.rotation + (rotation * PulseEngineInstance->GetDeltaTime());
 }

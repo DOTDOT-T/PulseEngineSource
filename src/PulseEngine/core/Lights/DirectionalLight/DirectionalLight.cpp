@@ -12,7 +12,7 @@ void DirectionalLight::RenderShadowMap(Shader &shader, PulseEngineBackend &scene
 {
     PulseEngineGraphicsAPI->BindShadowFramebuffer(&depthMapFBO);
     RecalculateLightSpaceMatrix();
-    shader.SetVec3("lightPos", position);
+    shader.SetVec3("lightPos", transform.position);
     shader.SetVec3("target", target);
     for (Entity* obj : scene.entities)
     {
@@ -25,14 +25,14 @@ void DirectionalLight::RenderShadowMap(Shader &shader, PulseEngineBackend &scene
 void DirectionalLight::BindToShader(Shader &shader, int index)
 {
     
-    PulseEngine::Vector3 direction = (target - position).Normalized();
+    PulseEngine::Vector3 direction = (target - transform.position).Normalized();
     
     shader.SetVec3("dirLight.direction", direction);
     shader.SetVec3("dirLight.color", PulseEngine::Vector3(color.r, color.g, color.b));
     shader.SetFloat("dirLight.intensity", intensity);
     shader.SetBool("dirLight.castsShadow", true);
     shader.SetVec3("dirLight.target", target);
-    shader.SetVec3("dirLight.position", position);
+    shader.SetVec3("dirLight.position", transform.position);
     shader.SetFloat("dirLight.near", nearPlane);
     shader.SetFloat("dirLight.far", farPlane);
 }

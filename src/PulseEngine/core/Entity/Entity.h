@@ -69,13 +69,13 @@ public:
     // ------------------------------------------------------------------------
 
     /// Sets the world position and updates the model matrix.
-    void SetPosition(const PulseEngine::Vector3& position) { this->position = position; UpdateModelMatrix();}
+    void SetPosition(const PulseEngine::Vector3& position) { this->transform.position = position; UpdateModelMatrix();}
 
     /// Sets the rotation and updates the model matrix.
-    void SetRotation(const PulseEngine::Vector3& rotation) { this->rotation = rotation; UpdateModelMatrix();}
+    void SetRotation(const PulseEngine::Vector3& rotation) { this->transform.rotation = rotation; UpdateModelMatrix();}
 
     /// Sets the scale and updates the model matrix.
-    void SetScale(const PulseEngine::Vector3& scale) {this->scale = scale; UpdateModelMatrix();}
+    void SetScale(const PulseEngine::Vector3& scale) {this->transform.scale = scale; UpdateModelMatrix();}
 
     void SetMaterial(Material* material);
 
@@ -141,9 +141,9 @@ public:
     // Getters
     // ------------------------------------------------------------------------
 
-    const PulseEngine::Vector3 &GetPosition() const { return position; }
-    const PulseEngine::Vector3& GetRotation() const {return rotation;}
-    const PulseEngine::Vector3& GetScale() const {return scale; }
+    const PulseEngine::Vector3 &GetPosition() const { return transform.position; }
+    const PulseEngine::Vector3& GetRotation() const {return transform.rotation;}
+    const PulseEngine::Vector3& GetScale() const {return transform.scale; }
     const PulseEngine::Mat4& GetMatrix() const { return entityMatrix; }
     const std::size_t& GetGuid() const {return guid;}
     /**
@@ -189,11 +189,7 @@ public:
      */
     void Rotate(const PulseEngine::Vector3& rotation);
 
-protected:
-    PulseEngine::Vector3 position;
-    PulseEngine::Vector3 rotation;
-    PulseEngine::Vector3 scale;
-
+    PulseEngine::Transform transform;
 
 private:
     // ------------------------------------------------------------------------
