@@ -79,7 +79,7 @@ void FileReader::Close()
 std::vector<char> FileReader::ReadAll()
 {
 #ifdef PULSE_WINDOWS
-    std::ifstream* file = new std::ifstream(filePath, std::ios::binary);
+    std::ifstream* file = new std::ifstream(std::string(ASSET_PATH) + filePath, std::ios::binary);
     
     // Ensure file is open in binary mode
     if (!file->is_open())
@@ -102,7 +102,7 @@ std::vector<char> FileReader::ReadAll()
 void FileReader::WriteAll(const std::vector<char>& buffer)
 {
 #ifdef PULSE_WINDOWS
-    std::ofstream* file = new std::ofstream(filePath, std::ios::binary);
+    std::ofstream* file = new std::ofstream(std::string(ASSET_PATH) + filePath, std::ios::binary);
 
     // Ensure the file is open and ready
     if (!file || !file->is_open())

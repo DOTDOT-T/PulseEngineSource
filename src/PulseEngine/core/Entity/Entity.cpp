@@ -31,7 +31,7 @@ void Entity::Deserialize(Archive &ar)
 Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position, Mesh *mesh, Material *material) : PulseObject(name.c_str()), material(material)
 {
     //actually is it possible to be nullptr, because of loadScene, we need to load an entity with a material but no mesh before reading it.
-    //so mesh can nullptr, and if it is pushed back into the meshes vector, it will cause a crash.
+    //so mesh can nul²lptr, and if it is pushed back into the meshes vector, it will cause a crash.
     // if(mesh) meshes.push_back(mesh);
     transform.position = position;
     transform.rotation = PulseEngine::Vector3(0.0f, 0.0f, 0.0f);

@@ -8,7 +8,7 @@
 
 Mesh* Primitive::Cube()
 {
-    std::string path = "assets/model.fbx";
+    std::string path = std::string(ASSET_PATH)+ "models/Primitives/Cube.fbx";
 
     Assimp::Importer* importer = new Assimp::Importer();
 
@@ -51,7 +51,7 @@ Mesh* Primitive::Cube()
 
 Mesh *Primitive::Sphere()
 {
-    std::string path = "assets/model.fbx";
+    std::string path = std::string(ASSET_PATH) + "models/Primitives/Sphere.fbx";
 
     Assimp::Importer* importer = new Assimp::Importer();
 

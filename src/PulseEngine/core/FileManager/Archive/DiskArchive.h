@@ -6,54 +6,106 @@
 #include "common/common.h"
 #include "common/dllExport.h"
 
+#include <vector>
+#include <string>
+#include <cstring>
+#include <filesystem>
+
+// ============================================================================
+// DiskArchive : Archive binaire fiable pour lecture/écriture disque
+// - Gestion stricte du curseur
+// - Vérification d’intégrité
+// - Sérialisation type-safe
+// - Logging clair
+// ============================================================================
 class PULSE_ENGINE_DLL_API DiskArchive : public Archive
 {
 public:
-    DiskArchive(const std::string& path, Mode mode)
-        : Archive(mode), fileReader(path)
+    explicit DiskArchive(const std::string& path, Mode mode)
+        : Archive(mode), fileReader(path), cursor(0)
     {
-        if (IsLoading()) buffer = fileReader.ReadAll(); // read entire file into memory
-        else buffer.clear();
-        cursor = 0;
-    }
-
-    void Serialize(const char* name, int& value) override {
-        if (IsSaving()) AppendToBuffer(reinterpret_cast<char*>(&value), sizeof(value));
-        else ReadFromBuffer(reinterpret_cast<char*>(&value), sizeof(value));
-    }
-
-    void Serialize(const char* name, float& value) override 
-    {
-        if (IsSaving()) AppendToBuffer(reinterpret_cast<char*>(&value), sizeof(value));
-        else ReadFromBuffer(reinterpret_cast<char*>(&value), sizeof(value));
-    }
-
-    void Serialize(const char* name, std::string& value) override 
-    {
-        if (IsSaving()) 
+        if (IsLoading())
         {
-            uint32_t len = static_cast<uint32_t>(value.size());
-            Serialize("len", reinterpret_cast<int&>(len));
-            AppendToBuffer(value.data(), len);
-        } else 
-        {
-            uint32_t len = 0;
-            Serialize("len", reinterpret_cast<int&>(len));
-            if (cursor + len > buffer.size()) 
+            buffer = fileReader.ReadAll();
+            if (buffer.empty())
             {
-                EDITOR_WARN("Archive: string data missing in buffer");
-                return;
+                EDITOR_WARN("DiskArchive: unable to read file or empty buffer (" << path << ")");
             }
-            value.resize(len);
-            ReadFromBuffer(value.data(), len);
+        }
+        else
+        {
+            buffer.clear();
+        }
+
+        // (Optionnel) Magic header/version
+        if (IsSaving())
+        {
+            const uint32_t magic = 0x504C5345; // "PLSE"
+            AppendToBuffer(reinterpret_cast<const char*>(&magic), sizeof(magic));
+        }
+        else
+        {
+            uint32_t magic = 0;
+            ReadFromBuffer(reinterpret_cast<char*>(&magic), sizeof(magic));
+            if (magic != 0x504C5345)
+            {
+                EDITOR_WARN("DiskArchive: invalid or incompatible file format (" << path << ")");
+                cursor = 0; // tente quand même de continuer
+            }
         }
     }
 
-    void Finalize() 
+    // =========================================================================
+    // Sérialisation type-safe
+    // =========================================================================
+    void Serialize(const char* name, int& value) override {
+        SerializePrimitive(value);
+    }
+
+    void Serialize(const char* name, float& value) override {
+        SerializePrimitive(value);
+    }
+
+    void Serialize(const char* name, uint32_t& value) {
+        SerializePrimitive(value);
+    }
+
+    void Serialize(const char* name, std::string& value) override
     {
-        if (IsSaving()) 
+        if (IsSaving())
         {
-            fileReader.WriteAll(buffer); // save buffer to disk
+            uint32_t len = static_cast<uint32_t>(value.size());
+            Serialize("len", len);
+            AppendToBuffer(value.data(), len);
+        }
+        else
+        {
+            uint32_t len = 0;
+            Serialize("len", len);
+
+            if (cursor + len > buffer.size())
+            {
+                EDITOR_WARN("DiskArchive: string data missing (" << len << " bytes requested, "
+                    << (buffer.size() - cursor) << " available)");
+                value.clear();
+                return;
+            }
+
+            value.resize(len);
+            ReadFromBuffer(value.data(), len);
+            EDITOR_LOG("DiskArchive: read string [" << value << "] (" << len << " bytes)");
+        }
+    }
+
+    // =========================================================================
+    // Finalisation
+    // =========================================================================
+    void Finalize()
+    {
+        if (IsSaving())
+        {
+            fileReader.WriteAll(buffer);
+            EDITOR_LOG("DiskArchive: wrote " << buffer.size() << " bytes to disk.");
         }
     }
 
@@ -62,22 +114,42 @@ private:
     std::vector<char> buffer;
     size_t cursor;
 
-    void AppendToBuffer(const char* data, size_t size) 
+    // =========================================================================
+    // Fonctions internes
+    // =========================================================================
+    template<typename T>
+    void SerializePrimitive(T& value)
     {
+        static_assert(std::is_trivially_copyable_v<T>, "SerializePrimitive requires trivially copyable type");
+
+        if (IsSaving())
+        {
+            AppendToBuffer(reinterpret_cast<const char*>(&value), sizeof(T));
+        }
+        else
+        {
+            ReadFromBuffer(reinterpret_cast<char*>(&value), sizeof(T));
+        }
+    }
+
+    void AppendToBuffer(const char* data, size_t size)
+    {
+        if (!data || size == 0) return;
         buffer.insert(buffer.end(), data, data + size);
     }
 
-    void ReadFromBuffer(char* out, size_t size) 
+    void ReadFromBuffer(char* out, size_t size)
     {
-        if (cursor + size > buffer.size()) 
+        if (cursor + size > buffer.size())
         {
-            EDITOR_WARN("Archive: attempted to read past buffer end");
+            EDITOR_WARN("DiskArchive: attempted to read past end (" << cursor << " + " << size
+                << " > " << buffer.size() << ")");
             return;
         }
+
         memcpy(out, buffer.data() + cursor, size);
         cursor += size;
     }
 };
 
-
-#endif
+#endif // DISKARCHIVE_H

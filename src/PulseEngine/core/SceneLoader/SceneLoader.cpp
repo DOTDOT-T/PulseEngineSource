@@ -37,6 +37,8 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
     
     DiskArchive dar(mapName, Archive::Mode::Loading);
     int entityCount;
+    std::string receivedMapName;
+    dar.Serialize("sceneName", receivedMapName);
     dar.Serialize("entitiesCount", entityCount);
     for(unsigned int i = 0; i < entityCount; i++)
     {
