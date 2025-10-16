@@ -46,9 +46,13 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
         dar.Serialize("typeName", typeName);
         if(typeName == "Entity")
         {
+            
+
             Entity* po = new Entity("test", PulseEngine::Vector3(0.0f));
 
             po->Serialize(dar);
+
+
             backend->entities.push_back(po);
         }
     }

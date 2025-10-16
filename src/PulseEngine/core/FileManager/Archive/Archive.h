@@ -18,6 +18,7 @@ public:
 
     // Core API for primitive types
     virtual void Serialize(const char* name, int& value) = 0;
+    virtual void Serialize(const char* name, std::size_t& value) = 0;
     virtual void Serialize(const char* name, float& value) = 0;
     virtual void Serialize(const char* name, std::string& value) = 0;
 

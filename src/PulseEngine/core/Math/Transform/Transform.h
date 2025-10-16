@@ -2,6 +2,7 @@
 #define TRANSFORM_H
 
 #include "Common/common.h"
+#include "PulseEngine/core/PulseObject/PulseObject.h"
 
 namespace PulseEngine 
 {
@@ -10,9 +11,14 @@ namespace PulseEngine
      * It provides all the method relative to the transformation of an entity in the 3D space to easy manipulation.
      * 
      */
-    class PULSE_ENGINE_DLL_API Transform 
+    class PULSE_ENGINE_DLL_API Transform : public PulseObject
     {
     public:
+        PULSE_GEN_BODY(Transform)
+        void Serialize(Archive& ar) override;
+        void Deserialize(Archive& ar) override;
+
+
         PulseEngine::Vector3 position; // Position in 3D space
         PulseEngine::Vector3 rotation; // Rotation in degrees (pitch, yaw, roll)
         PulseEngine::Vector3 scale;    // Scale factors for each axis

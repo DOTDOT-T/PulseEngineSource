@@ -17,9 +17,7 @@
 
 void Entity::Serialize(Archive &ar)
 {
-    ar.Serialize("position.x", transform.position.x);
-    ar.Serialize("position.y", transform.position.y);
-    ar.Serialize("position.z", transform.position.z);
+    transform.Serialize(ar);
     
 }
 

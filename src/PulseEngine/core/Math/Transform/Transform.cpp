@@ -1,8 +1,26 @@
 #include "Transform.h"
 #include "PulseEngine/core/Math/MathUtils.h" // For degrees to radians conversion
+#include "PulseEngine/core/FileManager/Archive/Archive.h"
 
 namespace PulseEngine 
 {
+    void Transform::Serialize(Archive &ar)
+    {
+        ar.Serialize("transform.position.x", position.x);
+        ar.Serialize("transform.position.y", position.y);
+        ar.Serialize("transform.position.z", position.z);
+        ar.Serialize("transform.rotation.x", rotation.x);
+        ar.Serialize("transform.rotation.y", rotation.y);
+        ar.Serialize("transform.rotation.z", rotation.z);
+        ar.Serialize("transform.scale.x", scale.x);
+        ar.Serialize("transform.scale.y", scale.y);
+        ar.Serialize("transform.scale.z", scale.z);
+    }
+
+    void Transform::Deserialize(Archive &ar)
+    {
+    }
+
     Transform::Transform(const Vector3& pos, const Vector3& rot, const Vector3& scl)
         : position(pos), rotation(rot), scale(scl)
     {

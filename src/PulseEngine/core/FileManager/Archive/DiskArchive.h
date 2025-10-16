@@ -65,6 +65,9 @@ public:
     void Serialize(const char* name, float& value) override {
         SerializePrimitive(value);
     }
+    void Serialize(const char* name, std::size_t& value) override {
+        SerializePrimitive(value);
+    }
 
     void Serialize(const char* name, uint32_t& value) {
         SerializePrimitive(value);
