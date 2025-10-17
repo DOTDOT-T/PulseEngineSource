@@ -59,22 +59,26 @@ public:
     // Sérialisation type-safe
     // =========================================================================
     void Serialize(const char* name, int& value) override {
+        EDITOR_LOG("int -> " << name << " : " << value)
         SerializePrimitive(value);
     }
 
     void Serialize(const char* name, float& value) override {
+        EDITOR_LOG("int -> " << name << " : " << value)
         SerializePrimitive(value);
     }
-    void Serialize(const char* name, std::size_t& value) override {
+    void Serialize(const char* name, std::uint64_t& value) override {
         SerializePrimitive(value);
     }
 
     void Serialize(const char* name, uint32_t& value) override {
+        EDITOR_LOG("int -> " << name << " : " << value)
         SerializePrimitive(value);
     }
 
     void Serialize(const char* name, std::string& value) override
     {
+        EDITOR_LOG("int -> " << name << " : " << value)
         if (IsSaving())
         {
             uint32_t len = static_cast<uint32_t>(value.size());

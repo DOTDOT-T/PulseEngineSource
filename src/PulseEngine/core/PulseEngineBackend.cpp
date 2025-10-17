@@ -62,14 +62,6 @@ int PulseEngineBackend::Initialize()
     EDITOR_LOG("Project name : " + gameName);
     EDITOR_LOG("Pulse Software © 2025");
 
-    EDITOR_LOG("Engine reflection has register in memory : ")
-
-    for(auto reg : TypeRegistry::GetMap())
-    {
-        PulseObject* test = reg.second();
-        EDITOR_LOG(reg.first << " -- " << test->ToString())
-        delete test;
-    }
     windowContext = new WindowContext();
     activeCamera = new Camera();
 

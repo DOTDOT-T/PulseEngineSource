@@ -9,6 +9,7 @@
 #include <mutex>
 #include <memory>
 #include "PulseEngine/core/PulseObject/PulseObject.h"
+#include "Common/EditorDefines.h"
 
 #define PULSE_REGISTER_CLASS_HEADER(name) \
     public: \
@@ -30,6 +31,7 @@ public:
         std::lock_guard<std::mutex> lock(GetMutex());
         auto& map = GetMap();
         map[typeName] = factory;
+        EDITOR_LOG("Register object : " << typeName)
     }
 
     static PulseObject* CreateInstance(const std::string& typeName)
