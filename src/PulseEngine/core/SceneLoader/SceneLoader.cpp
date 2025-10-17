@@ -26,7 +26,7 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
     std::ifstream scene(std::string(ASSET_PATH) + mapName);
     if (!scene.is_open())
     {
-        std::cout << "Couldn't open map " << std::string(ASSET_PATH) + mapName << std::endl;
+        EDITOR_LOG("Couldn't open map " << std::string(ASSET_PATH) + mapName)
         return;
     }
     backend->ClearScene();
@@ -69,9 +69,9 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
     // backend->SetWindowName(sceneData["sceneName"]);
     // for (const auto& entityData : sceneData["entities"])
     // {        
-    //     std::cout << "creating a new entity" << std::endl;
+    //     EDITOR_LOG("creating a new entity")
     //     Entity* entity = LoadEntityBaseData(entityData);
-    //     std::cout << "loaded entity base data " << std::endl;
+    //     EDITOR_LOG("loaded entity base data ")
     //     if(entity)
     //     {
     //         for(auto& script : entityData["Scripts"])
@@ -90,14 +90,14 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
     //             }
     //             LoadEntityScript(script, entity, existingScript);              
     //         }
-    //         std::cout << "adding the entity to the backend" << std::endl;
-    //         std::cout << "entity guid: " << entity->GetGuid() << std::endl;
-    //         std::cout << "entity muid: " << entity->GetMuid() << std::endl;
+    //         EDITOR_LOG("adding the entity to the backend")
+    //         EDITOR_LOG("entity guid: " << entity->GetGuid())
+    //         EDITOR_LOG("entity muid: " << entity->GetMuid())
     //         backend->entities.push_back(entity);
     //     }
     //     else
     //     {
-    //         std::cout << "entity is not valid !" << std::endl;
+    //         EDITOR_LOG("entity is not valid !")
     //     }
     // }
     // for (const auto& lightData : sceneData["lights"])
@@ -134,10 +134,10 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
     //         light->SetName(lightData["name"].get<std::string>());
     //         light->SetMuid(lightData["muid"].get<std::size_t>());
     //         backend->lights.push_back(light);
-    //         std::cout << "Light " << light->GetName() << " loaded." << std::endl;
+    //         EDITOR_LOG("Light " << light->GetName() << " loaded.")
     //     }
     // }
-    // std::cout << "Scene " << mapName << " loaded successfully." << std::endl;
+    // EDITOR_LOG("Scene " << mapName << " loaded successfully.")
     // PulseEngineInstance->actualMapPath = mapName;
     // // Set actualMapName to the substring after the last "/"
     // size_t lastSlash = mapName.find_last_of("/\\");
@@ -186,17 +186,17 @@ void SceneLoader::LoadEntityScript(const nlohmann::json_abi_v3_12_0::json &scrip
                 }
             }
 
-            std::cout << "Exposed variable name: " + var->name << std::endl;
+            EDITOR_LOG("Exposed variable name: " + var->name)
         }
         if(!existingScript) {
             entity->AddScript(scriptInstance);
             scriptInstance->OnStart();
         }
-        std::cout << "Script " << scriptName << " loaded." << std::endl;
+        EDITOR_LOG("Script " << scriptName << " loaded.")
     }
     else
     {
-        std::cout << "Script " << scriptName << " not found." << std::endl;
+        EDITOR_LOG("Script " << scriptName << " not found.")
     }
 }
 
@@ -247,19 +247,19 @@ Entity* SceneLoader::LoadEntityBaseData(const nlohmann::json_abi_v3_12_0::json &
     std::size_t muid = entityData["muid"].get<std::size_t>();
     nlohmann::json entityDocData;
 
-    std::cout << "Loading entity base data:" << std::endl;
-    std::cout << "  Name: " << name << std::endl;
-    std::cout << "  GUID: " << guid << std::endl;
-    std::cout << "  MUID: " << muid << std::endl;
-    std::cout << "  Position: (" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
-    std::cout << "  Rotation: (" << rotation.x << ", " << rotation.y << ", " << rotation.z << ")" << std::endl;
-    std::cout << "  Scale: (" << scale.x << ", " << scale.y << ", " << scale.z << ")" << std::endl;
+    EDITOR_LOG("Loading entity base data:")
+    EDITOR_LOG("  Name: " << name)
+    EDITOR_LOG("  GUID: " << guid)
+    EDITOR_LOG("  MUID: " << muid)
+    EDITOR_LOG("  Position: (" << position.x << ", " << position.y << ", " << position.z << ")")
+    EDITOR_LOG("  Rotation: (" << rotation.x << ", " << rotation.y << ", " << rotation.z << ")")
+    EDITOR_LOG("  Scale: (" << scale.x << ", " << scale.y << ", " << scale.z << ")")
 
     Entity* entity = GuidReader::GetEntityFromGuid(guid);
-    std::cout << "Entity retrieved from GUID: " << (entity ? "Valid" : "Invalid") << std::endl;
+    EDITOR_LOG("Entity retrieved from GUID: " << (entity ? "Valid" : "Invalid"))
     if (!entity)
     {
-        std::cout << "entity not valid" << std::endl;
+        EDITOR_LOG("entity not valid")
         return nullptr;
     };
     entity->SetGuid(guid);
@@ -269,7 +269,7 @@ Entity* SceneLoader::LoadEntityBaseData(const nlohmann::json_abi_v3_12_0::json &
     entity->SetScale(scale);
     entity->SetName(name);
     // entity->SetMaterial(MaterialManager::loadMaterial("Materials/cube.mat"));
-    std::cout << "Entity base data loaded and properties set." << std::endl;
+    EDITOR_LOG("Entity base data loaded and properties set.")
     return entity;
 }
 
@@ -312,20 +312,20 @@ const aiScene* SceneLoader::LoadSceneFromAssimp(std::string path)
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        std::cerr << "Erreur Assimp: " << importer.GetErrorString() << std::endl;
+        EDITOR_ERROR("Erreur Assimp: " << importer.GetErrorString())
         return nullptr;
     }
 
-    std::cout << "Modèle chargé avec succès : " << path << std::endl;
-    std::cout << "Nombre de meshes : " << scene->mNumMeshes << std::endl;
-    std::cout << "Nombre de matériaux : " << scene->mNumMaterials << std::endl;
-    std::cout << "Nombre de textures : " << scene->mNumTextures << std::endl;
+    EDITOR_LOG("Modèle chargé avec succès : " << path)
+    EDITOR_LOG("Nombre de meshes : " << scene->mNumMeshes)
+    EDITOR_LOG("Nombre de matériaux : " << scene->mNumMaterials)
+    EDITOR_LOG("Nombre de textures : " << scene->mNumTextures)
 
     // Affichage du premier mesh pour exemple
     if (scene->mNumMeshes > 0)
     {
         aiMesh* mesh = scene->mMeshes[0];
-        std::cout << "Premier mesh contient " << mesh->mNumVertices << " sommets." << std::endl;
+        EDITOR_LOG("Premier mesh contient " << mesh->mNumVertices << " sommets.")
     }
     return scene;
 }
@@ -396,7 +396,7 @@ void SceneLoader::SaveSceneToFile(const std::string &mapName, const std::string&
     //     }
     //     else
     //     {
-    //         std::cout << "Unknown light type, skipping." << std::endl;
+    //         EDITOR_LOG("Unknown light type, skipping.")
     //         continue;
     //     }
     //     lightData["name"] = light->GetName();
@@ -408,7 +408,7 @@ void SceneLoader::SaveSceneToFile(const std::string &mapName, const std::string&
     // std::ofstream sceneFile(std::string(ASSET_PATH) + mapPath);
     // if (!sceneFile.is_open())
     // {
-    //     std::cout << "Couldn't open file to save map " << mapPath << std::endl;
+    //     EDITOR_LOG("Couldn't open file to save map " << mapPath)
     //     return;
     // }
 

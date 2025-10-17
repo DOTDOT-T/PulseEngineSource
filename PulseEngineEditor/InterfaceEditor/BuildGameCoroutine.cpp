@@ -11,7 +11,7 @@ bool BuildGameCoroutine::Update(float deltaTime)
         switch (currentStep)
         {
             case Init:
-                std::cout << "Starting build...\n";
+                EDITOR_LOG("Starting build...\n");
                 editor->AddLoadingPopup([]() {
                 ImGui::Text("Building game for window...");
                 }, 0.0f, "Building Game");
@@ -40,7 +40,7 @@ bool BuildGameCoroutine::Update(float deltaTime)
                         ImGui::Text("Copying assets...");
                     }, "Building Game");
                     topbar->CopyAssetForWindow();
-                    std::cout << "Step 2 done\n";
+                    EDITOR_LOG("Step 2 done\n");
                     currentStep = Step3;
                     timer = 0;
                 }
@@ -54,7 +54,7 @@ bool BuildGameCoroutine::Update(float deltaTime)
                         ImGui::Text("Copying engine DLL...");
                     }, "Building Game");
                     topbar->CopyDllForWindow();
-                    std::cout << "Step 3 done\n";
+                    EDITOR_LOG("Step 3 done\n");
                     currentStep = Step4;
                     timer = 0;
                 }
@@ -68,7 +68,7 @@ bool BuildGameCoroutine::Update(float deltaTime)
                         ImGui::Text("Generating executable for window...");
                     }, "Building Game");
                     topbar->GenerateExecutableForWindow(engine);
-                    std::cout << "Step 4 done\n";
+                    EDITOR_LOG("Step 4 done\n");
                     currentStep = Compile;
                     timer = 0;
                 }
@@ -85,7 +85,7 @@ bool BuildGameCoroutine::Update(float deltaTime)
                 break;
 
             case Done:
-                std::cout << "Build Done!\n";
+                EDITOR_LOG("Build Done!\n");
                 return false;
         })
 

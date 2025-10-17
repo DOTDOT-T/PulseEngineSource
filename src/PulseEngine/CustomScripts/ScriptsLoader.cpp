@@ -18,7 +18,7 @@ IScript *ScriptsLoader::GetScriptFromCallName(std::string callName)
         scriptMap[callName] = (CreateScriptFunc)GetProcAddress(customScriptDll, callName.c_str());
         if (!scriptMap[callName])
         {
-            std::cerr << "Impossible de trouver " << callName << " dans la DLL ! " << scriptMap[callName] << std::endl;
+            EDITOR_ERROR("Impossible de trouver " << callName << " dans la DLL ! " << scriptMap[callName])
             return nullptr;
         }
         toReturn = scriptMap[callName](); 
@@ -28,7 +28,7 @@ IScript *ScriptsLoader::GetScriptFromCallName(std::string callName)
 
 void ScriptsLoader::LoadDLL()
 {
-    std::cout << "Working directory: " << std::filesystem::current_path() << std::endl;
+    EDITOR_LOG("Working directory: " << std::filesystem::current_path())
     std::string dllDirectory = "";
     EDITOR_ONLY(dllDirectory = "";)
     customScriptDll = LoadLibrary("CustomScripts.dll");
@@ -36,22 +36,22 @@ void ScriptsLoader::LoadDLL()
     if (customScriptDll == nullptr) 
     {
         DWORD error = GetLastError(); // Récupère l'erreur système
-        std::cerr << "Error loading CustomScripts.dll, error code: " << error << std::endl;
+        EDITOR_ERROR("Error loading CustomScripts.dll, error code: " << error)
     }
     else
     {
         LoadExportedFunctions(customScriptDll);
-        std::cout << "CustomScripts.dll loaded without errors" << std::endl;
+        EDITOR_LOG("CustomScripts.dll loaded without errors")
     }
     if (pulseCustomScriptDll == nullptr) 
     {
         DWORD error = GetLastError(); // Récupère l'erreur système
-        std::cerr << "Error loading pulseCustomScript.dll, error code: " << error << std::endl;
+        EDITOR_ERROR("Error loading pulseCustomScript.dll, error code: " << error)
     }
     else
     {
         LoadExportedFunctions(pulseCustomScriptDll);
-        std::cout << "pulseCustomScript.dll loaded without errors" << std::endl;
+        EDITOR_LOG("pulseCustomScript.dll loaded without errors")
     }
 }
 
@@ -86,7 +86,7 @@ void ScriptsLoader::LoadExportedFunctions(HMODULE dll)
             if (proc)
             {
                 scriptMap[funcName] = (CreateScriptFunc)proc;
-                std::cout << "Script function loaded: " << funcName << std::endl;
+                EDITOR_LOG("Script function loaded: " << funcName)
             }
         }
     }

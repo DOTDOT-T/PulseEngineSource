@@ -26,7 +26,7 @@ Profiler::~Profiler()
 
 void Profiler::SaveToJson()
 {
-    std::cout << "profiler end" << std::endl;
+    EDITOR_LOG("profiler end")
 
     std::ofstream outFile("TraceProfiler.json");
     nlohmann::json outJson;

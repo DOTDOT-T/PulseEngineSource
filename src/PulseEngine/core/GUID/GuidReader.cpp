@@ -99,7 +99,7 @@ Entity *GuidReader::GetEntityFromJson(nlohmann::json_abi_v3_12_0::json &entityDa
                 }
                 else
                 {
-                    std::cerr << "[GetEntityFromGuid] Invalid mesh GUID format." << std::endl;
+                    EDITOR_ERROR("[GetEntityFromGuid] Invalid mesh GUID format.")
                     continue;
                 }
 
@@ -130,11 +130,11 @@ Entity *GuidReader::GetEntityFromJson(nlohmann::json_abi_v3_12_0::json &entityDa
             }
             catch (const std::exception &e)
             {
-                std::cerr << "[GetEntityFromGuid] Error parsing mesh guid: " << e.what() << std::endl;
+                EDITOR_ERROR("[GetEntityFromGuid] Error parsing mesh guid: " << e.what())
             }
         }
     }
-    std::cout << "Entity has " << entity->GetMeshes().size() << " meshes." << std::endl;
+    EDITOR_LOG("Entity has " << entity->GetMeshes().size() << " meshes.")
     if (entityData.contains("Scripts"))
     {
 
@@ -154,7 +154,7 @@ Entity *GuidReader::GetEntityFromJson(nlohmann::json_abi_v3_12_0::json &entityDa
         }
     }
 
-    std::cout << "Entity has " << entity->GetScripts().size() << " scripts." << std::endl;
+    EDITOR_LOG("Entity has " << entity->GetScripts().size() << " scripts.")
     if (entityData.contains("Material"))
     {
         nlohmann::json_abi_v3_12_0::json jsonFile;
@@ -170,7 +170,7 @@ Entity *GuidReader::GetEntityFromJson(nlohmann::json_abi_v3_12_0::json &entityDa
         entity->SetMaterial(mat);
     }
 
-    std::cout << "Entity has material: " << (entity->GetMaterial() ? entity->GetMaterial()->GetName() : "None") << std::endl;
+    EDITOR_LOG("Entity has material: " << (entity->GetMaterial() ? entity->GetMaterial()->GetName() : "None"))
 
     return entity;
 }
@@ -286,7 +286,7 @@ RenderableMesh* GuidReader::GetMeshFromGuid(std::size_t guid)
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        std::cerr << "Erreur Assimp: " << importer->GetErrorString() << std::endl;
+        EDITOR_ERROR("Erreur Assimp: " << importer->GetErrorString())
         return nullptr;
     }
 
@@ -353,12 +353,12 @@ std::size_t GuidReader::InsertIntoCollection(const std::string &filePath)
 
 
     std::string collectionPath = GUID_COLLECTION_PATH + collectionType;
-    std::cout << collectionPath << std::endl;    
+    EDITOR_LOG(collectionPath)    
 
     // Load existing collection
     nlohmann::json jsonData;
-std::cout << "Working directory: " << std::filesystem::current_path() << std::endl;
-std::cout << "Full collection path: " << collectionPath << std::endl;
+EDITOR_LOG("Working directory: " << std::filesystem::current_path())
+EDITOR_LOG("Full collection path: " << collectionPath)
     std::ifstream inFile(collectionPath);
     if (inFile.is_open()) {
         // If file exists, read the existing JSON data
@@ -366,7 +366,7 @@ std::cout << "Full collection path: " << collectionPath << std::endl;
         inFile.close();
     } else {
         // If file doesn't exist, initialize an empty JSON object
-        std::cerr << "File not found, creating new collection file." << std::endl;
+        EDITOR_ERROR("File not found, creating new collection file.")
         jsonData = nlohmann::json::object();  // Initialize an empty JSON object
     }
 
@@ -379,7 +379,7 @@ std::cout << "Full collection path: " << collectionPath << std::endl;
         outFile << jsonData.dump(4); // 4 = pretty print with indentation
         outFile.close();
     } else {
-        std::cerr << "Failed to open GUID collection file for writing." << std::endl;
+        EDITOR_ERROR("Failed to open GUID collection file for writing.")
     }
 
     return guid;
@@ -402,7 +402,7 @@ std::vector<std::pair<std::string, std::string>> GuidReader::GetAllAvailableFile
         }
         return files;
     } else {
-        std::cerr << "Failed to open GUID collection file." << std::endl;
+        EDITOR_ERROR("Failed to open GUID collection file.")
     }
 
     return std::vector<std::pair<std::string, std::string>>();

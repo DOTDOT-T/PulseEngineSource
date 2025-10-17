@@ -7,17 +7,17 @@
 
 Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath) {
     // Charger et compiler les shaders
-    std::cout << "Loading shader from: " << vertexPath << " and " << fragmentPath << std::endl;
+    EDITOR_LOG("Loading shader from: " << vertexPath << " and " << fragmentPath)
     shaderID = PulseEngineBackend::graphicsAPI->CreateShader(vertexPath, fragmentPath);
-    std::cout << "Shader program linked with ID: " << shaderID << std::endl;
+    EDITOR_LOG("Shader program linked with ID: " << shaderID)
 }
 
 Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath, const std::string &geometryPath)
 {
     // Charger et compiler les shaders
-    std::cout << "Loading shader from: " << vertexPath << " and " << fragmentPath << std::endl;
+    EDITOR_LOG("Loading shader from: " << vertexPath << " and " << fragmentPath)
     shaderID = PulseEngineBackend::graphicsAPI->CreateShader(vertexPath, fragmentPath, geometryPath);
-    std::cout << "Shader program linked with ID: " << shaderID << std::endl;
+    EDITOR_LOG("Shader program linked with ID: " << shaderID)
 }
 
 void Shader::Use() const

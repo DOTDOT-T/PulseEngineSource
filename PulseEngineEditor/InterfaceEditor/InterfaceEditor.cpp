@@ -457,7 +457,7 @@ void InterfaceEditor::EntityAnalyzerWindow()
             }
         }
         int counter = 0;
-        std::cout << "Number of scripts on entity " << selectedEntity->GetScripts().size() << std::endl;
+        EDITOR_LOG("Number of scripts on entity " << selectedEntity->GetScripts().size());
          for (auto& s : selectedEntity->GetScripts())
          {
              int varCounter = 0;
@@ -465,7 +465,7 @@ void InterfaceEditor::EntityAnalyzerWindow()
              std::string treeNodeLabel = s->GetName() + std::string("###") + s->GetName() + "_" + std::to_string(counter);
              if (ImGui::TreeNode(treeNodeLabel.c_str()))
              {
-                 std::cout << "script variable quantity : " << s->GetExposedVariables().size() << std::endl;
+                 EDITOR_LOG("script variable quantity : " << s->GetExposedVariables().size());
                  for (auto& var : s->GetExposedVariables())
                  {
                      std::string label = var.name + "###" + s->GetName() + "_" + std::to_string(counter) + "_" + var.name + "_" + std::to_string(varCounter);

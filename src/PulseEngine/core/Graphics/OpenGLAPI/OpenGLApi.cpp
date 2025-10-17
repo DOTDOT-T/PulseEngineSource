@@ -13,7 +13,6 @@
 
 bool OpenGLAPI::InitializeApi(const char* title, int* width, int* height, PulseEngineBackend* engine)
 {
-    std::cout << "starting to init opengl" << std::endl;
         this->engine = engine;
     if (!glfwInit())
     {
@@ -73,8 +72,8 @@ bool OpenGLAPI::InitializeApi(const char* title, int* width, int* height, PulseE
         EDITOR_ERROR("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    std::cout << "OpenGL API initialized successfully." << std::endl;
-    std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
+    EDITOR_LOG("OpenGL API initialized successfully.")
+    EDITOR_LOG("OpenGL Version: " << glGetString(GL_VERSION))
     return true;
 }
 
@@ -455,9 +454,7 @@ bool OpenGLAPI::ShouldClose() const
     {
         EDITOR_ERROR("GLFW window is not initialized.");
         return true; // Consider it closed if window is null
-    }
-    std::cout << glfwWindowShouldClose(window) << std::endl;
-    
+    }    
     return glfwWindowShouldClose(window);
 }
 

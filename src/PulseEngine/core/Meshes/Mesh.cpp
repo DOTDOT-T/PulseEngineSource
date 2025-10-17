@@ -44,7 +44,7 @@ void Mesh::Draw(Shader* shader)
 Mesh* Mesh::LoadFromAssimp(const aiMesh* mesh, const aiScene* scene, SkeletalMesh* skel)
 {
     Mesh* newMesh = new Mesh();
-    std::cout << "chargement du mesh" << std::endl;
+    EDITOR_LOG("chargement du mesh")
 
     if (mesh->HasBones())
     {
@@ -64,7 +64,7 @@ Mesh* Mesh::LoadFromAssimp(const aiMesh* mesh, const aiScene* scene, SkeletalMes
                 newMesh->indices.push_back(face.mIndices[j]);
             }
         }
-        std::cout << "face done" << std::endl;
+        EDITOR_LOG("face done")
 
         // Sommets
         for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
@@ -173,28 +173,28 @@ Mesh* Mesh::LoadFromAssimp(const aiMesh* mesh, const aiScene* scene, SkeletalMes
         }
         }
 
-        std::cout << "vertices construits ! " << std::endl;
+        EDITOR_LOG("vertices construits ! ")
     }
     catch (const std::exception& e)
     {
-        std::cerr << "Exception dans le chargement des vertices: " << e.what() << std::endl;
+        EDITOR_ERROR("Exception dans le chargement des vertices: " << e.what())
         return nullptr;
     }
 
-    std::cout << "chargement du mesh fini, passage au setup" << std::endl;
+    EDITOR_LOG("chargement du mesh fini, passage au setup")
     newMesh->SetupMesh();
-    std::cout << "setup du mesh fini" << std::endl;
+    EDITOR_LOG("setup du mesh fini")
 
-    std::cout << "Nombre d'indices : " << newMesh->indices.size() << std::endl;
+    EDITOR_LOG("Nombre d'indices : " << newMesh->indices.size())
 
     unsigned int maxIndex = 0;
     for (unsigned int index : newMesh->indices)
     {
         if (index > maxIndex) maxIndex = index;
     }
-    std::cout << "Indice max : " << maxIndex << ", Nombre de sommets : " << newMesh->vertices.size() << std::endl;
-    std::cout << "mesh->HasFaces() ? " << mesh->HasFaces() << std::endl;
-    std::cout << "mesh->mNumFaces : " << mesh->mNumFaces << std::endl;
+    EDITOR_LOG("Indice max : " << maxIndex << ", Nombre de sommets : " << newMesh->vertices.size())
+    EDITOR_LOG("mesh->HasFaces() ? " << mesh->HasFaces())
+    EDITOR_LOG("mesh->mNumFaces : " << mesh->mNumFaces)
 
     return newMesh;
 }

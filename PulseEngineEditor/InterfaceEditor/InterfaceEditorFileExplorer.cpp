@@ -91,7 +91,6 @@ void InterfaceEditor::ShowFileGrid(const fs::path& currentDir, fs::path& selecte
                     const std::string prefix = "PulseEngineEditor\\";
                     if (fullPath.rfind(prefix, 0) == 0)
                     {
-                        std::cout << "prefix match fullpath" << std::endl;
                         fullPath = fullPath.substr(prefix.length());
                     }
                 

@@ -38,11 +38,11 @@ Mesh* Primitive::Cube()
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        std::cerr << "Erreur Assimp: " << importer->GetErrorString() << std::endl;
+        EDITOR_ERROR("Erreur Assimp: " << importer->GetErrorString())
         return nullptr;
     }
 
-    std::cout << "Modèle chargé avec succès : " << path << std::endl;
+    EDITOR_LOG("Modèle chargé avec succès : " << path)
     Mesh* msh = Mesh::LoadFromAssimp(scene->mMeshes[0], scene); // OK: importer toujours vivant ici
 
     msh->importer = importer;
@@ -81,11 +81,11 @@ Mesh *Primitive::Sphere()
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        std::cerr << "Erreur Assimp: " << importer->GetErrorString() << std::endl;
+        EDITOR_ERROR("Erreur Assimp: " << importer->GetErrorString())
         return nullptr;
     }
 
-    std::cout << "Modèle chargé avec succès : " << path << std::endl;
+    EDITOR_LOG("Modèle chargé avec succès : " << path)
     Mesh* msh = Mesh::LoadFromAssimp(scene->mMeshes[0], scene, nullptr); // OK: importer toujours vivant ici
 
     msh->importer = importer;

@@ -23,7 +23,7 @@ Entity *PulseEngine::GameEntity::Instantiate(const std::string &path, PulseEngin
 
     pathContent >> jsonData;
     entity = GuidReader::GetEntityFromJson(jsonData, entity);
-    std::cout << "no error parsing entity" << std::endl;
+    EDITOR_LOG("no error parsing entity")
     if(entity)
     {    
         //base data we have through parameter

@@ -186,7 +186,6 @@ void TopBar::UpdateBar(PulseEngineBackend* engine, InterfaceEditor* editor)
                 if (GetOpenFileName(&ofn))
                 {
                     // ResetWorkingDirectoryToExe();
-                    std::cout << "Selected file: " << filePath << std::endl;
                     std::string name = std::string(filePath).substr(std::string(filePath).find_last_of("/\\") + 1);
                     std::string assetPath = editor->currentDir.string() + "/" + name;
 
@@ -194,12 +193,10 @@ void TopBar::UpdateBar(PulseEngineBackend* engine, InterfaceEditor* editor)
                     switch(FileManager::GetFileType(filePath))
                     {
                         case FileType::MESH:
-                            std::cout << "importing mesh : " << name << std::endl;
                             ImportMesh(editor, name, guidPath, filePath, assetPath);
                             break;
                         case FileType::TEXTURE:
                             {
-                                std::cout << "Importing texture: " << name << std::endl;
                                 std::filesystem::current_path(FileManager::workingDirectory);
                                     std::string copyCommand = "xcopy \"" + std::string(filePath) + "\" \"" + assetPath + "\" /Y";
                                     system(copyCommand.c_str());
@@ -282,10 +279,6 @@ void TopBar::ImportMesh(InterfaceEditor *editor, std::string &name, std::string 
     std::string prefix = "PulseEngineEditor";
     DeletePrefix(fileStr, prefix, guidPath);
 
-    std::cout << "GUID Path: " << guidPath << std::endl;
-    std::cout << "Name : " << name << std::endl;
-    std::cout << "fileStr : " << fileStr << std::endl;
-
     std::filesystem::current_path(FileManager::workingDirectory);
 
     GuidReader::InsertIntoCollection(guidPath);
@@ -322,7 +315,6 @@ void TopBar::DeletePrefix(std::string &fileStr, std::string &prefix, std::string
 
 void TopBar::BuildGameToWindow(PulseEngineBackend *engine, InterfaceEditor* editor)
 {
-    std::cout << "=== Building game to window ===" << std::endl;
 
     // Create the build coroutine
     std::unique_ptr<Coroutine> buildCoroutine = std::make_unique<BuildGameCoroutine>();
@@ -338,7 +330,7 @@ void TopBar::BuildGameToWindow(PulseEngineBackend *engine, InterfaceEditor* edit
     else
     {
         // Handle error: cast failed
-        std::cerr << "Failed to cast Coroutine* to BuildGameCoroutine*\n";
+        EDITOR_ERROR("Failed to cast Coroutine* to BuildGameCoroutine*\n");
     }
 
 
@@ -348,7 +340,6 @@ void TopBar::BuildGameToWindow(PulseEngineBackend *engine, InterfaceEditor* edit
 
 void TopBar::CompileUserScripts(InterfaceEditor * editor, std::string output )
 {
-    std::cout << "Compiling...\n";
                     //Lets work on the custom files scripts now
                 std::string compiler = "g++";
                 std::string stdVersion = "-std=c++17";
@@ -368,19 +359,18 @@ void TopBar::CompileUserScripts(InterfaceEditor * editor, std::string output )
                 std::string compileCommand = compiler + " " + stdVersion +
                                              " -o " + output + " " + sources +
                                              includeDirs + " " + libs + " " + flags;
-            
-                std::cout << "Compiling with command:\n" << compileCommand << "\n";
+        
             
                 int result = system(compileCommand.c_str());
 
                 editor->ChangePorgressIn("Building Game", 1.0f);
                 if (result != 0)
                 {
-                    std::cerr << "Compilation failed.\n";
+                    EDITOR_ERROR("Compilation failed.\n");
                 }
                 else
                 {
-                    std::cout << "DLL generated: " << output << "\n";
+                    EDITOR_LOG("DLL generated: " << output << "\n");
                 }
 }
 
@@ -402,7 +392,6 @@ void TopBar::AnalyzeEntry(const std::filesystem::directory_entry & entry, std::s
 
 void TopBar::GenerateExecutableForWindow(PulseEngineBackend * engine)
 {
-    std::cout << "=== Creating the executable for window ===" << std::endl;
 
     nlohmann::json_abi_v3_12_0::json engineConfig = FileManager::OpenEngineConfigFile(engine);
     std::string gameName = engineConfig["GameData"]["Name"].get<std::string>();
@@ -418,7 +407,6 @@ void TopBar::GenerateExecutableForWindow(PulseEngineBackend * engine)
         "-DPULSE_GRAPHIC_OPENGL -DPULSE_WINDOWS " +
         defineGameName + " " + defineGameVersion + " "
                                                    "-o Build/Game.exe";
-    std::cout << "Compile command: " << compileCommand << std::endl;
     system(compileCommand.c_str());
 
     std::string renameCmd = "rename \"Build\\game.exe\" \"" + gameName + ".exe\"";
@@ -427,13 +415,11 @@ void TopBar::GenerateExecutableForWindow(PulseEngineBackend * engine)
 
 void TopBar::CopyDllForWindow()
 {
-    std::cout << "=== Copying PulseEngine.dll For window ===" << std::endl;
     system("xcopy dist\\PulseEngine.dll \"Build\" /Y");
 }
 
 void TopBar::CopyAssetForWindow()
 {
-    std::cout << "=== Copying assets For window ===" << std::endl;
     system("xcopy PulseEngineEditor \"Build/assets\" /E /I /Y");
 }
 

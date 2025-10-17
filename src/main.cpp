@@ -69,14 +69,14 @@ int main(int argc, char** argv)
     #endif
     if (engine->Initialize() != 0)
     {
-        std::cerr << "Engine failed to initialize" << std::endl;
+        EDITOR_ERROR("Engine failed to initialize")
         while(true) {}
         return -1;
     }
 
     if(engine->graphicsAPI == nullptr)
     {
-        std::cerr << "Graphics API failed to initialize" << std::endl;
+        EDITOR_ERROR("Graphics API failed to initialize")
         while(true) {}
         return -1;
     }
