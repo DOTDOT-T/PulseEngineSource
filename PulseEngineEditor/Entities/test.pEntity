@@ -1,0 +1,26 @@
+{
+    "Guid": "7334121461276113549",
+    "Material": "15061499069030162973",
+    "Meshes": [
+        {
+            "Guid": "13027152586787336027",
+            "MeshPath": "models/model.fbx.pmesh",
+            "Name": "models/model.fbx.pmesh",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ]
+}

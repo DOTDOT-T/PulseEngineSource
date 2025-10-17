@@ -1,5 +1,9 @@
 {
     "10599585959961309704": "assets/Materials/cube.mat",
-    "15061499069030162973": "PulseEngineEditor/Materials/StandardLit.mat",
-    "17020420305917145015": "PulseEngineEditor/Materials/cube.mat"
+    "15061499069030162973": "Materials/StandardLit.mat",
+    "17020420305917145015": "Materials/cube.mat",
+    "3708643310441521216": "Materials\\BaseMat.mat",
+    "4091889498087484128": "Materials/BaseMat.mat",
+    "6152505544545941956": "Materials/StandardLit.mat",
+    "7757342584422337042": "Materials/cube.mat"
 }

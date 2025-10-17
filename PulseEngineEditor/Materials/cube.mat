@@ -1,7 +1,13 @@
 {
-  "name": "cube",
-  "color": [0.8, 0.4, 0.4],
-  "specular": 0.1,
-  "roughness": 0.0,
-  "albedo": "Textures/albedo.jpg"
+    "albedo": "Entities/Tiles_068_basecolor.png",
+    "color": [
+        0.5,
+        0.0,
+        0.0
+    ],
+    "guid": "",
+    "name": "cube",
+    "normal": "Entities/Tiles_068_normal.png",
+    "roughness": "Entities/Tiles_068_roughness.png",
+    "specular": 10.0
 }

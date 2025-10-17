@@ -1,6 +1,13 @@
 {
-  "name": "StandardLit",
-  "color": [0.8, 0.8, 0.8],
-  "specular": 10.0,
-  "roughness": 0.1
+    "albedo": "Entities/Tiles_068_basecolor.png",
+    "color": [
+        1.0,
+        1.0,
+        1.0
+    ],
+    "guid": "",
+    "name": "StandardLit",
+    "normal": "Entities/Tiles_068_normal.png",
+    "roughness": "Entities/Tiles_068_roughness.png",
+    "specular": 10.0
 }

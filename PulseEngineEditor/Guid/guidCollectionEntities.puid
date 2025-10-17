@@ -1,4 +1,9 @@
 {
     "15108808711762115660": "Entities/simpleActor.pEntity",
-    "5208241477410102808": "PulseEngineEditor/Entities/simpleActor.pEntity"
+    "16237372376947475561": "Entities\\testEntity.pEntity",
+    "2775959593915128073": "Entities\\Cube.pEntity",
+    "4521267087377263324": "Entities\\o.pEntity",
+    "4999045609554485032": "Entities/primitiveCube.pEntity",
+    "5208241477410102808": "PulseEngineEditor/Entities/simpleActor.pEntity",
+    "7334121461276113549": "Entities\\test.pEntity"
 }

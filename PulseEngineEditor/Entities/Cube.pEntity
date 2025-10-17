@@ -1,0 +1,46 @@
+{
+    "Guid": "2775959593915128073",
+    "Material": "17020420305917145015",
+    "Meshes": [
+        {
+            "Guid": "0",
+            "MeshPath": "models/Primitives/primitiveCube.pmesh",
+            "Name": "models/Primitives/primitiveCube.pmesh",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "Guid": "1",
+            "MeshPath": "models/Primitives/primitiveSphere.pmesh",
+            "Name": "models/Primitives/primitiveSphere.pmesh",
+            "Position": [
+                1.909999966621399,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ]
+}

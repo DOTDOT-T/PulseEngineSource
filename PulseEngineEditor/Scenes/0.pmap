@@ -1,0 +1,47 @@
+{
+    "entities": [
+        {
+            "Scripts": [],
+            "guid": 16237372376947475561,
+            "muid": 9682384913782211086,
+            "name": "Entities\\testEntity.pEntity",
+            "position": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "Scripts": [],
+            "guid": 2775959593915128073,
+            "muid": 14296597937572794099,
+            "name": "Entities\\Cube.pEntity",
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "sceneName": "CZEFGZEOUFHDZOEIDYO.pmap"
+}
