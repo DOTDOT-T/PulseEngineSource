@@ -21,6 +21,7 @@
 
 #include "PulseEngine/core/Meshes/RenderableMesh.h"
 #include "PulseEngine/core/PulseObject/PulseObject.h"
+#include "PulseEngine/core/PulseObject/TypeRegister/TypeRegister.h"
 
 #include <string>
 #include <vector>
@@ -44,6 +45,7 @@ class Archive;
 class PULSE_ENGINE_DLL_API Entity : public PulseObject
 {
     PULSE_GEN_BODY(Entity)
+    PULSE_REGISTER_CLASS_HEADER(Entity)
 public:
 
     // ------------------------------------------------------------------------
@@ -58,6 +60,8 @@ public:
      * @param material Pointer to the material for rendering.
      */
     Entity(const std::string &name, const PulseEngine::Vector3 &position, Mesh *mesh, Material *material);
+
+    Entity();
 
     void BaseConstructor();
 

@@ -4,6 +4,9 @@
 
 namespace PulseEngine 
 {
+
+    PULSE_REGISTER_CLASS_CPP(Transform)
+
     void Transform::Serialize(Archive &ar)
     {
         ar.Serialize("transform.position.x", position.x);

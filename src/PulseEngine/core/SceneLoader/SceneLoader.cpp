@@ -13,6 +13,7 @@
 #include "PulseEngine/core/Lights/PointLight/PointLight.h"
 #include "PulseEngine/API/EntityAPI/EntityApi.h"
 #include "PulseEngine/core/FileManager/Archive/DiskArchive.h"
+#include "PulseEngine/core/PulseObject/TypeRegister/TypeRegister.h"
 
 #include <iostream>
 #include <assimp/Importer.hpp>      // Assimp::Importer
@@ -48,10 +49,9 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
         dar.Serialize("typeName", typeName);
         dar.Serialize("guid", guid);
         dar.Serialize("muid", muid);
-        if(typeName == "Entity")
-        {
-            
-
+        
+        if(TypeRegistry::IsRegistered(typeName))
+        {            
             Entity* po = GuidReader::GetEntityFromGuid(guid);
             if(!po)
             {

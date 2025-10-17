@@ -36,6 +36,7 @@
 #include "PulseEngine/core/Graphics/OpenGLAPI/OpenGLApi.h"
 #endif
 
+#include "PulseEngine/core/PulseObject/TypeRegister/TypeRegister.h"
 #include "Common/dllExport.h"
 
 Camera* PulseEngineBackend::activeCamera = new Camera();
@@ -61,6 +62,14 @@ int PulseEngineBackend::Initialize()
     EDITOR_LOG("Project name : " + gameName);
     EDITOR_LOG("Pulse Software © 2025");
 
+    EDITOR_LOG("Engine reflection has register in memory : ")
+
+    for(auto reg : TypeRegistry::GetMap())
+    {
+        PulseObject* test = reg.second();
+        EDITOR_LOG(reg.first << " -- " << test->ToString())
+        delete test;
+    }
     windowContext = new WindowContext();
     activeCamera = new Camera();
 

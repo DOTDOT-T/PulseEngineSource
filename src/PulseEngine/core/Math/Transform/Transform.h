@@ -3,6 +3,7 @@
 
 #include "Common/common.h"
 #include "PulseEngine/core/PulseObject/PulseObject.h"
+#include "PulseEngine/core/PulseObject/TypeRegister/TypeRegister.h"
 
 class Archive;
 
@@ -16,6 +17,7 @@ namespace PulseEngine
     class PULSE_ENGINE_DLL_API Transform : public PulseObject
     {
         PULSE_GEN_BODY(Transform)
+        PULSE_REGISTER_CLASS_HEADER(Transform)
     public:
         PulseEngine::Vector3 position; // Position in 3D space
         PulseEngine::Vector3 rotation; // Rotation in degrees (pitch, yaw, roll)

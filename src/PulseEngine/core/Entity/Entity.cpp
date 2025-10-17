@@ -14,6 +14,8 @@
 
 #include <algorithm>
 
+PULSE_REGISTER_CLASS_CPP(Entity)
+
 
 void Entity::Serialize(Archive &ar)
 {
@@ -42,6 +44,10 @@ Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position, Me
     transform.rotation = PulseEngine::Vector3(0.0f, 0.0f, 0.0f);
     transform.scale = PulseEngine::Vector3(1.0f, 1.0f, 1.0f);
     BaseConstructor();
+}
+
+Entity::Entity() : PulseObject()
+{
 }
 
 void Entity::BaseConstructor()

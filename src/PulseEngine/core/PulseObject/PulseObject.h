@@ -5,6 +5,10 @@
 #include <stdio.h>
 #include "Common/dllExport.h"
 
+
+
+
+
 /**
  * @brief To implement the class into the Pulse Ecosystem, use PULSE_GEN_BODY(ClassName)
  * @details this permit the engine to register correctly the class and generate all the body needed for this.
@@ -18,7 +22,7 @@
     const char* GetTypeName() const override { return #name; } \
     void Serialize(Archive& ar) override; \
     void Deserialize(Archive& ar) override; \
-    const char* ToString() override;
+    const char* ToString() override; \
 
 class Archive;
 
