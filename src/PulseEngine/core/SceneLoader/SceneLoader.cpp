@@ -43,12 +43,21 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
     for(unsigned int i = 0; i < entityCount; i++)
     {
         std::string typeName;
+        std::size_t guid;
+        std::size_t muid;
         dar.Serialize("typeName", typeName);
+        dar.Serialize("guid", guid);
+        dar.Serialize("muid", muid);
         if(typeName == "Entity")
         {
             
 
-            Entity* po = new Entity("test", PulseEngine::Vector3(0.0f));
+            Entity* po = GuidReader::GetEntityFromGuid(guid);
+            if(!po)
+            {
+                EDITOR_ERROR("entity with guid " << guid << "couldn't be loaded correctly")
+                continue;
+            }
 
             po->Serialize(dar);
 
@@ -336,7 +345,11 @@ void SceneLoader::SaveSceneToFile(const std::string &mapName, const std::string&
     for(Entity* en : backend->entities)
     {
         std::string typeName(en->GetTypeName());
+        std::size_t guid;
+        std::size_t muid;
         dar.Serialize("typeName", typeName);
+        dar.Serialize("guid", guid);
+        dar.Serialize("muid", muid);
         en->Serialize(dar);
     }
 

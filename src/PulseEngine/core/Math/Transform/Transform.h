@@ -4,6 +4,8 @@
 #include "Common/common.h"
 #include "PulseEngine/core/PulseObject/PulseObject.h"
 
+class Archive;
+
 namespace PulseEngine 
 {
     /**
@@ -13,8 +15,8 @@ namespace PulseEngine
      */
     class PULSE_ENGINE_DLL_API Transform : public PulseObject
     {
+        PULSE_GEN_BODY(Transform);
     public:
-        PULSE_GEN_BODY(Transform)
         void Serialize(Archive& ar) override;
         void Deserialize(Archive& ar) override;
 

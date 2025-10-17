@@ -69,7 +69,7 @@ public:
         SerializePrimitive(value);
     }
 
-    void Serialize(const char* name, uint32_t& value) {
+    void Serialize(const char* name, uint32_t& value) override {
         SerializePrimitive(value);
     }
 

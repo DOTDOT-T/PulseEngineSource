@@ -17,6 +17,8 @@
 
 void Entity::Serialize(Archive &ar)
 {
+    
+    ar.Serialize("name", name);
     transform.Serialize(ar);
     
 }

@@ -1,7 +1,8 @@
 #ifndef PULSEOBJECT_H
 #define PULSEOBJECT_H
 
-#include "Common/common.h"
+#include <cstddef>
+#include <stdio.h>
 #include "Common/dllExport.h"
 
 /**
