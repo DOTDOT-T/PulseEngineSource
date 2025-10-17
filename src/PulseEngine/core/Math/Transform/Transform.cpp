@@ -21,6 +21,11 @@ namespace PulseEngine
     {
     }
 
+    const char* Transform::ToString()
+    {
+        return std::string("position{" + std::string("x:") + std::to_string(position.x) + " : " + std::string("y:") + std::to_string(position.y) + " : " + std::string("z:") + std::to_string(position.z) + "}" + "rotation{" + std::string("x:") + std::to_string(rotation.x) + " : " + std::string("y:") + std::to_string(rotation.y) + " : " + std::string("z:") + std::to_string(rotation.z) + "}" + "scale{" + std::string("x:") + std::to_string(scale.x) + " : " + std::string("y:") + std::to_string(scale.y) + " : " + std::string("z:") + std::to_string(scale.z) + "}").c_str();
+    }
+
     Transform::Transform(const Vector3& pos, const Vector3& rot, const Vector3& scl)
         : position(pos), rotation(rot), scale(scl)
     {

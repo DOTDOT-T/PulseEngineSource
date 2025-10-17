@@ -15,12 +15,8 @@ namespace PulseEngine
      */
     class PULSE_ENGINE_DLL_API Transform : public PulseObject
     {
-        PULSE_GEN_BODY(Transform);
+        PULSE_GEN_BODY(Transform)
     public:
-        void Serialize(Archive& ar) override;
-        void Deserialize(Archive& ar) override;
-
-
         PulseEngine::Vector3 position; // Position in 3D space
         PulseEngine::Vector3 rotation; // Rotation in degrees (pitch, yaw, roll)
         PulseEngine::Vector3 scale;    // Scale factors for each axis

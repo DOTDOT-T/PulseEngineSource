@@ -6,13 +6,19 @@
 #include "Common/dllExport.h"
 
 /**
- * @brief When generating a new class, the generation need to use PULSE_GEN_BODY(name of the class)
+ * @brief To implement the class into the Pulse Ecosystem, use PULSE_GEN_BODY(ClassName)
  * @details this permit the engine to register correctly the class and generate all the body needed for this.
- * 
+ * @note DECLARE IN CPP THESE FUNCTION :
+ *  @note void Serialize(Archive& ar) override;
+    @note void Deserialize(Archive& ar) override;
+    @note const char* ToString() override;
  */
 #define PULSE_GEN_BODY(name) \
     public: \
-    const char* GetTypeName() const override { return #name; }
+    const char* GetTypeName() const override { return #name; } \
+    void Serialize(Archive& ar) override; \
+    void Deserialize(Archive& ar) override; \
+    const char* ToString() override;
 
 class Archive;
 
@@ -25,6 +31,7 @@ class PULSE_ENGINE_DLL_API PulseObject
 
         virtual void Serialize(Archive& ar);
         virtual void Deserialize(Archive& ar);
+        virtual const char* ToString();
         virtual const char* GetTypeName() const;
     private:
         const char* objectName;

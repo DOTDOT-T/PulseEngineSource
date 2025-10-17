@@ -43,11 +43,8 @@ class Archive;
  */
 class PULSE_ENGINE_DLL_API Entity : public PulseObject
 {
-public:
     PULSE_GEN_BODY(Entity)
-
-    void Serialize(Archive& ar) override;
-    void Deserialize(Archive& ar) override;
+public:
 
     // ------------------------------------------------------------------------
     // Constructors & Destructor

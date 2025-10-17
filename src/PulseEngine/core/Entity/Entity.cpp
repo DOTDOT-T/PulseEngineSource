@@ -28,6 +28,11 @@ void Entity::Deserialize(Archive &ar)
     EDITOR_LOG("deserialization is implemented")
 }
 
+const char* Entity::ToString()
+{
+    return std::string("EntityClass::" + name).c_str();
+}
+
 Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position, Mesh *mesh, Material *material) : PulseObject(name.c_str()), material(material)
 {
     //actually is it possible to be nullptr, because of loadScene, we need to load an entity with a material but no mesh before reading it.

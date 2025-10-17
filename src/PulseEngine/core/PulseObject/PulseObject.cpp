@@ -21,6 +21,11 @@ void PulseObject::Deserialize(Archive &ar)
     EDITOR_WARN("Deserialization is not implemented for " << objectName)
 }
 
+const char *PulseObject::ToString()
+{
+    return "stringification of Pulse Object";
+}
+
 const char *PulseObject::GetTypeName() const
 {
     return "PulseObject";

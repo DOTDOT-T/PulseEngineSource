@@ -63,6 +63,7 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
 
 
             backend->entities.push_back(po);
+            EDITOR_LOG("Spawning " << po->ToString() << " transform -> " << po->transform.ToString())
         }
     }
 
