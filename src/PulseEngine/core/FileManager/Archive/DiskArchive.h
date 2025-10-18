@@ -59,26 +59,27 @@ public:
     // Sérialisation type-safe
     // =========================================================================
     void Serialize(const char* name, int& value) override {
-        EDITOR_LOG("int -> " << name << " : " << value)
         SerializePrimitive(value);
+        EDITOR_LOG("int -> " << name << " : " << value)
     }
 
     void Serialize(const char* name, float& value) override {
-        EDITOR_LOG("int -> " << name << " : " << value)
         SerializePrimitive(value);
+        EDITOR_LOG("float -> " << name << " : " << value)
     }
     void Serialize(const char* name, std::uint64_t& value) override {
         SerializePrimitive(value);
+        EDITOR_LOG("uint64_t -> " << name << " : " << value)
     }
 
     void Serialize(const char* name, uint32_t& value) override {
-        EDITOR_LOG("int -> " << name << " : " << value)
         SerializePrimitive(value);
+        EDITOR_LOG("int -> " << name << " : " << value)
     }
 
     void Serialize(const char* name, std::string& value) override
     {
-        EDITOR_LOG("int -> " << name << " : " << value)
+        EDITOR_LOG("string -> " << name << " : " << value)
         if (IsSaving())
         {
             uint32_t len = static_cast<uint32_t>(value.size());
@@ -151,6 +152,10 @@ private:
         {
             EDITOR_WARN("DiskArchive: attempted to read past end (" << cursor << " + " << size
                 << " > " << buffer.size() << ")");
+            cursor = buffer.size();
+            memcpy(out, (char*)"0", strlen("0"));
+
+
             return;
         }
 

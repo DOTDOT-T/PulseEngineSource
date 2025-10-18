@@ -7,7 +7,16 @@ for %%f in (ObjectFiles\*.o) do (
     set OBJFILES=!OBJFILES! %%f
 )
 
+if not exist Build (
+    mkdir Build
+)
+if not exist Build\Modules (
+    mkdir Modules
+)
 
+if not exist Build\Modules\Interface (
+    mkdir Interface
+)
 
 g++ -shared -Wl,--out-implib,Build/libPulseEngineEditor.a ^
 -o Build/PulseEngineEditor.dll ^

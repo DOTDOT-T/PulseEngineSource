@@ -39,7 +39,9 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
     DiskArchive dar(mapName, Archive::Mode::Loading);
     int entityCount;
     std::string receivedMapName;
+    int guid;
     dar.Serialize("sceneName", receivedMapName);
+    dar.Serialize("guid", guid);
     dar.Serialize("entitiesCount", entityCount);
     for(unsigned int i = 0; i < entityCount; i++)
     {
@@ -341,7 +343,9 @@ void SceneLoader::SaveSceneToFile(const std::string &mapName, const std::string&
     DiskArchive dar(mapPath, Archive::Mode::Saving);
     int entitiesSize = (int)backend->entities.size();
     std::string map = mapName;
+    int guid;
     dar.Serialize("sceneName", map);
+    dar.Serialize("guid", guid);
     dar.Serialize("entitiesCount", entitiesSize);
     for(Entity* en : backend->entities)
     {

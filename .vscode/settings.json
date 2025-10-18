@@ -153,7 +153,8 @@
     "semaphore": "cpp",
     "stack": "cpp",
     "stop_token": "cpp",
-    "thread": "cpp"
+    "thread": "cpp",
+    "resumable": "cpp"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }

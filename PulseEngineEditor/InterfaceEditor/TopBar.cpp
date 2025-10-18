@@ -204,8 +204,7 @@ void TopBar::UpdateBar(PulseEngineBackend* engine, InterfaceEditor* editor)
                                 std::string fileStr = editor->currentDir.string() + "/" + name;
                                 std::string prefix = "PulseEngineEditor";
                                 DeletePrefix(fileStr, prefix, guidPath);
-
-                                GuidReader::InsertIntoCollection(guidPath);
+                                PulseEngineInstance->guidCollections["guidCollectionTextures.puid"]->InsertFile(guidPath);
                                 
                             }
                             break;

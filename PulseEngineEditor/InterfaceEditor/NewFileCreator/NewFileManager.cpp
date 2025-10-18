@@ -17,6 +17,8 @@
 #include "PulseEngine/core/FileManager/FileManager.h"
 #include "PulseEngine/core/GUID/GuidReader.h"
 #include "PulseEngine/core/GUID/GuidCollection.h"
+#include "PulseEngine/core/FileManager/Archive/Archive.h"
+#include "PulseEngine/core/FileManager/Archive/DiskArchive.h"
 #include <glm/gtc/type_ptr.hpp>
 
 
@@ -95,6 +97,18 @@ void NewFileManager::RenderPopup(const std::filesystem::path &currentDir, std::f
                 std::string fullFileName = fileNameStr + extension;
                 fs::path newFilePath = currentDir / fullFileName;
 
+                if (extension == ".pmap")
+                {
+                    DiskArchive* ar = new DiskArchive((sanitizedDir / (fileNameStr + extension)).string(), Archive::Mode::Saving);
+                    int entityCount = 0;
+                    std::string receivedMapName = fileNameStr;
+                    ar->Serialize("sceneName", receivedMapName);
+                    uint64_t g = static_cast<uint64_t>(guid);
+                    ar->Serialize("guid", g);
+                    ar->Serialize("entitiesCount", entityCount);
+                    ar->Finalize();
+                    delete ar;
+                }
                 if (!fs::exists(newFilePath))
                 {
                     std::ofstream ofs(newFilePath.string());
@@ -108,10 +122,8 @@ void NewFileManager::RenderPopup(const std::filesystem::path &currentDir, std::f
                         else if (extension == ".mat")
                         {
                             guid = PulseEngineInstance->guidCollections["guidCollectionMaterials.puid"]->InsertFile((sanitizedDir / fullFileName).string());
-                            ofs << "{\n    \"name\": " << fileNameStr << ",\n\"guid\": \"" << guid << "\"\n}\n";
+                            ofs << "{\n    \"name\": \"" << fileNameStr << "\",\n\"guid\": \"" << guid << "\"\n}\n";
                         }
-                        else if (extension == ".pmap")
-                            ofs << "{\n    \"guid\": \"" << guid << "\"\n}\n";
                         else if (extension == ".synapse") 
                             ofs << "{\n    \"guid\": \"" << guid << "\"\n}\n";
 
