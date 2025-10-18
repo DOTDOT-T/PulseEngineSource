@@ -69,6 +69,8 @@ class PulseEngineBackend;
  */
 class PULSE_ENGINE_DLL_API DirectionalLight : public LightData
 {
+    PULSE_GEN_BODY(DirectionalLight)
+    PULSE_REGISTER_CLASS_HEADER(DirectionalLight)
 public:
     PulseEngine::Vector3 direction; ///< Light direction vector, normalized.
 
@@ -100,9 +102,11 @@ public:
         float a
     ) : LightData(p, c, i, a), nearPlane(np), farPlane(fp), target(t)
     {
-        InitShadowMap(1024);
+        InitShadowMap(2048);
         RecalculateLightSpaceMatrix();
     }
+
+    DirectionalLight() : LightData() {}
 
     /**
      * @brief Initializes the shadow map resources (FBO and depth texture).

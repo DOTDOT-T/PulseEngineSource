@@ -2,6 +2,9 @@
 #include "PulseEngine/core/Entity/Entity.h"
 #include "PulseEngine/core/Math/MathUtils.h"
 #include "PulseEngine/core/Graphics/IGraphicsApi.h"
+#include "PulseEngine/core/FileManager/Archive/Archive.h"
+
+PULSE_REGISTER_CLASS_CPP(DirectionalLight)
 
 void DirectionalLight::InitShadowMap(int resolution)
 {
@@ -44,4 +47,29 @@ void DirectionalLight::RecalculateLightSpaceMatrix()
     
     // PulseEngine::Mat4 lightView = PulseEngine::MathUtils::Matrix::LookAt(position, target, up);
     // lightSpaceMatrix = lightProjection * lightView;
+}
+
+
+void DirectionalLight::Serialize(Archive& ar)
+{
+    LightData::Serialize(ar);
+
+    ar.Serialize("lightIntensity", intensity);
+    ar.Serialize("direction.x", direction.x);
+    ar.Serialize("direction.y", direction.y);
+    ar.Serialize("direction.z", direction.z);
+    ar.Serialize("target.x", target.x);
+    ar.Serialize("target.y", target.y);
+    ar.Serialize("target.z", target.z);
+    ar.Serialize("nearPlane", nearPlane);
+    ar.Serialize("farPlane", farPlane);
+}
+void DirectionalLight::Deserialize(Archive& ar)
+{
+
+}
+
+const char* DirectionalLight::ToString()
+{
+    return "DirectionalLight::ToString()";
 }

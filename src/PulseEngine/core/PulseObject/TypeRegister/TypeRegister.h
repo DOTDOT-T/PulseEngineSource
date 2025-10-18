@@ -34,14 +34,17 @@ public:
         EDITOR_LOG("Register object : " << typeName)
     }
 
-    static PulseObject* CreateInstance(const std::string& typeName)
+    template<typename T>
+    static T* CreateInstance(const std::string& typeName)
     {
         std::lock_guard<std::mutex> lock(GetMutex());
         auto& map = GetMap();
         auto it = map.find(typeName);
-        if (it != map.end())
-            return it->second();
-        return nullptr; 
+        if (it == map.end())
+            return nullptr;
+
+        PulseObject* obj = it->second();
+        return dynamic_cast<T*>(obj); //safe downcast automatique
     }
 
     static bool IsRegistered(const std::string& typeName)

@@ -29,6 +29,7 @@ class PulseEngineBackend;
  */
 class PULSE_ENGINE_DLL_API LightData: public Entity
 {
+    PULSE_GEN_BODY(LightData)
     public:
         PulseEngine::Mat4 lightSpaceMatrix;
         PulseEngine::Color color;
@@ -54,6 +55,7 @@ class PULSE_ENGINE_DLL_API LightData: public Entity
         virtual void RecalculateLightSpaceMatrix() = 0;
     
         LightData(PulseEngine::Vector3 position, PulseEngine::Color color, float intensity, float attenuation) : Entity("Light", position), color(color), intensity(intensity), attenuation(attenuation), castsShadow(true) {}
-};
+        LightData() : Entity() {}
+    };
 
 #endif

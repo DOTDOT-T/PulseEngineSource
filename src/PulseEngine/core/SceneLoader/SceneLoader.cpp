@@ -69,6 +69,18 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
         }
     }
 
+    int lightCount = (int)backend->lights.size();
+    dar.Serialize("lightCount", lightCount);
+    for(unsigned int i = 0; i < lightCount; i++)
+    {
+        std::string typeName;
+        dar.Serialize("typeName", typeName);
+        LightData* light = TypeRegistry::CreateInstance<LightData>(typeName);
+        light->Serialize(dar);
+
+        backend->lights.push_back(light);
+    }
+
     // backend->SetWindowName(sceneData["sceneName"]);
     // for (const auto& entityData : sceneData["entities"])
     // {        
@@ -356,6 +368,15 @@ void SceneLoader::SaveSceneToFile(const std::string &mapName, const std::string&
         dar.Serialize("guid", guid);
         dar.Serialize("muid", muid);
         en->Serialize(dar);
+    }
+
+    int lightCount = (int)backend->lights.size();
+    dar.Serialize("lightCount", lightCount);
+    for(LightData* light : backend->lights)
+    {
+        std::string typeName(light->GetTypeName());
+        dar.Serialize("typeName", typeName);
+        light->Serialize(dar);
     }
 
     dar.Finalize();

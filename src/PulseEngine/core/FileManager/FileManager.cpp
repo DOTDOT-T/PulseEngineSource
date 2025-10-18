@@ -89,7 +89,6 @@ void FileManager::SaveEngineConfigFile(PulseEngineBackend* engine, const json& e
 
 FileType FileManager::GetFileType(const std::string &fileName)
 {
-    EDITOR_LOG(fileName)
     if (EndsWith(fileName, ".png") || EndsWith(fileName, ".jpg") || EndsWith(fileName, ".jpeg"))
     {
         return FileType::TEXTURE;
