@@ -60,7 +60,7 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
                 EDITOR_ERROR("entity with guid " << guid << "couldn't be loaded correctly")
                 continue;
             }
-
+            po->SetMuid(muid);
             po->Serialize(dar);
 
 
