@@ -1,4 +1,3 @@
-
 #include "InterfaceEditor.h"
 #include "PulseEngine/core/SceneLoader/SceneLoader.h"
 #include "PulseEngineEditor/InterfaceEditor/TopBar.h"
@@ -548,142 +547,98 @@ void InterfaceEditor::GenerateSceneDataWindow()
     // Scroll area for Entities + Lights
     ImGui::BeginChild("SceneEntitiesScroll", ImVec2(0, 300), true);
 
-    // --- ENTITIES SECTION ---
-    ImGui::Text("Entities");
-    ImGui::Separator();
-
     // Collect entities to safely delete after iteration
-    std::vector<size_t> entitiesToDelete;
+    std::vector<Entity*> entitiesToDelete;
 
-    for (size_t i = 0; i < PulseEngineInstance->entities.size(); ++i)
+    if (ImGui::BeginTable("EntitiesTable", 3, 
+    ImGuiTableFlags_SizingStretchProp | 
+    ImGuiTableFlags_NoBordersInBodyUntilResize | 
+    ImGuiTableFlags_RowBg | 
+    ImGuiTableFlags_NoPadInnerX))
     {
-        auto entity = PulseEngineInstance->entities[i];
-        if (!entity)
-            continue;
+        ImGui::TableSetupColumn("Name");
+        ImGui::TableSetupColumn("Type");
+        ImGui::TableSetupColumn("MUID");
+        ImGui::TableHeadersRow();
 
-        // Compose label with persistent ID: use entity GUID or pointer address
-        std::string label = entity->GetName() + "##Entity_" + std::to_string(reinterpret_cast<uintptr_t>(entity));
+        std::vector<Entity*> entities = PulseEngineInstance->entities;
 
-        // Highlight if selected
-        if (selectedEntity == entity)
-            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.9f, 0.2f, 0.2f, 0.7f));
-        else
-            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.15f, 0.15f, 0.15f, 1.0f));
-
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.1f, 0.75f, 0.95f, 0.9f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.05f, 0.45f, 0.7f, 1.0f));
-        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 6.0f);
-
-        // Full width button but leave room for delete button on right
-        float fullWidth = ImGui::GetContentRegionAvail().x;
-        float deleteBtnWidth = 24.0f;
-        float entityBtnWidth = fullWidth - deleteBtnWidth - 8.0f; // 8 for spacing
-
-        if (ImGui::Button(label.c_str(), ImVec2(entityBtnWidth, 0)))
+        for(Entity* light : PulseEngineInstance->lights)
         {
-            selectedEntity = entity;
+            entities.push_back(light);
         }
 
-        ImGui::PopStyleColor(3);
-        ImGui::PopStyleVar();
-
-        ImGui::SameLine();
-
-        // Show delete button only on hover of entity button for cleaner UI
-        bool isHovered = ImGui::IsItemHovered();
-        ImGui::PushStyleColor(ImGuiCol_Button, isHovered ? ImVec4(0.9f, 0.2f, 0.2f, 1.0f) : ImVec4(0.6f, 0.1f, 0.1f, 0.7f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.3f, 0.3f, 1.0f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.7f, 0.0f, 0.0f, 1.0f));
-        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-
-        if (ImGui::Button("X", ImVec2(deleteBtnWidth, 0)))
+        for (auto* entity : entities)
         {
-            entitiesToDelete.push_back(i);
-            if (selectedEntity == entity)
-                selectedEntity = nullptr;
+            if (!entity)
+                continue;
+        
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+        
+            std::string label = entity->GetName() + 
+                "##Entity_" + std::to_string(reinterpret_cast<uintptr_t>(entity));
+        
+            bool isSelected = (selectedEntity == entity);
+            ImGui::PushID(entity);
+            if (ImGui::Selectable(label.c_str(), isSelected, 
+                ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowDoubleClick))
+            {
+                selectedEntity = entity;
+            }
+        
+            // Right-click context menu
+            if (ImGui::BeginPopupContextItem())
+            {
+                if (ImGui::MenuItem("Destroy"))
+                {
+                    // Handle destruction here
+                    if (selectedEntity == entity)
+                    {
+                        entitiesToDelete.push_back(selectedEntity);
+                        selectedEntity = nullptr;
+                    }
+                
+                    ImGui::EndPopup();
+                    ImGui::PopID();
+                    break; // Break the loop since entity is destroyed
+                }
+                ImGui::EndPopup();
+            }
+        
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted(entity->GetTypeName());
+        
+            ImGui::TableNextColumn();
+            ImGui::Text("%zu", entity->GetMuid());
+        
+            ImGui::PopID();
         }
+        
+        ImGui::EndTable();
 
-        ImGui::PopStyleVar(2);
-        ImGui::PopStyleColor(3);
-
-        ImGui::Spacing();
     }
 
     // Delete entities after loop to avoid invalidating vector while iterating
     for (auto it = entitiesToDelete.rbegin(); it != entitiesToDelete.rend(); ++it)
     {
-        PulseEngineInstance->DeleteEntity(PulseEngineInstance->entities[*it]);
-    }
-
-    ImGui::Separator();
-    ImGui::Spacing();
-
-    // --- LIGHTS SECTION ---
-    ImGui::Text("Lights");
-    ImGui::Separator();
-
-    std::vector<size_t> lightsToDelete;
-
-    for (size_t i = 0; i < PulseEngineInstance->lights.size(); ++i)
-    {
-        auto light = PulseEngineInstance->lights[i];
-        if (!light)
-            continue;
-
-        std::string label = "Light #" + std::to_string(i + 1) + "##Light_" + std::to_string(reinterpret_cast<uintptr_t>(light));
-
-        if (selectedEntity == light)
-            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.5f, 0.0f, 0.7f));
-        else
-            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.15f, 0.15f, 0.15f, 1.0f));
-
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.1f, 0.75f, 0.95f, 0.9f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.05f, 0.45f, 0.7f, 1.0f));
-        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 6.0f);
-
-        float fullWidth = ImGui::GetContentRegionAvail().x;
-        float deleteBtnWidth = 24.0f;
-        float lightBtnWidth = fullWidth - deleteBtnWidth - 8.0f;
-
-        if (ImGui::Button(label.c_str(), ImVec2(lightBtnWidth, 0)))
+        if((*it)->GetTypeName() == "Entity")
         {
-            selectedEntity = light;
+            PulseEngineInstance->DeleteEntity(*it);
         }
-
-        ImGui::PopStyleColor(3);
-        ImGui::PopStyleVar();
-
-        ImGui::SameLine();
-
-        bool isHovered = ImGui::IsItemHovered();
-        ImGui::PushStyleColor(
-            ImGuiCol_Button, 
-            isHovered ? ImVec4(1.0f, 0.5f, 0.0f, 1.0f) : ImVec4(0.6f, 0.3f, 0.0f, 0.7f)
-        );
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.3f, 0.3f, 1.0f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.7f, 0.0f, 0.0f, 1.0f));
-        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-
-        std::string deleteButtonLabel = "X##delete" + std::to_string(i);
-        if (ImGui::Button(deleteButtonLabel.c_str(), ImVec2(deleteBtnWidth, 0)))
+        else if((*it)->GetTypeName() == "LightData")
         {
-            lightsToDelete.push_back(i);
-            if (selectedEntity == light)
-                selectedEntity = nullptr;
+            // Cherche l'itérateur dans le vector lights
+            auto lightIt = std::find(PulseEngineInstance->lights.begin(),
+                                     PulseEngineInstance->lights.end(),
+                                     static_cast<LightData*>(*it));
+            if (lightIt != PulseEngineInstance->lights.end())
+            {
+                PulseEngineInstance->lights.erase(lightIt);
+            }
         }
-
-        ImGui::PopStyleVar(2);
-        ImGui::PopStyleColor(3);
-
-        ImGui::Spacing();
     }
 
-    for (auto it = lightsToDelete.rbegin(); it != lightsToDelete.rend(); ++it)
-    {
-        PulseEngineInstance->lights.erase(PulseEngineInstance->lights.begin() + *it);
-    }
 
     ImGui::EndChild();
 
