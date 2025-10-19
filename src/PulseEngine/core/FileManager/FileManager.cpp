@@ -49,6 +49,7 @@ json FileManager::OpenEngineConfigFile(PulseEngineBackend* engine)
     {
         // Default engine config
         engineConfig["GameData"]["Name"]             = "Pulse game name";
+        engineConfig["GameData"]["version"]           = "v0.0.1";
         engineConfig["GameData"]["FirstScene"]        = "Scenes/CZEFGZEOUFHDZOEIDYO.pmap";
         engineConfig["GameData"]["DefaultResolution"] = "1920x1080";
         engineConfig["GameData"]["Fullscreen"]        = false;
@@ -58,7 +59,7 @@ json FileManager::OpenEngineConfigFile(PulseEngineBackend* engine)
         engineConfig["Engine"]["Version"]  = engine->GetEngineVersion();
         engineConfig["Engine"]["DevMonth"] = engine->GetDevMonth();
         engineConfig["Engine"]["Author"]   = engine->GetCompanyName();
-        engineConfig["Engine"]["License"]  = "None";
+        engineConfig["Engine"]["License"]  = "Apache 2.0";
         engineConfig["Engine"]["discord"] = false;
         
 
