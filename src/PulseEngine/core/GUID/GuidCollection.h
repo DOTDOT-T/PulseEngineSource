@@ -98,6 +98,8 @@ public:
      * @return The file path associated with that GUID, or an empty string if not found.
      */
     std::string GetFilePathFromGuid(const std::string& guid) const;
+
+    std::string GetGuidFromFilePath(const std::string& filePath) const;
 };
 
 #endif // GUIDCOLLECTION_H

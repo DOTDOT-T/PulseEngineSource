@@ -106,7 +106,11 @@ public:
         RecalculateLightSpaceMatrix();
     }
 
-    DirectionalLight() : LightData() {}
+    DirectionalLight() : LightData() 
+    {
+        InitShadowMap(2048);
+        RecalculateLightSpaceMatrix();
+    }
 
     /**
      * @brief Initializes the shadow map resources (FBO and depth texture).

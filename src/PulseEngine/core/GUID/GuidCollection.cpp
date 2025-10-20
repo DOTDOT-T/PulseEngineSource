@@ -61,3 +61,15 @@ std::size_t GuidCollection::InsertFile(const std::string &filePath)
 
     return guid;
 }
+
+std::string GuidCollection::GetGuidFromFilePath(const std::string &filePath) const
+{
+    for (const auto& [key, value] : files)
+    {
+        if (value == filePath)
+        {
+            return key;
+        }
+    }
+    return std::string("");
+}

@@ -16,19 +16,19 @@ void PlayerBehavior::OnUpdate()
     PulseEngine::Vector3 moveDir(0.0f);
     if(inputSystem->isActionDown(0))
     {
-        moveDir.z -= 1.0f;
+        moveDir -= owner->GetTransform()->GetForward();
     }
     if(inputSystem->isActionDown(1))
     {
-        moveDir.z += 1.0f;
+        moveDir += owner->GetTransform()->GetForward();
     }
     if(inputSystem->isActionDown(2))
     {
-        moveDir.x -= 1.0f;
+        owner->SetRotation(owner->GetRotation() + PulseEngine::Vector3(0.0f, -25.0f * PulseEngineInstance->GetDeltaTime(), 0.0f));
     }
     if(inputSystem->isActionDown(3))
     {
-        moveDir.x += 1.0f;
+        owner->SetRotation(owner->GetRotation() - PulseEngine::Vector3(0.0f, -25.0f * PulseEngineInstance->GetDeltaTime(), 0.0f));
     }
     if(moveDir.x != 0.0f || moveDir.z != 0.0f || moveDir.y != 0.0f)
     {
@@ -37,13 +37,7 @@ void PlayerBehavior::OnUpdate()
         owner->SetPosition(owner->GetPosition() + moveDir * PulseEngineInstance->GetDeltaTime() * 5.0f);
     }
 
-    camera->Front = (owner->GetPosition() - camera->Position).Normalized();
-
-    owner->GetMaterialApi()->ChangeColor(owner->GetPosition().x / 10.0f + 0.5f, owner->GetPosition().y / 10.0f + 0.5f, owner->GetPosition().z / 10.0f + 0.5f);
-
-    PulseEngine::Vector3 dir = PulseEngine::MathUtils::LookAt(owner->GetPosition(), owner->GetPosition() + moveDir);
-    owner->SetRotation(PulseEngine::Vector3(0.0f, PulseEngine::MathUtils::ToDegrees(atan2(dir.x, dir.z)), 0.0f)); // only y rotation
-    
+    camera->Front = (owner->GetPosition() - camera->Position).Normalized();   
     
 }
 

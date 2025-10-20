@@ -22,6 +22,8 @@ namespace PulseEngine
             PulseEngine::Vector3 GetRotation() {return entity->GetRotation(); }
             void SetPosition(const PulseEngine::Vector3& pos) {entity->SetPosition(pos);}
             void SetRotation(const PulseEngine::Vector3& rot) {entity->SetRotation(rot);}
+
+            Transform* GetTransform() { return &entity->transform; }
     
             /**
              * @brief Get a specific component from the entity.
@@ -38,6 +40,44 @@ namespace PulseEngine
                     if (auto* ptr = dynamic_cast<ClassScript*>(script)) 
                     {
                         return ptr;
+                    }
+                }
+                return nullptr;
+            }
+
+            RenderableMesh* GetMeshByName(const std::string& name)
+            {
+                for (auto& mesh : entity->GetMeshes()) 
+                {
+                    if (mesh->GetName() == name) 
+                    {
+                        return mesh;
+                    }
+                }
+                return nullptr;
+            }
+
+            std::vector<RenderableMesh*> GetMeshesContainingName(const std::string& namePart)
+            {
+                std::vector<RenderableMesh*> matchingMeshes;
+                for (auto& mesh : entity->GetMeshes()) 
+                {
+                    if (mesh->GetName().find(namePart) != std::string::npos) 
+                    {
+                        matchingMeshes.push_back(mesh);
+                    }
+                }
+                return matchingMeshes;
+            }
+
+            RenderableMesh* GetMeshContainingName(const std::string& namePart)
+            {
+                std::vector<RenderableMesh*> matchingMeshes;
+                for (auto& mesh : entity->GetMeshes()) 
+                {
+                    if (mesh->GetName().find(namePart) != std::string::npos) 
+                    {
+                        return mesh;
                     }
                 }
                 return nullptr;

@@ -279,15 +279,14 @@ void TopBar::ImportMesh(InterfaceEditor *editor, std::string &name, std::string 
     DeletePrefix(fileStr, prefix, guidPath);
 
     std::filesystem::current_path(FileManager::workingDirectory);
-
-    GuidReader::InsertIntoCollection(guidPath);
+    PulseEngineInstance->guidCollections["guidCollectionMeshes.puid"]->InsertFile(guidPath);
     std::string copyCommand = "xcopy \"" + std::string(filePath) + "\" \"" + meshPath + "\" /Y";
     system(copyCommand.c_str());
 
     DeletePrefix(meshPath, prefix, meshPath);
     std::ofstream guidFile(fileStr);
     nlohmann::json_abi_v3_12_0::json guidJson;
-    guidJson["Guid"] = GenerateGUIDFromPath(guidPath);
+    guidJson["Guid"] = PulseEngineInstance->guidCollections["guidCollectionMeshes.puid"]->GetGuidFromFilePath(guidPath);
     guidJson["Name"] = name;
     guidJson["MeshPath"] = meshPath;
     guidJson["CreationDate"] = std::time(nullptr);
