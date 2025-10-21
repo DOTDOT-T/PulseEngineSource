@@ -234,9 +234,9 @@ void Entity::CalculateMeshMatrix(RenderableMesh* const & mesh) const
 
     Mat4 localTransform = MathUtils::Matrix::Identity();
     localTransform = MathUtils::Matrix::Translate(localTransform, mesh->position);
-    localTransform = MathUtils::Matrix::RotateX(localTransform, MathUtils::ToRadians(mesh->rotation.x));
-    localTransform = MathUtils::Matrix::RotateY(localTransform, MathUtils::ToRadians(mesh->rotation.y));
     localTransform = MathUtils::Matrix::RotateZ(localTransform, MathUtils::ToRadians(mesh->rotation.z));
+    localTransform = MathUtils::Matrix::RotateY(localTransform, MathUtils::ToRadians(mesh->rotation.y));
+    localTransform = MathUtils::Matrix::RotateX(localTransform, MathUtils::ToRadians(mesh->rotation.x));
     localTransform = MathUtils::Matrix::Scale(localTransform, mesh->scale);
 
     // Correct order: local × parent
