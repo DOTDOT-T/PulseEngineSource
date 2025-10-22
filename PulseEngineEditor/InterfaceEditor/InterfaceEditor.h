@@ -74,6 +74,9 @@ public:
 
     void Render();
 
+    void RenderGizmo(PulseEngine::Transform* transform, PulseEngine::Vector2 viewport);
+    PulseEngine::Transform* GetSelectedGizmo();
+
     void RenderFullscreenWelcomePanel();
 
     void ShowFileGrid(const fs::path &currentDir, fs::path &selectedFile);

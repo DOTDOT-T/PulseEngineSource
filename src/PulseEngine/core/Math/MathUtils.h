@@ -169,6 +169,22 @@ namespace PulseEngine
 
         namespace Matrix
         {
+            static void ToColumnMajor(const PulseEngine::Mat4& m, float out[16])
+            {
+                for (int row = 0; row < 4; ++row)
+                    for (int col = 0; col < 4; ++col)
+                        out[col * 4 + row] = m.data[row][col]; // transpose
+            }
+            
+            static PulseEngine::Mat4 FromColumnMajor(const float in[16])
+            {
+                PulseEngine::Mat4 m;
+                for (int row = 0; row < 4; ++row)
+                    for (int col = 0; col < 4; ++col)
+                        m.data[row][col] = in[col * 4 + row]; // transpose back
+                return m;
+            }
+
             inline PulseEngine::Mat4 Identity()
             {
                 PulseEngine::Mat4 mat;

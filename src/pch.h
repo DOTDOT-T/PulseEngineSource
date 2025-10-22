@@ -26,6 +26,7 @@
 #include "backends/imgui_impl_opengl3.h"
 #include "imgui-node/imgui_node_editor.h"
 #include "imgui-node/imgui_node_editor_internal.h"
+#include "imgui/ImGuizmo.h"
 namespace ed = ax::NodeEditor;
 // #include "PulseEngine/core/FileManager/FileReader/FileReader.h"
 // #include "PulseEngine/core/FileManager/FileManager.h"

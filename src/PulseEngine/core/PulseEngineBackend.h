@@ -118,6 +118,10 @@ public:
 
     std::unordered_map<std::string, GuidCollection*> guidCollections;
     InputSystem* inputSystem;
+
+    PulseEngine::Mat4 view;
+    PulseEngine::Mat4 projection;
+    
 private:
     WindowContext* windowContext = nullptr;
 
@@ -137,8 +141,6 @@ private:
 
     static Camera* activeCamera;
 
-    PulseEngine::Mat4 view;
-    PulseEngine::Mat4 projection;
 
 
     nlohmann::json_abi_v3_12_0::json engineConfig;

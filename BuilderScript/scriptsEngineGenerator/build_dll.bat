@@ -64,6 +64,7 @@ src\PulseEngine\core\ExecutableManager\ExecutableCommunication.cpp ^
 src\PulseEngine\API\EntityAPI\EntityApi.cpp ^
 include/imgui/backends/imgui_impl_glfw.cpp ^
 include/imgui/backends/imgui_impl_opengl3.cpp ^
+include\imgui\ImGuizmo.cpp ^
 include/imgui-node/imgui_node_editor.cpp ^
 include/imgui-node/imgui_node_editor_api.cpp ^
 include/imgui-node/imgui_canvas.cpp ^

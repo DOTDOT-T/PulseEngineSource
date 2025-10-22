@@ -19,6 +19,8 @@
 #include "PulseEngineEditor/InterfaceEditor/Synapse/Node.h"
 #include "PulseEngineEditor/InterfaceEditor/Synapse/Synapse.h"
 #include "PulseEngineEditor/InterfaceEditor/NewFileCreator/NewFileManager.h"
+#include "PulseEngine/core/Math/MathUtils.h"
+#include "camera.h"
 #include <glm/gtc/type_ptr.hpp>
 
 
@@ -688,4 +690,79 @@ void InterfaceEditor::InitAfterEngine()
     {
         module->Initialize();
     }
+}
+
+void InterfaceEditor::RenderGizmo(PulseEngine::Transform* transform, PulseEngine::Vector2 viewport)
+{
+    // Ensure we have a valid region
+    ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+    if (viewportSize.x <= 0.0f) viewportSize.x = 200.0f;
+    if (viewportSize.y <= 0.0f) viewportSize.y = 200.0f;
+
+    // Draw invisible button to capture input (represents the rendered viewport)
+    ImGui::InvisibleButton("ViewportGizmo", viewportSize);
+    bool hovered = ImGui::IsItemHovered();
+    bool active = ImGui::IsItemActive();
+
+    // --- Absolute screen rect for gizmo ---
+    ImVec2 itemMin = ImGui::GetItemRectMin();
+    ImVec2 itemMax = ImGui::GetItemRectMax();
+    ImVec2 itemSize = ImVec2(viewport.x, viewport.y);
+
+    // Make sure ImGuizmo draws in the same space as ImGui
+    ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());
+    float y = ImGui::GetIO().DisplaySize.y - (itemMin.y + viewportSize.y);
+    ImGuizmo::SetRect(itemMin.x, y, itemSize.x, itemSize.y);
+
+    // --- Prepare matrices ---
+    PulseEngine::Mat4 translation = PulseEngine::Mat4::CreateTranslation(transform->position);
+    PulseEngine::Mat4 rotation = PulseEngine::Mat4::CreateFromEulerAngles(
+        glm::radians(transform->rotation.x),
+        glm::radians(transform->rotation.y),
+        glm::radians(transform->rotation.z)
+    );
+    PulseEngine::Mat4 scale = PulseEngine::Mat4::CreateScale(transform->scale);
+    PulseEngine::Mat4 modelPE = translation * rotation * scale;
+
+    float model[16];
+    PulseEngine::MathUtils::Matrix::ToColumnMajor(modelPE, model);
+
+    // --- Camera matrices ---
+    Camera* cam = PulseEngineInstance->GetActiveCamera();
+    glm::mat4 view = glm::lookAt(
+        glm::vec3(cam->Position.x, cam->Position.y, cam->Position.z),
+        glm::vec3(cam->Position.x + cam->Front.x, cam->Position.y + cam->Front.y, cam->Position.z + cam->Front.z),
+        glm::vec3(cam->Up.x, cam->Up.y, cam->Up.z)
+    );
+
+    glm::mat4 projection = glm::perspective(
+        glm::radians(cam->Zoom),
+        viewport.x / viewport.y,
+        0.1f,
+        1000.0f
+    );
+    if (ImGui::IsItemActive() && ImGuizmo::IsOver())
+        ImGui::ClearActiveID();
+    // --- Manipulate only if viewport hovered or already active ---
+    ImGuizmo::Manipulate(glm::value_ptr(view),
+                         glm::value_ptr(projection),
+                         ImGuizmo::UNIVERSAL,
+                         ImGuizmo::LOCAL,
+                         model);
+
+    if (ImGuizmo::IsUsing())
+    {
+        float t[3], r[3], s[3];
+        ImGuizmo::DecomposeMatrixToComponents(model, t, r, s);
+        transform->position = { t[0], t[1], t[2] };
+        transform->rotation = { r[0], r[1], r[2] };
+        transform->scale    = { s[0], s[1], s[2] };
+    }
+    
+}
+
+
+PulseEngine::Transform *InterfaceEditor::GetSelectedGizmo()
+{
+    return selectedEntity ? &selectedEntity->transform : nullptr;
 }

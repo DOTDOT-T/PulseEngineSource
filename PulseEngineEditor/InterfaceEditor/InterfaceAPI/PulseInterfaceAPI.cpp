@@ -472,3 +472,62 @@ void PulseInterfaceAPI::EndTable()
 {
     ImGui::EndTable();
 }
+
+void PulseInterfaceAPI::RenderGizmo(PulseEngine::Transform *transform, PulseEngine::Vector2 viewportSize)
+{
+    PulseEngineInstance->editor->RenderGizmo(transform, viewportSize);
+}
+
+PulseEngine::Transform *PulseInterfaceAPI::GetSelectedGizmo()
+{
+    return PulseEngineInstance->editor->GetSelectedGizmo();
+}
+
+PulseEngine::Vector2 PulseInterfaceAPI::GetCursorScreenPos()
+{
+    return PulseEngine::Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
+}
+
+void PulseInterfaceAPI::SetCursorScreenPos(const PulseEngine::Vector2 &pos)
+{
+    ImGui::SetCursorScreenPos(ImVec2(pos.x, pos.y));
+}
+
+void PulseInterfaceAPI::GizmoDebug()
+{    // Ouvre une fenêtre ImGui
+    ImGui::Begin("Gizmo Test");
+
+    // Taille disponible pour le viewport
+    ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+    if (viewportSize.x <= 0.0f) viewportSize.x = 200.0f;
+    if (viewportSize.y <= 0.0f) viewportSize.y = 200.0f;
+
+
+    // Dummy "image" pour simuler le rendu de caméra
+    ImGui::Text("Camera Viewport");
+    ImGui::InvisibleButton("viewport", viewportSize); 
+    ImVec2 imagePos = ImGui::GetItemRectMin();
+    ImVec2 imageSize = ImGui::GetItemRectSize();
+
+    // Matrices simples pour le test
+    static glm::mat4 model = glm::mat4(1.0f);
+    static glm::mat4 view = glm::lookAt(
+        glm::vec3(0.0f, 0.0f, 5.0f),  // caméra position
+        glm::vec3(0.0f, 0.0f, 0.0f),  // regarde vers l'origine
+        glm::vec3(0.0f, 1.0f, 0.0f)   // up vector
+    );
+    static glm::mat4 projection = glm::perspective(glm::radians(60.0f), 
+        viewportSize.x / viewportSize.y, 0.1f, 100.0f);
+
+    // Set ImGuizmo drawlist et rect
+    ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());
+    ImGuizmo::SetRect(imagePos.x, imagePos.y, imageSize.x, imageSize.y);
+
+    // Manipulation du gizmo
+    ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(projection),
+                         ImGuizmo::OPERATION::UNIVERSAL,
+                         ImGuizmo::MODE::LOCAL,
+                         glm::value_ptr(model));
+
+    ImGui::End();
+}

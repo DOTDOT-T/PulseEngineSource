@@ -444,6 +444,17 @@ static void SetTableColumnIndex(int columnN);
  */
 static void EndTable();
 
+static void RenderGizmo(PulseEngine::Transform* transform, PulseEngine::Vector2 viewportSize);
+
+static PulseEngine::Transform* GetSelectedGizmo();
+
+static PulseEngine::Vector2 GetCursorScreenPos();
+
+static void SetCursorScreenPos(const PulseEngine::Vector2& pos);
+
+
+static void GizmoDebug();
+
 
 };
 
