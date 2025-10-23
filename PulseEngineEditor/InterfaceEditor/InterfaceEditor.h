@@ -74,7 +74,7 @@ public:
 
     void Render();
 
-    void RenderGizmo(PulseEngine::Transform* transform, PulseEngine::Vector2 viewport);
+    void RenderGizmo(PulseEngine::Transform* transform, PulseEngine::Vector2 viewport, ImGuizmo::OPERATION operation = ImGuizmo::OPERATION::TRANSLATE);
     PulseEngine::Transform* GetSelectedGizmo();
 
     void RenderFullscreenWelcomePanel();

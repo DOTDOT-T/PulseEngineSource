@@ -692,15 +692,17 @@ void InterfaceEditor::InitAfterEngine()
     }
 }
 
-void InterfaceEditor::RenderGizmo(PulseEngine::Transform* transform, PulseEngine::Vector2 viewport)
+void InterfaceEditor::RenderGizmo(PulseEngine::Transform* transform, PulseEngine::Vector2 viewport, ImGuizmo::OPERATION operation)
 {
+
+    ImGuizmo::BeginFrame();
     // Ensure we have a valid region
     ImVec2 viewportSize = ImGui::GetContentRegionAvail();
     if (viewportSize.x <= 0.0f) viewportSize.x = 200.0f;
     if (viewportSize.y <= 0.0f) viewportSize.y = 200.0f;
 
     // Draw invisible button to capture input (represents the rendered viewport)
-    ImGui::InvisibleButton("ViewportGizmo", viewportSize);
+    // ImGui::InvisibleButton("ViewportGizmo", viewportSize);
     bool hovered = ImGui::IsItemHovered();
     bool active = ImGui::IsItemActive();
 
@@ -711,18 +713,12 @@ void InterfaceEditor::RenderGizmo(PulseEngine::Transform* transform, PulseEngine
 
     // Make sure ImGuizmo draws in the same space as ImGui
     ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());
-    float y = ImGui::GetIO().DisplaySize.y - (itemMin.y + viewportSize.y);
-    ImGuizmo::SetRect(itemMin.x, y, itemSize.x, itemSize.y);
+    
+    ImGuizmo::SetRect(itemMin.x, itemMin.y, itemSize.x, itemSize.y);
 
     // --- Prepare matrices ---
     PulseEngine::Mat4 translation = PulseEngine::Mat4::CreateTranslation(transform->position);
-    PulseEngine::Mat4 rotation = PulseEngine::Mat4::CreateFromEulerAngles(
-        glm::radians(transform->rotation.x),
-        glm::radians(transform->rotation.y),
-        glm::radians(transform->rotation.z)
-    );
-    PulseEngine::Mat4 scale = PulseEngine::Mat4::CreateScale(transform->scale);
-    PulseEngine::Mat4 modelPE = translation * rotation * scale;
+    PulseEngine::Mat4 modelPE = translation;
 
     float model[16];
     PulseEngine::MathUtils::Matrix::ToColumnMajor(modelPE, model);
@@ -743,21 +739,27 @@ void InterfaceEditor::RenderGizmo(PulseEngine::Transform* transform, PulseEngine
     );
     if (ImGui::IsItemActive() && ImGuizmo::IsOver())
         ImGui::ClearActiveID();
+
+    
+
     // --- Manipulate only if viewport hovered or already active ---
     ImGuizmo::Manipulate(glm::value_ptr(view),
                          glm::value_ptr(projection),
-                         ImGuizmo::UNIVERSAL,
+                         operation,
                          ImGuizmo::LOCAL,
                          model);
 
-    if (ImGuizmo::IsUsing())
+                         
+
+    if(ImGuizmo::IsUsing())
     {
         float t[3], r[3], s[3];
         ImGuizmo::DecomposeMatrixToComponents(model, t, r, s);
-        transform->position = { t[0], t[1], t[2] };
-        transform->rotation = { r[0], r[1], r[2] };
-        transform->scale    = { s[0], s[1], s[2] };
+        if(operation == ImGuizmo::OPERATION::TRANSLATE) transform->position = { t[0], t[1], t[2] };
+        if(operation == ImGuizmo::OPERATION::ROTATE) transform->rotation    += { r[0], r[1], r[2] };
+        if(operation == ImGuizmo::OPERATION::SCALE) transform->scale        = { s[0], s[1], s[2] };
     }
+
     
 }
 

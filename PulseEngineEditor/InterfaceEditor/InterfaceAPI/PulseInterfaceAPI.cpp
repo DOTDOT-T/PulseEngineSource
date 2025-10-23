@@ -1,5 +1,6 @@
 #include "PulseInterfaceAPI.h"
 #include "imgui/imgui.h"
+#include "imgui/ImGuizmo.h"
 #include "PulseEngine/core/PulseEngineBackend.h"
 #include "PulseEngineEditor/InterfaceEditor/InterfaceEditor.h"
 #include "PulseEngine/core/Entity/Entity.h"
@@ -473,9 +474,15 @@ void PulseInterfaceAPI::EndTable()
     ImGui::EndTable();
 }
 
-void PulseInterfaceAPI::RenderGizmo(PulseEngine::Transform *transform, PulseEngine::Vector2 viewportSize)
+void PulseInterfaceAPI::RenderGizmo(PulseEngine::Transform *transform, PulseEngine::Vector2 viewportSize, TransformOperator transOp)
 {
-    PulseEngineInstance->editor->RenderGizmo(transform, viewportSize);
+    ImGuizmo::OPERATION op[3] = {
+        ImGuizmo::OPERATION::TRANSLATE,
+        ImGuizmo::OPERATION::ROTATE,
+        ImGuizmo::OPERATION::SCALE
+    };
+
+    PulseEngineInstance->editor->RenderGizmo(transform, viewportSize, op[(int)transOp]);
 }
 
 PulseEngine::Transform *PulseInterfaceAPI::GetSelectedGizmo()

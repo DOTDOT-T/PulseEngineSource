@@ -50,6 +50,13 @@ enum EditorWidgetComponent
     EDITOR_WIDGET__COMP_COUNT
 };
 
+enum TransformOperator
+{
+    TRANSLATE,
+    ROTATE,
+    SCALE
+};
+
 struct OutputContextMenuType
 {
     bool isClicked = false;
@@ -444,7 +451,7 @@ static void SetTableColumnIndex(int columnN);
  */
 static void EndTable();
 
-static void RenderGizmo(PulseEngine::Transform* transform, PulseEngine::Vector2 viewportSize);
+static void RenderGizmo(PulseEngine::Transform* transform, PulseEngine::Vector2 viewportSize, TransformOperator transOp);
 
 static PulseEngine::Transform* GetSelectedGizmo();
 
