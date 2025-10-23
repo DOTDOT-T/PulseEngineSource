@@ -80,6 +80,7 @@ src\PulseEngine\core\Profiler\Profiler.cpp ^
 src\PulseEngine\core\Profiler\ProfileTimer.cpp ^
 src\PulseEngine\core\PulseObject\PulseObject.cpp ^
 src\PulseEngine\core\Lights\Lights.cpp ^
+src\PulseEngine\core\SceneManager\SceneManager.cpp ^
 -I. -Iinclude -Iinclude/websocketpp -Iinclude/asio -Iinclude/imgui -Iinclude/imgui-node -I./src -IE:/Editor/Include -Iexternal/assimp/include ^
 -Lexternal/assimp/lib ^
 -Lexternal/assimp/lib/x64 ^

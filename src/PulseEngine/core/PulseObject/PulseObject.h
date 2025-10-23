@@ -37,6 +37,8 @@ class PULSE_ENGINE_DLL_API PulseObject
         virtual void Deserialize(Archive& ar);
         virtual const char* ToString();
         virtual const char* GetTypeName() const;
+
+        std::uint64_t GetGuid() {return static_cast<uint64_t>(guid);}
     private:
         const char* objectName;
         std::size_t guid;

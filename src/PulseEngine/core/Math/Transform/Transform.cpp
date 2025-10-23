@@ -1,6 +1,7 @@
 #include "Transform.h"
 #include "PulseEngine/core/Math/MathUtils.h" // For degrees to radians conversion
 #include "PulseEngine/core/FileManager/Archive/Archive.h"
+#include "PulseEngine/core/GUID/GuidGenerator.h"
 
 namespace PulseEngine 
 {
@@ -26,12 +27,13 @@ namespace PulseEngine
 
     const char* Transform::ToString()
     {
-        return std::string("position{" + std::string("x:") + std::to_string(position.x) + " : " + std::string("y:") + std::to_string(position.y) + " : " + std::string("z:") + std::to_string(position.z) + "}" + "rotation{" + std::string("x:") + std::to_string(rotation.x) + " : " + std::string("y:") + std::to_string(rotation.y) + " : " + std::string("z:") + std::to_string(rotation.z) + "}" + "scale{" + std::string("x:") + std::to_string(scale.x) + " : " + std::string("y:") + std::to_string(scale.y) + " : " + std::string("z:") + std::to_string(scale.z) + "}").c_str();
+        return "transform";
     }
 
     Transform::Transform(const Vector3& pos, const Vector3& rot, const Vector3& scl)
-        : position(pos), rotation(rot), scale(scl)
-    {
+        : position(pos), rotation(rot), scale(scl), PulseObject(GenerateNameOnTime(std::string("Transform")).c_str())
+    {    
+
     }
 
     Vector3 Transform::Apply(const Vector3& point) const 
@@ -67,6 +69,17 @@ namespace PulseEngine
         return Vector3(rotationMatrix[0][0], rotationMatrix[0][1], rotationMatrix[0][2]).Normalized();
     }
 
+    PulseEngine::Mat4 Transform::GetModelMatrix()
+    {
+        Mat4 transformMat = PulseEngine::MathUtils::Matrix::Identity();
+        transformMat = PulseEngine::MathUtils::Matrix::Translate(transformMat, position);
+        transformMat = PulseEngine::MathUtils::Matrix::RotateZ(transformMat, PulseEngine::MathUtils::ToRadians(rotation.z));
+        transformMat = PulseEngine::MathUtils::Matrix::RotateY(transformMat, PulseEngine::MathUtils::ToRadians(rotation.y));
+        transformMat = PulseEngine::MathUtils::Matrix::RotateX(transformMat, PulseEngine::MathUtils::ToRadians(rotation.x));
+        transformMat = PulseEngine::MathUtils::Matrix::Scale(transformMat, scale);
+
+        return transformMat;
+    }
 
     Vector3 Transform::GetUp() const
     {

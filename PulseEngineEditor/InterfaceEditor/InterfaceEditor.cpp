@@ -570,6 +570,8 @@ void InterfaceEditor::GenerateSceneDataWindow()
             entities.push_back(light);
         }
 
+
+
         for (auto* entity : entities)
         {
             if (!entity)
@@ -756,7 +758,7 @@ void InterfaceEditor::RenderGizmo(PulseEngine::Transform* transform, PulseEngine
         float t[3], r[3], s[3];
         ImGuizmo::DecomposeMatrixToComponents(model, t, r, s);
         if(operation == ImGuizmo::OPERATION::TRANSLATE) transform->position = { t[0], t[1], t[2] };
-        if(operation == ImGuizmo::OPERATION::ROTATE) transform->rotation    += { r[0], r[1], r[2] };
+        if(operation == ImGuizmo::OPERATION::ROTATE) transform->rotation   += { r[0], r[1], r[2] };
         if(operation == ImGuizmo::OPERATION::SCALE) transform->scale        = { s[0], s[1], s[2] };
     }
 
@@ -767,4 +769,39 @@ void InterfaceEditor::RenderGizmo(PulseEngine::Transform* transform, PulseEngine
 PulseEngine::Transform *InterfaceEditor::GetSelectedGizmo()
 {
     return selectedEntity ? &selectedEntity->transform : nullptr;
+}
+
+void InterfaceEditor::CleanUpHierarchy(HierarchyEntity* h)
+{
+
+    for(auto& child : h->children)
+    {
+        CleanUpHierarchy(child)
+        delete child;
+    }
+
+}
+
+void InterfaceEditor::GenerateHierarchy()
+{
+
+    std::unordered_map<uint64_t, HierarchyEntity*> allHierarchy;
+
+    for(Entity* ent : PulseEngineInstance->entities)
+    {
+        if(ent->transform.parentId == -1)
+        {
+            HierarchyEntity* newHierarchy = new HierarchyEntity;
+            newHierarchy->entity = ent;
+            hierarchy.children.push_back(newHierarchy);
+            allHierarchy[ent->transform.GetGuid()] = newHierarchy;
+        }
+        else
+        {
+            HierarchyEntity* newHierarchy = new HierarchyEntity;
+            newHierarchy->entity = ent;
+            allHierarchy[ent->transform.parentId]->children.push_back(newHierarchy);
+            allHierarchy            
+        }
+    }
 }

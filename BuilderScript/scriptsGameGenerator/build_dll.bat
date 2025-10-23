@@ -48,6 +48,7 @@ src\PulseEngine\core\PulseObject\PulseObject.cpp ^
 src\PulseEngine\core\Lights\Lights.cpp ^
 src\PulseEngine\core\Meshes\RenderableMesh.cpp ^
 src\PulseEngine\core\Meshes\StaticMesh.cpp ^
+src\PulseEngine\core\SceneManager\SceneManager.cpp ^
 -I. ^
 -Iinclude -Iinclude/imgui ^
 -I./src -Iexternal/assimp/include ^

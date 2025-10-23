@@ -65,16 +65,7 @@ Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position) : 
 
 void Entity::UpdateModelMatrix()
 {
-    using namespace PulseEngine;
-
-    Mat4 localMat = PulseEngine::MathUtils::Matrix::Identity();
-    localMat = PulseEngine::MathUtils::Matrix::Translate(localMat, transform.position);
-    localMat = PulseEngine::MathUtils::Matrix::RotateZ(localMat, PulseEngine::MathUtils::ToRadians(transform.rotation.z));
-    localMat = PulseEngine::MathUtils::Matrix::RotateY(localMat, PulseEngine::MathUtils::ToRadians(transform.rotation.y));
-    localMat = PulseEngine::MathUtils::Matrix::RotateX(localMat, PulseEngine::MathUtils::ToRadians(transform.rotation.x));
-    localMat = PulseEngine::MathUtils::Matrix::Scale(localMat, transform.scale);
-
-    this->entityMatrix = localMat;
+    this->entityMatrix = transform.GetModelMatrix();
 
     for(auto& mesh : meshes)
     {
@@ -239,7 +230,6 @@ void Entity::CalculateMeshMatrix(RenderableMesh* const & mesh) const
     localTransform = MathUtils::Matrix::RotateX(localTransform, MathUtils::ToRadians(mesh->rotation.x));
     localTransform = MathUtils::Matrix::Scale(localTransform, mesh->scale);
 
-    // Correct order: local × parent
     mesh->matrix = entityTransform * localTransform;
 
 }

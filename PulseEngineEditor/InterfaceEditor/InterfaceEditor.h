@@ -37,6 +37,12 @@ struct LoadingPopupData
     float progressPercent = 0.0f;
 };
 
+struct HierarchyEntity
+{
+    Entity* entity = nullptr;
+    std::vector<HierarchyEntity*> children;
+}
+
 
 
 
@@ -57,6 +63,7 @@ private:
     std::unordered_map<std::string, Texture*> icons;
     std::unordered_map<std::string, unsigned int> texturesLoaded;
     Synapse* synapse = nullptr;
+    HierarchyEntity hierarchy;
 
 public:
     std::unordered_map<std::string, bool> windowStates;
@@ -76,6 +83,10 @@ public:
 
     void RenderGizmo(PulseEngine::Transform* transform, PulseEngine::Vector2 viewport, ImGuizmo::OPERATION operation = ImGuizmo::OPERATION::TRANSLATE);
     PulseEngine::Transform* GetSelectedGizmo();
+
+    void CleanUpHierarchy(HierarchyEntity* h);
+    void GenerateHierarchy();
+    
 
     void RenderFullscreenWelcomePanel();
 
