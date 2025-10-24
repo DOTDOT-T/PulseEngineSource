@@ -14,6 +14,7 @@
 #include "PulseEngine/API/EntityAPI/EntityApi.h"
 #include "PulseEngine/core/FileManager/Archive/DiskArchive.h"
 #include "PulseEngine/core/PulseObject/TypeRegister/TypeRegister.h"
+#include "PulseEngine/core/SceneManager/SceneManager.h"
 
 #include <iostream>
 #include <assimp/Importer.hpp>      // Assimp::Importer
@@ -65,6 +66,7 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
 
 
             backend->entities.push_back(po);
+            SceneManager::GetInstance()->InsertEntity(po);
             EDITOR_LOG("Spawning " << po->ToString() << " transform -> " << po->transform.ToString())
         }
     }

@@ -2,6 +2,7 @@
 #define PULSEOBJECT_H
 
 #include <cstddef>
+#include <cstdint>
 #include <stdio.h>
 #include "Common/dllExport.h"
 
@@ -38,7 +39,7 @@ class PULSE_ENGINE_DLL_API PulseObject
         virtual const char* ToString();
         virtual const char* GetTypeName() const;
 
-        std::uint64_t GetGuid() {return static_cast<uint64_t>(guid);}
+        uint64_t GetGuid() {return static_cast<uint64_t>(guid);}
     private:
         const char* objectName;
         std::size_t guid;

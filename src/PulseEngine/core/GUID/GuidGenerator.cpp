@@ -9,7 +9,7 @@
 #include "GuidGenerator.h"
 
 
-std::size_t GenerateGUIDFromPath(const std::string& filepath)
+std::size_t PULSE_ENGINE_DLL_API GenerateGUIDFromPath(const std::string& filepath)
 {
     std::hash<std::string> hasher;
     return hasher(filepath);  // returns same value every time for the same path

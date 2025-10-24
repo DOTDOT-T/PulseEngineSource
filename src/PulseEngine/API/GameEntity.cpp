@@ -8,6 +8,7 @@
 #include "PulseEngine/CustomScripts/IScripts.h"
 #include "PulseEngine/core/GUID/GuidGenerator.h"
 #include "PulseEngine/core/GUID/GuidCollection.h"
+#include "PulseEngine/core/SceneManager/SceneManager.h"
 
 Entity *PulseEngine::GameEntity::Instantiate(const std::string &path, PulseEngine::Vector3 position, PulseEngine::Vector3 rotation, PulseEngine::Vector3 scale)
 {
@@ -39,6 +40,7 @@ Entity *PulseEngine::GameEntity::Instantiate(const std::string &path, PulseEngin
             script->OnStart();
         }
         PulseEngineInstance->entities.push_back(entity);
+        SceneManager::GetInstance()->InsertEntity(entity);
     }
     else
     {

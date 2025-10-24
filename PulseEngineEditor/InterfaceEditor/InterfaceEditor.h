@@ -19,6 +19,7 @@
 #include "Common/dllExport.h"
 #include "PulseEngineEditor/InterfaceEditor/Synapse/NodeMenuRegistry.h"
 #include "PulseEngineEditor/InterfaceEditor/Synapse/Node.h"
+#include "PulseEngine/core/SceneManager/SceneManager.h"
 #include <unordered_map>
 #include <filesystem>
 
@@ -36,14 +37,6 @@ struct LoadingPopupData
     std::function<void()> contentFunction;
     float progressPercent = 0.0f;
 };
-
-struct HierarchyEntity
-{
-    Entity* entity = nullptr;
-    std::vector<HierarchyEntity*> children;
-}
-
-
 
 
 
@@ -63,7 +56,8 @@ private:
     std::unordered_map<std::string, Texture*> icons;
     std::unordered_map<std::string, unsigned int> texturesLoaded;
     Synapse* synapse = nullptr;
-    HierarchyEntity hierarchy;
+
+    std::vector<std::pair<Entity*, PulseEngine::Transform*>> reparent;
 
 public:
     std::unordered_map<std::string, bool> windowStates;
@@ -80,12 +74,13 @@ public:
 #pragma endregion
 
     void Render();
+    void DrawHierarchyNode(HierarchyEntity* node, Entity*& selectedEntity, std::vector<Entity*>& entitiesToDelete);
 
     void RenderGizmo(PulseEngine::Transform* transform, PulseEngine::Vector2 viewport, ImGuizmo::OPERATION operation = ImGuizmo::OPERATION::TRANSLATE);
     PulseEngine::Transform* GetSelectedGizmo();
 
-    void CleanUpHierarchy(HierarchyEntity* h);
-    void GenerateHierarchy();
+    // void CleanUpHierarchy(HierarchyEntity* h);
+    // void GenerateHierarchy();
     
 
     void RenderFullscreenWelcomePanel();

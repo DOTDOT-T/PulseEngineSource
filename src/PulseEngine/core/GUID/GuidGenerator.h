@@ -45,6 +45,7 @@
  */
 std::size_t PULSE_ENGINE_DLL_API GenerateGUIDFromPath(const std::string& filepath);
 
+std::string PULSE_ENGINE_DLL_API GenerateNameOnTime(const std::string& baseName);
 /**
  * @brief Generates a deterministic GUID from a file path and a map name.
  * 

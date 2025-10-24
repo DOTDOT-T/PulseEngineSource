@@ -31,9 +31,9 @@ namespace PulseEngine
     }
 
     Transform::Transform(const Vector3& pos, const Vector3& rot, const Vector3& scl)
-        : position(pos), rotation(rot), scale(scl), PulseObject(GenerateNameOnTime(std::string("Transform")).c_str())
+        : position(pos), rotation(rot), scale(scl)
     {    
-
+        EDITOR_LOG("transform construct")
     }
 
     Vector3 Transform::Apply(const Vector3& point) const 

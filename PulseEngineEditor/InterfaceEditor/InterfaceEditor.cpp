@@ -20,6 +20,8 @@
 #include "PulseEngineEditor/InterfaceEditor/Synapse/Synapse.h"
 #include "PulseEngineEditor/InterfaceEditor/NewFileCreator/NewFileManager.h"
 #include "PulseEngine/core/Math/MathUtils.h"
+#include "PulseEngine/core/Math/Transform/Transform.h"
+#include "PulseEngine/core/SceneManager/SceneManager.h"
 #include "camera.h"
 #include <glm/gtc/type_ptr.hpp>
 
@@ -529,13 +531,19 @@ void InterfaceEditor::EntityAnalyzerWindow()
 }
 
 void InterfaceEditor::GenerateSceneDataWindow()
-{
-    ImGui::Begin("Scene Manager");
+{    
+    for(auto& rep : reparent)
+    {
+        SceneManager::GetInstance()->ChangeEntityParent(rep.first, rep.second);
+    }
 
-    ImGui::TextColored(ImVec4(0.1f, 0.6f, 0.9f, 1.0f), "Scene Management");
+    reparent.clear();
+    ImGui::Begin("Scene Manager");
+    // if(ImGui::Button("update")) GenerateHierarchy();
+
+    ImGui::TextColored(ImVec4(0.1f, 0.6f, 0.9f, 1.0f), "Scene Hierarchy");
     ImGui::Separator();
 
-    // Clear Scene Button
     if (ImGui::Button("Clear Scene", ImVec2(-1, 0)))
     {
         selectedEntity = nullptr;
@@ -546,108 +554,120 @@ void InterfaceEditor::GenerateSceneDataWindow()
     ImGui::Text("Scene Contents");
     ImGui::Separator();
 
-    // Scroll area for Entities + Lights
     ImGui::BeginChild("SceneEntitiesScroll", ImVec2(0, 300), true);
 
-    // Collect entities to safely delete after iteration
     std::vector<Entity*> entitiesToDelete;
 
-    if (ImGui::BeginTable("EntitiesTable", 3, 
-    ImGuiTableFlags_SizingStretchProp | 
-    ImGuiTableFlags_NoBordersInBodyUntilResize | 
-    ImGuiTableFlags_RowBg | 
-    ImGuiTableFlags_NoPadInnerX))
-    {
-        ImGui::TableSetupColumn("Name");
-        ImGui::TableSetupColumn("Type");
-        ImGui::TableSetupColumn("MUID");
-        ImGui::TableHeadersRow();
+    // --- Affiche la hiérarchie ---
+    DrawHierarchyNode(SceneManager::GetInstance()->GetRoot(), selectedEntity, entitiesToDelete);
 
-        std::vector<Entity*> entities = PulseEngineInstance->entities;
-
-        for(Entity* light : PulseEngineInstance->lights)
-        {
-            entities.push_back(light);
-        }
-
-
-
-        for (auto* entity : entities)
-        {
-            if (!entity)
-                continue;
-        
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn();
-        
-            std::string label = entity->GetName() + 
-                "##Entity_" + std::to_string(reinterpret_cast<uintptr_t>(entity));
-        
-            bool isSelected = (selectedEntity == entity);
-            ImGui::PushID(entity);
-            if (ImGui::Selectable(label.c_str(), isSelected, 
-                ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowDoubleClick))
-            {
-                selectedEntity = entity;
-            }
-        
-            // Right-click context menu
-            if (ImGui::BeginPopupContextItem())
-            {
-                if (ImGui::MenuItem("Destroy"))
-                {
-                    // Handle destruction here
-                    if (selectedEntity == entity)
-                    {
-                        entitiesToDelete.push_back(selectedEntity);
-                        selectedEntity = nullptr;
-                    }
-                
-                    ImGui::EndPopup();
-                    ImGui::PopID();
-                    break; // Break the loop since entity is destroyed
-                }
-                ImGui::EndPopup();
-            }
-        
-            ImGui::TableNextColumn();
-            ImGui::TextUnformatted(entity->GetTypeName());
-        
-            ImGui::TableNextColumn();
-            ImGui::Text("%zu", entity->GetMuid());
-        
-            ImGui::PopID();
-        }
-        
-        ImGui::EndTable();
-
-    }
-
-    // Delete entities after loop to avoid invalidating vector while iterating
+    // --- Suppression après parcours ---
     for (auto it = entitiesToDelete.rbegin(); it != entitiesToDelete.rend(); ++it)
     {
-        if((*it)->GetTypeName() == "Entity")
-        {
+        if ((*it)->GetTypeName() == std::string("Entity"))
             PulseEngineInstance->DeleteEntity(*it);
-        }
-        else if((*it)->GetTypeName() == "LightData")
+        else if ((*it)->GetTypeName() == std::string("LightData"))
         {
-            // Cherche l'itérateur dans le vector lights
             auto lightIt = std::find(PulseEngineInstance->lights.begin(),
                                      PulseEngineInstance->lights.end(),
                                      static_cast<LightData*>(*it));
             if (lightIt != PulseEngineInstance->lights.end())
-            {
                 PulseEngineInstance->lights.erase(lightIt);
-            }
         }
     }
 
-
     ImGui::EndChild();
-
-
     ImGui::End();
+
+
+
+}
+void InterfaceEditor::DrawHierarchyNode(HierarchyEntity* node, Entity*& selectedEntity, std::vector<Entity*>& entitiesToDelete)
+{
+    if (!node || !node->entity)
+        return;
+
+    Entity* entity = node->entity;
+    bool isSelected = (selectedEntity == entity);
+    bool safeEscape = false;
+
+    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+    if (node->children.empty())
+        flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+    if (isSelected)
+        flags |= ImGuiTreeNodeFlags_Selected;
+
+    std::string label = entity->GetName() + "##" + std::to_string(reinterpret_cast<uintptr_t>(entity));
+
+    bool nodeOpen = ImGui::TreeNodeEx((void*)entity, flags, "%s", label.c_str());
+
+    // --- Sélection ---
+    if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+        selectedEntity = entity;
+
+    // --- Drag source ---
+    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+    {
+        // payload type can be anything unique
+        ImGui::SetDragDropPayload("HIERARCHY_NODE", &entity, sizeof(Entity*));
+        ImGui::Text("Dragging %s", label.c_str());
+        ImGui::EndDragDropSource();
+    }
+
+    // --- Drag target ---
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_NODE"))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(Entity*));
+            Entity* draggedEntity = *(Entity**)payload->Data;
+
+            // --- Handle hierarchy reparenting ---
+            if (draggedEntity != entity)
+            {
+                SceneManager::GetInstance()->ChangeEntityParent(draggedEntity, &entity->transform);  
+                std::pair<Entity*, PulseEngine::Transform*> rep;
+                rep.first = draggedEntity;
+                rep.second = &entity->transform;
+                reparent.push_back(rep);
+            }
+        }
+        ImGui::EndDragDropTarget();
+        safeEscape = true;
+    }
+
+    // --- Context menu ---
+    if (ImGui::BeginPopupContextItem())
+    {
+        if (ImGui::MenuItem("Destroy"))
+        {
+            entitiesToDelete.push_back(entity);
+            selectedEntity = nullptr;
+        }
+        ImGui::EndPopup();
+    }
+
+    // --- Sub-nodes ---
+    if (nodeOpen && !node->children.empty())
+    {
+        if (!safeEscape)
+        {
+            // Make a shallow copy of the pointers. This avoids iterator invalidation
+            // if ChangeEntityParent mutates the original vector during drag/drop.
+            std::vector<HierarchyEntity*> childrenCopy = node->children;
+            for (HierarchyEntity* child : childrenCopy)
+            {
+                // Guard: child might have been removed; check non-null and still valid parent-child relation if needed
+                if (!child) continue;
+                DrawHierarchyNode(child, selectedEntity, entitiesToDelete);
+            }
+        }
+    
+        if (!(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+            ImGui::TreePop();
+    }
+
 }
 
 
@@ -771,37 +791,40 @@ PulseEngine::Transform *InterfaceEditor::GetSelectedGizmo()
     return selectedEntity ? &selectedEntity->transform : nullptr;
 }
 
-void InterfaceEditor::CleanUpHierarchy(HierarchyEntity* h)
-{
+// void InterfaceEditor::CleanUpHierarchy(HierarchyEntity* h)
+// {
 
-    for(auto& child : h->children)
-    {
-        CleanUpHierarchy(child)
-        delete child;
-    }
+//     for(auto& child : h->children)
+//     {
+//         CleanUpHierarchy(child);
+//         delete child;
+//     }
 
-}
+// }
 
-void InterfaceEditor::GenerateHierarchy()
-{
+// void InterfaceEditor::GenerateHierarchy()
+// {
+//     CleanUpHierarchy(hierarchy);
 
-    std::unordered_map<uint64_t, HierarchyEntity*> allHierarchy;
+//     std::unordered_map<PulseEngine::Transform*, HierarchyEntity*> allHierarchy;
+//     if(!hierarchy.entity)
+//     {
+//         hierarchy.entity = new Entity();
+//         hierarchy.entity->SetName("RootScene");
+//     }
 
-    for(Entity* ent : PulseEngineInstance->entities)
-    {
-        if(ent->transform.parentId == -1)
-        {
-            HierarchyEntity* newHierarchy = new HierarchyEntity;
-            newHierarchy->entity = ent;
-            hierarchy.children.push_back(newHierarchy);
-            allHierarchy[ent->transform.GetGuid()] = newHierarchy;
-        }
-        else
-        {
-            HierarchyEntity* newHierarchy = new HierarchyEntity;
-            newHierarchy->entity = ent;
-            allHierarchy[ent->transform.parentId]->children.push_back(newHierarchy);
-            allHierarchy            
-        }
-    }
-}
+//     for(Entity* ent : PulseEngineInstance->entities)
+//     {
+//         HierarchyEntity* newHierarchy = new HierarchyEntity;
+//         allHierarchy[&ent->transform] = newHierarchy;
+//         newHierarchy->entity = ent;
+//         if(!ent->transform.parent)
+//         {
+//             hierarchy.children.push_back(newHierarchy);
+//         }
+//         else
+//         {
+//             allHierarchy[ent->transform.parent]->children.push_back(newHierarchy);
+//         }
+//     }
+// }

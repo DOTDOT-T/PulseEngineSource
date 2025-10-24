@@ -19,10 +19,10 @@ namespace PulseEngine
         PULSE_GEN_BODY(Transform)
         PULSE_REGISTER_CLASS_HEADER(Transform)
     public:
-        uint64_t parentId = -1;
         PulseEngine::Vector3 position; // Position in 3D space
         PulseEngine::Vector3 rotation; // Rotation in degrees (pitch, yaw, roll)
         PulseEngine::Vector3 scale;    // Scale factors for each axis
+        Transform* parent = nullptr;
 
 
         Transform(const PulseEngine::Vector3& pos = PulseEngine::Vector3(0.0f, 0.0f, 0.0f), 

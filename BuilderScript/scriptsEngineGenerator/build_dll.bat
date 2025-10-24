@@ -18,7 +18,7 @@ if not exist Build\Modules\Interface (
     mkdir Interface
 )
 
-g++ -shared -Wl,--out-implib,Build/libPulseEngineEditor.a ^
+g++ -g -shared -Wl,--out-implib,Build/libPulseEngineEditor.a ^
 -o Build/PulseEngineEditor.dll ^
 %OBJFILES% ^
 src/glad.c ^

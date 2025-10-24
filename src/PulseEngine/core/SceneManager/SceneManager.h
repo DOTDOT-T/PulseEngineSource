@@ -5,21 +5,50 @@
 #include "common/dllExport.h"
 #include "PulseEngine/core/PulseObject/PulseObject.h"
 
-
 class Entity;
+
+struct HierarchyEntity
+{
+    Entity* entity = nullptr;
+    std::vector<HierarchyEntity*> children;
+
+    HierarchyEntity()
+    {
+        entity = nullptr;
+    }
+
+    HierarchyEntity(Entity* ent) 
+    {
+        entity = ent;
+    }
+};
+
+typedef std::unordered_map<PulseEngine::Transform*, HierarchyEntity*> MapTransforms;
 
 
 class PULSE_ENGINE_DLL_API SceneManager : public PulseObject
 {
 public:
-    SceneManager* GetInstance();
+    static SceneManager* GetInstance();
+
+    void InsertEntity(Entity* entity, PulseEngine::Transform* parent = nullptr);
+    void ChangeEntityParent(Entity *entity, PulseEngine::Transform *newParent);
+    std::vector<HierarchyEntity *>::iterator FindEntityInNodeChildren(std::vector<HierarchyEntity *> &childRoot, Entity *entity);
+    HierarchyEntity* GetRoot() {return &root;}
+
+    
+    void RegenerateHierarchy(MapTransforms MapTransforms);
 
 private:
     SceneManager();
     SceneManager(const SceneManager& sm) = delete;
     ~SceneManager() = delete;
 
-    std::unordered_map<uint64_t, Entity*> entities;
+    void CleanHierarchyFrom(HierarchyEntity* top);
+
+    MapTransforms allEntities;
+    HierarchyEntity root;
+
 };
 
 #endif
