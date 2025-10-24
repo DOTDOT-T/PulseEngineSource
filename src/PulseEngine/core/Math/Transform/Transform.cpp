@@ -69,7 +69,7 @@ namespace PulseEngine
         return Vector3(rotationMatrix[0][0], rotationMatrix[0][1], rotationMatrix[0][2]).Normalized();
     }
 
-    PulseEngine::Mat4 Transform::GetModelMatrix()
+    PulseEngine::Mat4 Transform::GetLocalMatrix()
     {
         Mat4 transformMat = PulseEngine::MathUtils::Matrix::Identity();
         transformMat = PulseEngine::MathUtils::Matrix::Translate(transformMat, position);

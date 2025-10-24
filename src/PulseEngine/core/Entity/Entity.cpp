@@ -52,7 +52,6 @@ Entity::Entity() : PulseObject()
 
 void Entity::BaseConstructor()
 {
-    UpdateModelMatrix();
     collider = new BoxCollider(&this->transform.position, &this->transform.rotation, PulseEngine::Vector3(1.0f, 1.0f, 1.0f));
     collider->owner = new PulseEngine::EntityApi(this);
 }
@@ -63,9 +62,9 @@ Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position) : 
     BaseConstructor();
 }
 
-void Entity::UpdateModelMatrix()
+void Entity::UpdateModelMatrix(PulseEngine::Mat4 parentMatrix)
 {
-    this->entityMatrix = transform.GetModelMatrix();
+    this->entityMatrix = parentMatrix * transform.GetLocalMatrix();
 
     for(auto& mesh : meshes)
     {
@@ -76,11 +75,11 @@ void Entity::UpdateModelMatrix()
 
 void Entity::SetMaterial(Material * material) { this->material = material; }
 
-void Entity::UpdateEntity(float deltaTime)
+void Entity::UpdateEntity(PulseEngine::Mat4 parentMatrix)
 {
     PROFILE_TIMER_FUNCTION;
-    internalClock += deltaTime;
-    UpdateModelMatrix();
+    internalClock += PulseEngineInstance->GetDeltaTime();
+    UpdateModelMatrix(parentMatrix);
     collider->SetRotation(transform.rotation);
     IN_GAME_ONLY(
         for (size_t i = 0; i < scripts.size(); ++i)

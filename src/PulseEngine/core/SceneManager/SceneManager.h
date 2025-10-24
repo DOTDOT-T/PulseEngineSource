@@ -36,6 +36,9 @@ public:
     std::vector<HierarchyEntity *>::iterator FindEntityInNodeChildren(std::vector<HierarchyEntity *> &childRoot, Entity *entity);
     HierarchyEntity* GetRoot() {return &root;}
 
+    void UpdateScene();
+    void RenderScene();
+
     
     void RegenerateHierarchy(MapTransforms MapTransforms);
 
@@ -45,6 +48,8 @@ private:
     ~SceneManager() = delete;
 
     void CleanHierarchyFrom(HierarchyEntity* top);
+
+    void UpdateEntityHierarchy(HierarchyEntity *top, PulseEngine::Mat4 parentMatrix);
 
     MapTransforms allEntities;
     HierarchyEntity root;

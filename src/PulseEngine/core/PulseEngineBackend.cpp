@@ -37,6 +37,7 @@
 #endif
 
 #include "PulseEngine/core/PulseObject/TypeRegister/TypeRegister.h"
+#include "PulseEngine/core/SceneManager/SceneManager.h"
 #include "Common/dllExport.h"
 
 Camera* PulseEngineBackend::activeCamera = new Camera();
@@ -171,18 +172,20 @@ void PulseEngineBackend::Update()
         light->RecalculateLightSpaceMatrix();
     }
 
-    for (size_t i = 0; i < entities.size(); ++i)
-    {
-        Entity* entityA = entities[i];
-        entityA->UpdateEntity(deltaTime);
-        Collider* col = dynamic_cast<Collider*>(entityA->collider);
-        if(col) col->othersCollider.clear();
-        for (size_t j = i + 1; j < entities.size(); ++j)
-        {
-            Entity* entityB = entities[j];
-            CollisionManager::ManageCollision(dynamic_cast<Collider*>(entityA->collider), dynamic_cast<Collider*>(entityB->collider));                
-        }
-    }
+    // for (size_t i = 0; i < entities.size(); ++i)
+    // {
+    //     Entity* entityA = entities[i];
+    //     entityA->UpdateEntity(deltaTime);
+    //     Collider* col = dynamic_cast<Collider*>(entityA->collider);
+    //     if(col) col->othersCollider.clear();
+    //     for (size_t j = i + 1; j < entities.size(); ++j)
+    //     {
+    //         Entity* entityB = entities[j];
+    //         CollisionManager::ManageCollision(dynamic_cast<Collider*>(entityA->collider), dynamic_cast<Collider*>(entityB->collider));                
+    //     }
+    // }
+
+    SceneManager::GetInstance()->UpdateScene();
     
 
     coroutineManager->UpdateAll(deltaTime);
@@ -221,7 +224,8 @@ void PulseEngineBackend::Render()
     
              break; // Only one directional light supported
          }
-        entity->DrawEntity();
+
+        SceneManager::GetInstance()->RenderScene();
     }
 
         // Draw grid quad in editor only

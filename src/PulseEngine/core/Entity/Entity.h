@@ -77,13 +77,13 @@ public:
     // ------------------------------------------------------------------------
 
     /// Sets the world position and updates the model matrix.
-    void SetPosition(const PulseEngine::Vector3& position) { this->transform.position = position; UpdateModelMatrix();}
+    void SetPosition(const PulseEngine::Vector3& position) { this->transform.position = position;}
 
     /// Sets the rotation and updates the model matrix.
-    void SetRotation(const PulseEngine::Vector3& rotation) { this->transform.rotation = rotation; UpdateModelMatrix();}
+    void SetRotation(const PulseEngine::Vector3& rotation) { this->transform.rotation = rotation;}
 
     /// Sets the scale and updates the model matrix.
-    void SetScale(const PulseEngine::Vector3& scale) {this->transform.scale = scale; UpdateModelMatrix();}
+    void SetScale(const PulseEngine::Vector3& scale) {this->transform.scale = scale;}
 
     void SetMaterial(Material* material);
 
@@ -95,7 +95,7 @@ public:
      * @brief Updates the entity's behavior/scripts.
      * @param deltaTime Time elapsed since the last frame.
      */
-    void UpdateEntity(float deltaTime);
+    void UpdateEntity(PulseEngine::Mat4 parentMatrix);
 
     /**
      * @brief Draws the entity using its current mesh/material/shader.
@@ -218,7 +218,7 @@ private:
     float internalClock = 0.0f;
 
     /// Updates the entity's world transformation matrix.
-    void UpdateModelMatrix();
+    void UpdateModelMatrix(PulseEngine::Mat4 parentMatrix);
 };
 
 #endif // ENTITY_H

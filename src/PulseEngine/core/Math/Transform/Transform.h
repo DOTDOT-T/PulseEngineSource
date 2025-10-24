@@ -51,7 +51,7 @@ namespace PulseEngine
          */
         PulseEngine::Vector3 GetRight() const;
 
-        PulseEngine::Mat4 GetModelMatrix();
+        PulseEngine::Mat4 GetLocalMatrix();
     };
 }
 

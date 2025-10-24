@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "PulseEngine/core/Entity/Entity.h"
+#include "PulseEngine/core/Math/MathUtils.h"
 #include <algorithm>
 
 SceneManager *SceneManager::GetInstance()
@@ -98,6 +99,23 @@ std::vector<HierarchyEntity *>::iterator SceneManager::FindEntityInNodeChildren(
         });
 }
 
+void SceneManager::UpdateScene()
+{
+    for(auto obj : root.children)
+    {
+        obj->entity->UpdateEntity(0.0f);
+        UpdateEntityHierarchy(obj, PulseEngine::MathUtils::Matrix::Identity());
+    }
+}
+
+void SceneManager::RenderScene()
+{
+    for(auto obj : root.children)
+    {
+        obj->entity->DrawEntity();
+    }
+}
+
 void SceneManager::RegenerateHierarchy(MapTransforms MapTransforms)
 {
     // CleanUpHierarchy(root);
@@ -132,4 +150,15 @@ void SceneManager::CleanHierarchyFrom(HierarchyEntity *top)
     //     CleanUpHierarchy(child);
     //     delete child;
     // }
+}
+
+void SceneManager::UpdateEntityHierarchy(HierarchyEntity *top, PulseEngine::Mat4 parentMatrix)
+{
+    if(!top) return;
+    top->entity->UpdateEntity(parentMatrix);
+    
+    for(HierarchyEntity* child : top->children)
+    {
+        UpdateEntityHierarchy(child, top->entity->GetMatrix());
+    }
 }
