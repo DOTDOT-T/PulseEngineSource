@@ -1,11 +1,11 @@
 {
     "Guid": "4521267087377263324",
-    "Material": "17020420305917145015",
-        "Meshes": [
+    "Material": "15061499069030162973",
+    "Meshes": [
         {
-            "Guid": "13027152586787336027",
-            "MeshPath": "models/Primitives/primitiveCube.pmesh",
-            "Name": "models/Primitives/primitiveCube.pmesh",
+            "Guid": "13165329742416532885",
+            "MeshPath": "models\\Tanks/track.fbx.pmesh",
+            "Name": "models\\Tanks/track.fbx.pmesh",
             "Position": [
                 0.0,
                 0.0,
@@ -21,6 +21,172 @@
                 1.0,
                 1.0
             ]
+        },
+        {
+            "Guid": "3864272412183776844",
+            "MeshPath": "models\\Tanks/chassis.fbx.pmesh",
+            "Name": "models\\Tanks/chassis.fbx.pmesh",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "Guid": "7093984251589410138",
+            "MeshPath": "models\\Tanks/turret.fbx.pmesh",
+            "Name": "models\\Tanks/turret.fbx.pmesh",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "Guid": "13556854434312303953",
+            "MeshPath": "models\\Tanks/cannon.fbx.pmesh",
+            "Name": "models\\Tanks/cannon.fbx.pmesh",
+            "Position": [
+                -0.05999999865889549,
+                0.9399999976158142,
+                -1.2000000476837158
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "Guid": "261959351707582769",
+            "MeshPath": "models\\Tanks/wheels.fbx.pmesh",
+            "Name": "models\\Tanks/wheels.fbx.pmesh",
+            "Position": [
+                1.659999966621399,
+                -0.3700000047683716,
+                2.490000009536743
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "Guid": "261959351707582769",
+            "MeshPath": "models\\Tanks/wheels.fbx.pmesh",
+            "Name": "models\\Tanks/wheels.fbx.pmesh",
+            "Position": [
+                1.659999966621399,
+                -0.3700000047683716,
+                1.2799999713897705
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "Guid": "261959351707582769",
+            "MeshPath": "models\\Tanks/wheels.fbx.pmesh",
+            "Name": "models\\Tanks/wheels.fbx.pmesh",
+            "Position": [
+                1.659999966621399,
+                -0.3700000047683716,
+                0.10000000149011612
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "Guid": "261959351707582769",
+            "MeshPath": "models\\Tanks/wheels.fbx.pmesh",
+            "Name": "models\\Tanks/wheels.fbx.pmesh",
+            "Position": [
+                1.659999966621399,
+                -0.3700000047683716,
+                -0.9700000286102295
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "Guid": "261959351707582769",
+            "MeshPath": "models\\Tanks/wheels.fbx.pmesh",
+            "Name": "models\\Tanks/wheels.fbx.pmesh",
+            "Position": [
+                1.659999966621399,
+                -0.3700000047683716,
+                -1.940000057220459
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "Scripts": [
+        {
+            "Guid": 4462949331954562030,
+            "Name": "PulseScriptPlayerBehavior"
         }
     ]
 }

@@ -1,3 +1,14 @@
+/**
+ * @file SceneManager.h
+ * @author Dorian LEXTERIAQUE (dlexteriaque@gmail.com)
+ * @brief The class that manage all the scene rendering and update
+ * @note will include BSP in the futur
+ * @version 0.1
+ * @date 2025-10-24
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 #ifndef SCENEMANAGER_H
 #define SCENEMANAGER_H
 

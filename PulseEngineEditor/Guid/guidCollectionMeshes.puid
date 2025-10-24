@@ -1,6 +1,11 @@
 {
-    "13027152586787336027": "models/model.pmesh",
     "0": "models/Primitives/primitiveCube.pmesh",
     "1": "models/Primitives/primitiveSphere.pmesh",
-    "2": "models/Primitives/primitiveCylinder.pmesh"
+    "13027152586787336027": "models/model.pmesh",
+    "13165329742416532885": "models\\Tanks/track.fbx.pmesh",
+    "13556854434312303953": "models\\Tanks/cannon.fbx.pmesh",
+    "2": "models/Primitives/primitiveCylinder.pmesh",
+    "261959351707582769": "models\\Tanks/wheels.fbx.pmesh",
+    "3864272412183776844": "models\\Tanks/chassis.fbx.pmesh",
+    "7093984251589410138": "models\\Tanks/turret.fbx.pmesh"
 }
