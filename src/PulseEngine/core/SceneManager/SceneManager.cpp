@@ -110,10 +110,7 @@ void SceneManager::UpdateScene()
 
 void SceneManager::RenderScene()
 {
-    for(auto obj : root.children)
-    {
-        obj->entity->DrawEntity();
-    }
+    RenderEntityHierarchy(&root);
 }
 
 void SceneManager::RegenerateHierarchy(MapTransforms MapTransforms)
@@ -160,5 +157,15 @@ void SceneManager::UpdateEntityHierarchy(HierarchyEntity *top, PulseEngine::Mat4
     for(HierarchyEntity* child : top->children)
     {
         UpdateEntityHierarchy(child, top->entity->GetMatrix());
+    }
+}
+
+void SceneManager::RenderEntityHierarchy(HierarchyEntity *top)
+{
+    if(!top) return;
+    top->entity->DrawEntity();
+    for(HierarchyEntity* child : top->children)
+    {
+        RenderEntityHierarchy(child);
     }
 }

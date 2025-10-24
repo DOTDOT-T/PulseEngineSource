@@ -22,6 +22,8 @@
 #include "PulseEngine/core/Math/MathUtils.h"
 #include "PulseEngine/core/Math/Transform/Transform.h"
 #include "PulseEngine/core/SceneManager/SceneManager.h"
+#include "PulseEngine/API/EntityAPI/EntityApi.h"
+#include "PulseEngine/API/GameEntity.h"
 #include "camera.h"
 #include <glm/gtc/type_ptr.hpp>
 
@@ -91,6 +93,27 @@ InterfaceEditor::InterfaceEditor()
     windowStates["SceneData"] = true;
     windowStates["assetManager"] = true;
 
+
+    fileClickedCallbacks.push_back(
+        [](const ClickedFileData& data) 
+        { 
+            std::string fullPath = data.name.string();
+            if (fullPath.size() >= 8 && fullPath.substr(fullPath.size() - 8) == ".pEntity")
+            {
+                if (ImGui::Selectable("Add to scene"))
+                {
+                    std::string instantiatePath = fullPath;
+                    std::cout << fullPath << std::endl;
+                    // Replace backslashes with forward slashes
+                    size_t pos = instantiatePath.find("PulseEngineEditor\\");
+                    if (pos != std::string::npos) {
+                        instantiatePath.erase(pos, std::string("PulseEngineEditor\\").length());
+                    }
+                    PulseEngine::GameEntity::Instantiate(instantiatePath, PulseEngine::Vector3(0.0f, 0.0f, 0.0f), PulseEngine::Vector3(0.0f, 0.0f, 0.0f), PulseEngine::Vector3(1.0f, 1.0f, 1.0f));
+                }
+            }
+
+        });
     
 
 

@@ -50,6 +50,7 @@ private:
     void CleanHierarchyFrom(HierarchyEntity* top);
 
     void UpdateEntityHierarchy(HierarchyEntity *top, PulseEngine::Mat4 parentMatrix);
+    void RenderEntityHierarchy(HierarchyEntity *top);
 
     MapTransforms allEntities;
     HierarchyEntity root;

@@ -225,7 +225,8 @@ void PulseEngineBackend::Render()
              break; // Only one directional light supported
          }
 
-        SceneManager::GetInstance()->RenderScene();
+         entity->DrawEntity();
+        // SceneManager::GetInstance()->RenderScene();
     }
 
         // Draw grid quad in editor only
