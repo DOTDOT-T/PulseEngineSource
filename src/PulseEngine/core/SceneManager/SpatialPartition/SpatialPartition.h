@@ -9,7 +9,6 @@ class Entity;
 
 class PULSE_ENGINE_DLL_API SpatialPartition : public PulseObject
 {
-    PULSE_GEN_BODY(SpatialPartition)
 public:
     virtual ~SpatialPartition() = default;
 

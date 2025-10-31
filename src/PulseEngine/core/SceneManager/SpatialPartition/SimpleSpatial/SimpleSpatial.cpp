@@ -1,5 +1,17 @@
 #include "SimpleSpatial.h"
 
+void SimpleSpatialPartition::Serialize(Archive& ar)
+{
+
+}
+void SimpleSpatialPartition::Deserialize(Archive& ar)
+{
+
+}
+const char* SimpleSpatialPartition::ToString()
+{
+    return "spatial partitionning";
+}
 void SimpleSpatialPartition::Insert(Entity *entity)
 {
     if (!entity) return;

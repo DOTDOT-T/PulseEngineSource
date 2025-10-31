@@ -8,6 +8,20 @@ float Plane::DistanceToPoint(const PulseEngine::Vector3 &p) const
     return normal.Dot(p) + d;
 }
 
+
+void Plane::Serialize(Archive& ar)
+{
+
+}
+void Plane::Deserialize(Archive& ar)
+{
+
+}
+const char* Plane::ToString()
+{
+    return "Plane";
+}
+
 void Frustum::ExtractFromMatrix(const PulseEngine::Mat4 & viewProj)
 {
     // left
@@ -63,4 +77,17 @@ bool Frustum::IntersectsAABB(const AABB & box) const
             return false; // box entirely outside
     }
     return true;
+}
+
+void Frustum::Serialize(Archive& ar)
+{
+
+}
+void Frustum::Deserialize(Archive& ar)
+{
+
+}
+const char* Frustum::ToString()
+{
+    return "Frustum";
 }
