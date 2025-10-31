@@ -50,7 +50,7 @@ json FileManager::OpenEngineConfigFile(PulseEngineBackend* engine)
         // Default engine config
         engineConfig["GameData"]["Name"]             = "Pulse game name";
         engineConfig["GameData"]["version"]           = "v0.0.1";
-        engineConfig["GameData"]["FirstScene"]        = "Scenes/CZEFGZEOUFHDZOEIDYO.pmap";
+        engineConfig["GameData"]["FirstScene"]        = "Scenes/default.pmap";
         engineConfig["GameData"]["DefaultResolution"] = "1920x1080";
         engineConfig["GameData"]["Fullscreen"]        = false;
         engineConfig["GameData"]["VSync"]             = true;
