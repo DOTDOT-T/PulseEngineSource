@@ -196,95 +196,38 @@ void PulseEngineBackend::Render()
     PROFILE_TIMER_FUNCTION;
     graphicsAPI->StartFrame();
 
-    for (Entity* entity : entities)
-    {
-        if (!IsRenderable(entity)) continue;
-        Shader* shader = entity->GetMaterial()->GetShader();
+    SceneManager::GetInstance()->RenderScene();
 
-        shader->Use();
-        shader->SetMat4("projection", projection);
-        shader->SetMat4("view", view);
-        shader->SetVec3("viewPos", GetActiveCamera()->Position);
-
-        LightManager::BindLightsToShader(shader, this, entity);
-         for (size_t i = 0; i < lights.size(); ++i)
-         {
-             DirectionalLight* dLight = dynamic_cast<DirectionalLight*>(lights[i]);
-             if (!dLight)
-                 continue;
-    
-             dLight->BindToShader(*shader, -1);
-    
-             if (dLight->castsShadow)
-             {            PulseEngineGraphicsAPI->ActivateTexture(0);
-                 PulseEngineGraphicsAPI->BindTexture(TEXTURE_2D, dLight->depthMapTex);
-          
-                 shader->SetInt("dirLight.shadowMap", 0);
-             }
-    
-             break; // Only one directional light supported
-         }
-
-         entity->DrawEntity();
-        // SceneManager::GetInstance()->RenderScene();
-    }
+    // for (Entity* entity : entities)
+    // {
+    //     if (!IsRenderable(entity)) continue;
+    //     Shader* shader = entity->GetMaterial()->GetShader();
+    //     shader->Use();
+    //     shader->SetMat4("projection", projection);
+    //     shader->SetMat4("view", view);
+    //     shader->SetVec3("viewPos", GetActiveCamera()->Position);
+    //     LightManager::BindLightsToShader(shader, this, entity);
+    //      for (size_t i = 0; i < lights.size(); ++i)
+    //      {
+    //          DirectionalLight* dLight = dynamic_cast<DirectionalLight*>(lights[i]);
+    //          if (!dLight)
+    //              continue;  
+    //          dLight->BindToShader(*shader, -1);   
+    //          if (dLight->castsShadow)
+    //          {            PulseEngineGraphicsAPI->ActivateTexture(0);
+    //              PulseEngineGraphicsAPI->BindTexture(TEXTURE_2D, dLight->depthMapTex);          
+    //              shader->SetInt("dirLight.shadowMap", 0);
+    //          }  
+    //          break; // Only one directional light supported
+    //      }
+    //      entity->DrawEntity();
+    //     // SceneManager::GetInstance()->RenderScene();
+    // }
 
         // Draw grid quad in editor only
     EDITOR_ONLY(
         DrawGridQuad(view, projection);
     )
-
-if (lights.size() > 0)
-{
-    DirectionalLight* dLight = dynamic_cast<DirectionalLight*>(lights[0]);
-    if (dLight && dLight->castsShadow)
-    {
-        // Static VAO/VBO pour ne créer qu'une seule fois
-        static unsigned int quadVAO = 0, quadVBO = 0, quadEBO = 0;
-        if (quadVAO == 0)
-        {
-            float quadVertices[] = {
-                // positions   // texCoords
-               -0.9f, -0.9f,  0.0f, 0.0f,
-               -0.5f, -0.9f,  1.0f, 0.0f,
-               -0.5f, -0.5f,  1.0f, 1.0f,
-               -0.9f, -0.5f,  0.0f, 1.0f
-            };
-            unsigned int quadIndices[] = { 0, 1, 2, 2, 3, 0 };
-
-            glGenVertexArrays(1, &quadVAO);
-            glGenBuffers(1, &quadVBO);
-            glGenBuffers(1, &quadEBO);
-
-            glBindVertexArray(quadVAO);
-
-            glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, quadEBO);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quadIndices), quadIndices, GL_STATIC_DRAW);
-
-            // position
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-            glEnableVertexAttribArray(0);
-            // texCoords
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-            glEnableVertexAttribArray(1);
-
-            glBindVertexArray(0);
-        }
-
-        // Draw quad
-        debugShader->Use();
-        PulseEngineGraphicsAPI->ActivateTexture(10);
-        PulseEngineGraphicsAPI->BindTexture(TEXTURE_2D, dLight->depthMapTex);
-        debugShader->SetInt("depthMap", 10);
-
-    glBindVertexArray(quadVAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-    }
-}
 
     graphicsAPI->EndFrame();
 }

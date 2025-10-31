@@ -1,6 +1,12 @@
 #include "SceneManager.h"
 #include "PulseEngine/core/Entity/Entity.h"
 #include "PulseEngine/core/Math/MathUtils.h"
+
+#include "PulseEngine/core/Material/Material.h"
+#include "PulseEngine/core/Lights/LightManager.h"
+#include "PulseEngine/core/SceneManager/SpatialPartition/SpatialPartition.h"
+#include "PulseEngine/core/SceneManager/SpatialPartition/SimpleSpatial/SimpleSpatial.h"
+
 #include <algorithm>
 
 SceneManager *SceneManager::GetInstance()
@@ -9,6 +15,7 @@ SceneManager *SceneManager::GetInstance()
     if(!sm)
     {
         sm = new SceneManager;
+        sm->spatialPartition = new SimpleSpatialPartition;
     } 
     return sm;
 }
@@ -22,6 +29,8 @@ void SceneManager::InsertEntity(Entity *entity, PulseEngine::Transform *parent)
         entity->transform.parent = parent;
     }
     else root.children.push_back(newHie);
+
+    spatialPartition->Insert(entity);
 }
 
 void SceneManager::ChangeEntityParent(Entity *entity, PulseEngine::Transform *newParent)
@@ -101,16 +110,42 @@ std::vector<HierarchyEntity *>::iterator SceneManager::FindEntityInNodeChildren(
 
 void SceneManager::UpdateScene()
 {
-    for(auto obj : root.children)
-    {
-        obj->entity->UpdateEntity(0.0f);
-        UpdateEntityHierarchy(obj, PulseEngine::MathUtils::Matrix::Identity());
-    }
+    UpdateEntityHierarchy(&root, PulseEngine::MathUtils::Matrix::Identity());
+
+    // Update spatial data for moved entities
+    /**
+     * @note we need a vector with all the moved entities (move from O(N) to O(K) with k the moved entities -> less than 5% of N in average)
+     */
+    for (auto& [transform, node] : allEntities)
+        spatialPartition->Update(node->entity);
 }
 
 void SceneManager::RenderScene()
 {
-    RenderEntityHierarchy(&root);
+
+    std::vector<Entity*> visible;
+
+    Frustum frust;
+    frust.ExtractFromMatrix(PulseEngineInstance->view * PulseEngineInstance->projection);
+    spatialPartition->Query(frust, visible);
+
+    for(Entity* ent : visible)
+    {
+        Entity* drawable = ent;
+        Shader* shader = drawable->GetMaterial()->GetShader();
+
+        shader->Use();
+        shader->SetMat4("projection", PulseEngineInstance->projection);
+        shader->SetMat4("view", PulseEngineInstance->view);
+        shader->SetVec3("viewPos", PulseEngineInstance->GetActiveCamera()->Position);
+
+        LightManager::BindLightsToShader(shader, PulseEngineInstance, drawable);
+
+        drawable->DrawEntity();
+    }
+
+
+    // RenderEntityHierarchy(&root);
 }
 
 void SceneManager::RegenerateHierarchy(MapTransforms MapTransforms)
@@ -162,7 +197,18 @@ void SceneManager::UpdateEntityHierarchy(HierarchyEntity *top, PulseEngine::Mat4
 
 void SceneManager::RenderEntityHierarchy(HierarchyEntity *top)
 {
-    if(!top) return;
+    if(!top || !top->entity || !top->entity->GetMaterial() || !top->entity->GetMaterial()->GetShader()) return;
+
+    Entity* drawable = top->entity;
+    Shader* shader = drawable->GetMaterial()->GetShader();
+
+    shader->Use();
+    shader->SetMat4("projection", PulseEngineInstance->projection);
+    shader->SetMat4("view", PulseEngineInstance->view);
+    shader->SetVec3("viewPos", PulseEngineInstance->GetActiveCamera()->Position);
+
+    LightManager::BindLightsToShader(shader, PulseEngineInstance, drawable);
+
     top->entity->DrawEntity();
     for(HierarchyEntity* child : top->children)
     {

@@ -17,6 +17,7 @@
 #include "PulseEngine/core/PulseObject/PulseObject.h"
 
 class Entity;
+class SpatialPartition;
 
 struct HierarchyEntity
 {
@@ -65,6 +66,7 @@ private:
 
     MapTransforms allEntities;
     HierarchyEntity root;
+    SpatialPartition* spatialPartition;
 
 };
 

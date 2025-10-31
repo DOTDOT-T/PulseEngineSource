@@ -6,6 +6,9 @@
 
 namespace PulseEngine
 {
+
+    
+
     /**
      * @brief Mat4 class represents a 4x4 matrix used for 3D transformations.
      * 
@@ -13,7 +16,18 @@ namespace PulseEngine
     struct PULSE_ENGINE_DLL_API Mat4
     {
         float data[4][4]; 
-
+        inline Vector4 operator*(const Vector4& vec) const
+        {
+            Vector4 result;
+            for (int row = 0; row < 4; ++row)
+            {
+                result[row] = data[row][0] * vec.x +
+                              data[row][1] * vec.y +
+                              data[row][2] * vec.z +
+                              data[row][3] * vec.a;
+            }
+            return result;
+        }
         // Default constructor initializes to identity matrix
         Mat4()
         {
@@ -118,7 +132,7 @@ namespace PulseEngine
             }
             return result;
         }
-
+        
 
         /**
          * @brief Multiply this matrix by a vector.

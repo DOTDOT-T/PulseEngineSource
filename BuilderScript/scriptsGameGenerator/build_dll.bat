@@ -49,6 +49,9 @@ src\PulseEngine\core\Lights\Lights.cpp ^
 src\PulseEngine\core\Meshes\RenderableMesh.cpp ^
 src\PulseEngine\core\Meshes\StaticMesh.cpp ^
 src\PulseEngine\core\SceneManager\SceneManager.cpp ^
+src\PulseEngine\core\SceneManager\SpatialPartition\SpatialPartition.cpp ^
+src\PulseEngine\core\Math\Frustum\Frustum.cpp ^
+src\PulseEngine\core\SceneManager\SpatialPartition\SimpleSpatial\SimpleSpatial.cpp ^
 -I. ^
 -Iinclude -Iinclude/imgui ^
 -I./src -Iexternal/assimp/include ^

@@ -128,7 +128,43 @@ namespace PulseEngine
             return x * other.x + y * other.y + z * other.z;
         }
 
-        
+            Vector3 Min(const Vector3& other) const
+    {
+        return Vector3(
+            std::min(x, other.x),
+            std::min(y, other.y),
+            std::min(z, other.z)
+        );
+    }
+
+    // Returns the component-wise maximum between this vector and another
+    Vector3 Max(const Vector3& other) const
+    {
+        return Vector3(
+            std::max(x, other.x),
+            std::max(y, other.y),
+            std::max(z, other.z)
+        );
+    }
+
+    // Static helpers (so you can call Vector3::Min(a, b))
+    static Vector3 Min(const Vector3& a, const Vector3& b)
+    {
+        return Vector3(
+            std::min(a.x, b.x),
+            std::min(a.y, b.y),
+            std::min(a.z, b.z)
+        );
+    }
+
+    static Vector3 Max(const Vector3& a, const Vector3& b)
+    {
+        return Vector3(
+            std::max(a.x, b.x),
+            std::max(a.y, b.y),
+            std::max(a.z, b.z)
+        );
+    }
     };
 
     struct Vector4
