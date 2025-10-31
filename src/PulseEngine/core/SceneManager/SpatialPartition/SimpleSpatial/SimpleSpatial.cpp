@@ -42,7 +42,7 @@ void SimpleSpatialPartition::Query(const Frustum &frustum, std::vector<Entity *>
         {
             if (!e) continue;
 
-            AABB aabb = AABB(e->GetPosition() - PulseEngine::Vector3(0.1f), e->GetPosition() + PulseEngine::Vector3(0.1f));
+            AABB aabb = AABB(e->GetPosition() - PulseEngine::Vector3(0.5f), e->GetPosition() + PulseEngine::Vector3(0.5f));
             if (frustum.IntersectsAABB(aabb))
                 outEntities.push_back(e);
         }

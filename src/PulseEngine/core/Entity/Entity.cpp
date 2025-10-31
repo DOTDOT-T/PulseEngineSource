@@ -48,6 +48,7 @@ Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position, Me
 
 Entity::Entity() : PulseObject()
 {
+    BaseConstructor();
 }
 
 void Entity::BaseConstructor()
