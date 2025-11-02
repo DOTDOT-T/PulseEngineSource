@@ -1,4 +1,3 @@
-#include "Common/common.h"
 #include "renderer.h"
 
 
@@ -7,11 +6,9 @@ Renderer::Renderer() {
 }
 
 void Renderer::clear() {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    std::cout << "clearings" << std::endl;
 }
 
-void Renderer::render(Shader& shader) {
-    // Applique le shader et dessine les objets 3D ici
-    // glUseProgram(shader.getProgramID());
-    // Dessin (par exemple, triangle, modèle, etc.)
+void Renderer::render() {
+    std::cout << "rendering" << std::endl;
 }

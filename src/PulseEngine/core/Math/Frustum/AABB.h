@@ -1,6 +1,9 @@
 #pragma once
 
-#include "Common/common.h"
+// #include "Common/common.h"
+
+#include "PulseEngine/core/Math/Vector.h"
+#include "PulseEngine/core/Math/Mat4.h"
 #include <algorithm>
 
 struct AABB

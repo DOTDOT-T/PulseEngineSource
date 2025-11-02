@@ -5,8 +5,8 @@
 #include <string>
 #include <functional>
 #include <chrono>
-#include "Common/common.h"
-#include "GuidGenerator.h"
+// #include "Common/common.h"
+// #include "GuidGenerator.h"
 
 
 std::size_t PULSE_ENGINE_DLL_API GenerateGUIDFromPath(const std::string& filepath)

@@ -1,5 +1,6 @@
 #include "PulseObject.h"
-#include "Common/common.h"
+// #include "Common/common.h"
+#include "Common/EditorDefines.h"
 #include "PulseEngine/core/GUID/GuidGenerator.h"
 #include "PulseEngine/core/FileManager/Archive/Archive.h"
 

@@ -1,12 +1,15 @@
 #ifndef FRUSTUM_H
 #define FRUSTUM_H
 
-#include "Common/common.h"
-#include "Common/dllExport.h"
+// #include "Common/common.h"
 
 #include "PulseEngine/core/PulseObject/PulseObject.h"
 #include "PulseEngine/core/PulseObject/TypeRegister/TypeRegister.h"
 #include "PulseEngine/core/Math/Frustum/AABB.h"
+#include "Common/dllExport.h"
+
+#include "PulseEngine/core/Math/Vector.h"
+#include "PulseEngine/core/Math/Mat4.h"
 
 struct PULSE_ENGINE_DLL_API Plane : public PulseObject
 {

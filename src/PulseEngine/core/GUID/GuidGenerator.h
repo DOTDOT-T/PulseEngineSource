@@ -31,8 +31,9 @@
 #ifndef GUIDGENERATOR_H
 #define GUIDGENERATOR_H
 
-#include "Common/common.h"
+// #include "Common/common.h"
 #include "Common/dllExport.h"
+#include <string>
 
 /**
  * @brief Generates a deterministic GUID from a file path string.
