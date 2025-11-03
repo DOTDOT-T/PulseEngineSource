@@ -1,6 +1,8 @@
 #include "InputSystem.h"
 #include <iostream>
 
+using namespace PulseEngine::FileSystem;
+
 InputSystem::InputSystem() : mouseX(0.0), mouseY(0.0) {
     for (int i = 0; i < MAX_KEYS; i++) {
         keys[i].keyCode = -1;

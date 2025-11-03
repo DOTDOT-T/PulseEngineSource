@@ -1,10 +1,11 @@
 #include "FileManager.h"
-#include "PulseEngine/core/PulseEngineBackend.h"
+// #include "PulseEngine/core/PulseEngineBackend.h"
 
 #include <fstream>
 #include <algorithm>
 
 using json = nlohmann::json;
+using namespace PulseEngine::FileSystem;
 
 std::filesystem::path FileManager::workingDirectory = "";
 
@@ -39,7 +40,7 @@ std::string FileManager::GetCollectionByExtension(const std::string& fileName)
     return collectionType;
 }
 
-json FileManager::OpenEngineConfigFile(PulseEngineBackend* engine)
+json FileManager::OpenEngineConfigFile()
 {
     const std::string configPath = std::string(ASSET_PATH) + "Engine-config.ini";
     json engineConfig;
@@ -55,10 +56,10 @@ json FileManager::OpenEngineConfigFile(PulseEngineBackend* engine)
         engineConfig["GameData"]["Fullscreen"]        = false;
         engineConfig["GameData"]["VSync"]             = true;
 
-        engineConfig["Engine"]["Name"]     = engine->GetEngineName();
-        engineConfig["Engine"]["Version"]  = engine->GetEngineVersion();
-        engineConfig["Engine"]["DevMonth"] = engine->GetDevMonth();
-        engineConfig["Engine"]["Author"]   = engine->GetCompanyName();
+        engineConfig["Engine"]["Name"]     = "Pulse Engine";
+        engineConfig["Engine"]["Version"]  = "v0.2.1";
+        engineConfig["Engine"]["DevMonth"] = "November";
+        engineConfig["Engine"]["Author"]   = "Pulse Software";
         engineConfig["Engine"]["License"]  = "Apache 2.0";
         engineConfig["Engine"]["discord"] = false;
         
@@ -77,7 +78,7 @@ json FileManager::OpenEngineConfigFile(PulseEngineBackend* engine)
     return engineConfig;
 }
 
-void FileManager::SaveEngineConfigFile(PulseEngineBackend* engine, const json& engineConfig)
+void FileManager::SaveEngineConfigFile(const json& engineConfig)
 {
     const std::string configPath = std::string(ASSET_PATH) + "Engine-config.ini";
     std::ofstream outFile(configPath);

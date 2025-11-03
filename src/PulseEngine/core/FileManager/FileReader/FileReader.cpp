@@ -1,4 +1,5 @@
 #include "FileReader.h"
+using namespace PulseEngine::FileSystem;
 
 FileReader::FileReader(const std::string &path)
 {
@@ -7,13 +8,17 @@ FileReader::FileReader(const std::string &path)
 
 #ifdef PULSE_WINDOWS
     std::filesystem::path p(definePath);
-    if(!std::filesystem::exists(p))
+    if (!std::filesystem::exists(p))
     {
         EDITOR_LOG("File at path " + definePath + " does not exist. Creating it");
-        FileManager::CreateNewDirectories(path.substr(0, path.find_last_of("/\\")));
+    
+        auto parentDir = std::filesystem::path(definePath).parent_path();
+        std::filesystem::create_directories(parentDir);
+    
         std::ofstream createFile(definePath);
         createFile.close();
     }
+
     fileData = new std::ifstream(definePath);
 #endif
 

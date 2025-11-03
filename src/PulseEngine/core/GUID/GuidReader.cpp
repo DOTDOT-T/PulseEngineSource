@@ -22,6 +22,7 @@
 #include <assimp/postprocess.h>     // postprocessing flags
 
 #include <set>
+using namespace PulseEngine::FileSystem;
 
 Entity *GuidReader::GetEntityFromGuid(std::size_t guid)
 {

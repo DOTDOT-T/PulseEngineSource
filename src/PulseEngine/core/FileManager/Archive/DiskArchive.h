@@ -10,6 +10,7 @@
 #include <string>
 #include <cstring>
 #include <filesystem>
+using namespace PulseEngine::FileSystem;
 
 // ============================================================================
 // DiskArchive : Archive binaire fiable pour lecture/écriture disque

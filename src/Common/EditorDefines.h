@@ -96,6 +96,16 @@
     #define PROFILE_TIMER_FUNCTION 
 #endif
 
+
+// --------------------
+// Asset Path Configuration
+// --------------------
+#ifdef ENGINE_EDITOR
+    #define ASSET_PATH "PulseEngineEditor/"  // Editor-specific asset path
+#else
+    #define ASSET_PATH "assets/"             // Runtime asset path
+#endif
+
 #define PulseEngineInstance PulseEngineBackend::GetInstance()
 #define PulseEngineGraphicsAPI PulseEngineBackend::graphicsAPI
 #define PulseEngineDeltaTime PulseEngineBackend::GetDeltaTime()

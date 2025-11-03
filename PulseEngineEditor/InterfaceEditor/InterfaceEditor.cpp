@@ -29,6 +29,7 @@
 
 
 #include <filesystem>
+using namespace PulseEngine::FileSystem;
 
 namespace ed = ax::NodeEditor;
 namespace fs = std::filesystem;
@@ -342,7 +343,7 @@ void InterfaceEditor::EngineConfigWindow()
     static int selectedMapIndex = 0;
     static std::vector<std::string> mapFiles = SceneLoader::GetSceneFiles("PulseEngineEditor/Scenes");
 
-    auto saveConfig = FileManager::OpenEngineConfigFile(PulseEngineInstance);
+    auto saveConfig = FileManager::OpenEngineConfigFile();
 
     static char engineNameBuffer[128] = {0};
     static bool nameInitialized = false;
@@ -355,7 +356,7 @@ void InterfaceEditor::EngineConfigWindow()
     ImGui::Text("Project Name:");
     if (ImGui::InputText("##ProjectName", engineNameBuffer, sizeof(engineNameBuffer))) {
         saveConfig["GameData"]["Name"] = std::string(engineNameBuffer);
-        FileManager::SaveEngineConfigFile(PulseEngineInstance, saveConfig);
+        FileManager::SaveEngineConfigFile(saveConfig);
     }
 
     ImGui::Text("Launch Map:");
@@ -385,7 +386,7 @@ void InterfaceEditor::EngineConfigWindow()
             {
                 selectedMapIndex = i;
                 saveConfig["GameData"]["FirstScene"] = mapFiles[i];
-                FileManager::SaveEngineConfigFile(PulseEngineInstance, saveConfig);
+                FileManager::SaveEngineConfigFile(saveConfig);
             }
             if (isSelected)
                 ImGui::SetItemDefaultFocus();

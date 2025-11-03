@@ -40,6 +40,8 @@
 #include "PulseEngine/core/SceneManager/SceneManager.h"
 #include "Common/dllExport.h"
 
+using namespace PulseEngine::FileSystem;
+
 Camera* PulseEngineBackend::activeCamera = new Camera();
 IGraphicsAPI* PulseEngineBackend::graphicsAPI = nullptr;
 PulseEngineBackend* PulseEngineBackend::instance = nullptr;
@@ -113,7 +115,7 @@ int PulseEngineBackend::Initialize()
     )
 
  
-    engineConfig = FileManager::OpenEngineConfigFile(this);
+    engineConfig = FileManager::OpenEngineConfigFile();
 
     std::string firstScene = engineConfig["GameData"]["FirstScene"];
     SceneLoader::LoadScene(firstScene, this);

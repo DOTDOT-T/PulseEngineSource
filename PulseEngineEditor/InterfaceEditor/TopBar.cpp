@@ -35,6 +35,7 @@
 #include "PulseEngine/CustomScripts/ScriptsLoader.h"
 #include <windows.h>
 #include <commdlg.h>
+using namespace PulseEngine::FileSystem;
 
 namespace ed = ax::NodeEditor;
 
@@ -391,7 +392,7 @@ void TopBar::AnalyzeEntry(const std::filesystem::directory_entry & entry, std::s
 void TopBar::GenerateExecutableForWindow(PulseEngineBackend * engine)
 {
 
-    nlohmann::json_abi_v3_12_0::json engineConfig = FileManager::OpenEngineConfigFile(engine);
+    nlohmann::json_abi_v3_12_0::json engineConfig = FileManager::OpenEngineConfigFile();
     std::string gameName = engineConfig["GameData"]["Name"].get<std::string>();
     std::string gameVersion = engineConfig["GameData"]["version"].get<std::string>();
 

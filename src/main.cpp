@@ -26,6 +26,7 @@
 #include <iostream>
 #include <map>
 
+using namespace PulseEngine::FileSystem;
 
 
 int main(int argc, char** argv)

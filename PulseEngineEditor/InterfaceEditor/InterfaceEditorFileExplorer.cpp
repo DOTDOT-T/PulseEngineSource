@@ -24,6 +24,7 @@
 
 #include <filesystem>
 
+using namespace PulseEngine::FileSystem;
 namespace fs = std::filesystem;
 
 void InterfaceEditor::ShowFileGrid(const fs::path& currentDir, fs::path& selectedFile)
