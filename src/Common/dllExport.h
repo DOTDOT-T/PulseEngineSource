@@ -32,3 +32,4 @@
   /// No-op for non-Windows platforms (Linux/macOS).
   #define PULSE_ENGINE_DLL_API
 #endif
+

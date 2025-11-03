@@ -11,6 +11,8 @@
 #include "PulseEngine/core/PulseObject/PulseObject.h"
 #include "Common/EditorDefines.h"
 
+using namespace PulseEngine::Registry;
+
 #define PULSE_REGISTER_CLASS_HEADER(name) \
     public: \
         static bool objectRegistered##name;

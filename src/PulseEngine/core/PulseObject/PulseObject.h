@@ -27,22 +27,26 @@
 
 class Archive;
 
-class PULSE_ENGINE_DLL_API PulseObject
+
+namespace PulseEngine::Registry
 {
-    public:
+    class PULSE_ENGINE_DLL_API PulseObject
+    {
+        public:
 
-        PulseObject(const char* name = "Unnamed");
-        ~PulseObject();
+            PulseObject(const char* name = "Unnamed");
+            ~PulseObject();
 
-        virtual void Serialize(Archive& ar);
-        virtual void Deserialize(Archive& ar);
-        virtual const char* ToString();
-        virtual const char* GetTypeName() const;
+            virtual void Serialize(Archive& ar);
+            virtual void Deserialize(Archive& ar);
+            virtual const char* ToString();
+            virtual const char* GetTypeName() const;
 
-        uint64_t GetGuid() {return static_cast<uint64_t>(guid);}
-    private:
-        const char* objectName;
-        std::size_t guid;
-};
+            uint64_t GetGuid() {return static_cast<uint64_t>(guid);}
+        private:
+            const char* objectName;
+            std::size_t guid;
+    };
+}
 
 #endif

@@ -35,28 +35,32 @@
 #include "Common/dllExport.h"
 #include <string>
 
-/**
- * @brief Generates a deterministic GUID from a file path string.
- * 
- * @param filepath Path to the asset file.
- * @return A size_t representing the GUID.
- * 
- * @note Deterministic: calling this function multiple times with the same
- * filepath will return the same GUID.
- */
-std::size_t PULSE_ENGINE_DLL_API GenerateGUIDFromPath(const std::string& filepath);
+namespace PulseEngine::Registry
+{
 
-std::string PULSE_ENGINE_DLL_API GenerateNameOnTime(const std::string& baseName);
-/**
- * @brief Generates a deterministic GUID from a file path and a map name.
- * 
- * @param filepath Path to the asset file.
- * @param mapName Optional map or collection name to namespace the GUID.
- * @return A size_t representing the GUID.
- * 
- * @note Using a map name allows multiple collections to reference the same
- * file independently without collision.
- */
-std::size_t PULSE_ENGINE_DLL_API GenerateGUIDFromPathAndMap(const std::string& filepath, const std::string& mapName);
+    /**
+     * @brief Generates a deterministic GUID from a file path string.
+     * 
+     * @param filepath Path to the asset file.
+     * @return A size_t representing the GUID.
+     * 
+     * @note Deterministic: calling this function multiple times with the same
+     * filepath will return the same GUID.
+     */
+    std::size_t PULSE_ENGINE_DLL_API GenerateGUIDFromPath(const std::string& filepath);
 
+    std::string PULSE_ENGINE_DLL_API GenerateNameOnTime(const std::string& baseName);
+    /**
+     * @brief Generates a deterministic GUID from a file path and a map name.
+     * 
+     * @param filepath Path to the asset file.
+     * @param mapName Optional map or collection name to namespace the GUID.
+     * @return A size_t representing the GUID.
+     * 
+     * @note Using a map name allows multiple collections to reference the same
+     * file independently without collision.
+     */
+    std::size_t PULSE_ENGINE_DLL_API GenerateGUIDFromPathAndMap(const std::string& filepath, const std::string& mapName);
+
+}
 #endif // GUIDGENERATOR_H
