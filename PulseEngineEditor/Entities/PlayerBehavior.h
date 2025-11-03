@@ -8,6 +8,8 @@
 #include "PulseEngine/core/Lights/DirectionalLight/DirectionalLight.h"
 #include "camera.h"
 
+using namespace PulseLibs;
+
 class PULSE_ENGINE_DLL_API PlayerBehavior : public IScript
 {
     public:

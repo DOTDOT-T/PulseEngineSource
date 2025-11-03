@@ -2,6 +2,7 @@
 #include <iostream>
 
 using namespace PulseEngine::FileSystem;
+using namespace PulseLibs;
 
 InputSystem::InputSystem() : mouseX(0.0), mouseY(0.0) {
     for (int i = 0; i < MAX_KEYS; i++) {

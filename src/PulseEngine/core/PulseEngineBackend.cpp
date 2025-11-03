@@ -41,15 +41,16 @@
 #include "Common/dllExport.h"
 
 using namespace PulseEngine::FileSystem;
+using namespace PulseLibs;
 
 Camera* PulseEngineBackend::activeCamera = new Camera();
 IGraphicsAPI* PulseEngineBackend::graphicsAPI = nullptr;
 PulseEngineBackend* PulseEngineBackend::instance = nullptr;
 float PulseEngineBackend::deltaTime = 0.0f;
 
-#ifdef ENGINE_EDITOR
+// #ifdef ENGINE_EDITOR
 InterfaceEditor* PulseEngineBackend::editor = nullptr;
-#endif
+// #endif
 
 PulseEngineBackend::PulseEngineBackend() 
 { 
@@ -91,7 +92,7 @@ int PulseEngineBackend::Initialize()
     #endif
 
     coroutineManager = new CoroutineManager;
-    inputSystem = new InputSystem;
+    inputSystem = new PulseLibs::InputSystem;
 
     shadowShader = new Shader(std::string(ASSET_PATH) + "shaders/directionalDepth/dirDepth.vert", std::string(ASSET_PATH) + "shaders/directionalDepth/dirDepth.frag");
     pointLightShadowShader = new Shader(std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.vert", std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.frag", std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.glsl");

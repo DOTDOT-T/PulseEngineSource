@@ -40,7 +40,7 @@
 
 #pragma once
 
-#include "pch.h"
+// #include "pch.h"
 #include "PulseEngine/core/FileManager/FileManager.h"
 #include "PulseEngine/core/FileManager/FileReader/FileReader.h"
 
@@ -52,118 +52,123 @@
 /// Right mouse button index
 #define RIGHT_MOUSE_BUTTON 1
 
-/**
- * @struct OneBinding
- * @brief Represents a single action-to-input mapping.
- *
- * Contains the action ID and the corresponding key or mouse button.
- */
-struct OneBinding {
-    int actionId; ///< Identifier for the action
-    int button;   ///< Key or mouse button code
-
-    OneBinding() : actionId(-1), button(-1) {}
-    OneBinding(int actionId, int button) : actionId(actionId), button(button) {}
-};
-
-/**
- * @class InputSystem
- * @brief Manages keyboard and mouse input and provides an action-binding layer.
- *
- * @details
- * The InputSystem maintains the current and previous state of keys and mouse buttons.
- * It provides functions to bind actions to inputs, query input states, and persist
- * bindings to disk.
- */
-class PULSE_ENGINE_DLL_API InputSystem {
-public:
-    /// Represents the state of a key or button
-    enum class KeyState {
-        Up,       ///< Not pressed
-        Down,     ///< Held down
-        Pressed,  ///< Pressed this frame
-        Released  ///< Released this frame
-    };
-
-    InputSystem();
-    ~InputSystem();
-
-    // ========================================================================
-    // Frame Update
-    // ========================================================================
-
-    /// Call at the beginning of each frame to update input states
-    void newFrame();
-
-    // ========================================================================
-    // Binding API
-    // ========================================================================
+namespace PulseLibs
+{
 
     /**
-     * @brief Bind a keyboard key to an action ID.
-     * @param actionId The action identifier.
-     * @param key The key code to bind.
+     * @struct OneBinding
+     * @brief Represents a single action-to-input mapping.
+     *
+     * Contains the action ID and the corresponding key or mouse button.
      */
-    void bindAction(int actionId, int key);
-
+    struct OneBinding {
+        int actionId; ///< Identifier for the action
+        int button;   ///< Key or mouse button code
+    
+        OneBinding() : actionId(-1), button(-1) {}
+        OneBinding(int actionId, int button) : actionId(actionId), button(button) {}
+    };
+    
     /**
-     * @brief Bind a mouse button to an action ID.
-     * @param actionId The action identifier.
-     * @param button The mouse button index to bind.
+     * @class InputSystem
+     * @brief Manages keyboard and mouse input and provides an action-binding layer.
+     *
+     * @details
+     * The InputSystem maintains the current and previous state of keys and mouse buttons.
+     * It provides functions to bind actions to inputs, query input states, and persist
+     * bindings to disk.
      */
-    void bindMouseAction(int actionId, int button);
-
-    // ========================================================================
-    // Query API
-    // ========================================================================
-
-    bool isActionDown(int actionId) const;       ///< Returns true if the action is held down
-    bool wasActionPressed(int actionId) const;  ///< Returns true if the action was pressed this frame
-    bool wasActionReleased(int actionId) const; ///< Returns true if the action was released this frame
-
-    double getMouseX() const; ///< Current mouse X position (pixels)
-    double getMouseY() const; ///< Current mouse Y position (pixels)
-
-    OneBinding GetOneBinding(int actionId) const;                 ///< Retrieve the binding for a given action
-    void ChangeBinding(OneBinding newBinding, int actionId);      ///< Update the binding for a given action
-
-    /// Saves all current action bindings to disk
-    void SaveBindingsToFile();
-
-private:
-    // ========================================================================
-    // Internal Input Structures
-    // ========================================================================
-
-    struct KeyInfo {
-        int keyCode = -1;       ///< Key code
-        KeyState state = KeyState::Up; ///< Current key state
+    class PULSE_ENGINE_DLL_API InputSystem {
+    public:
+        /// Represents the state of a key or button
+        enum class KeyState {
+            Up,       ///< Not pressed
+            Down,     ///< Held down
+            Pressed,  ///< Pressed this frame
+            Released  ///< Released this frame
+        };
+    
+        InputSystem();
+        ~InputSystem();
+    
+        // ========================================================================
+        // Frame Update
+        // ========================================================================
+    
+        /// Call at the beginning of each frame to update input states
+        void newFrame();
+    
+        // ========================================================================
+        // Binding API
+        // ========================================================================
+    
+        /**
+         * @brief Bind a keyboard key to an action ID.
+         * @param actionId The action identifier.
+         * @param key The key code to bind.
+         */
+        void bindAction(int actionId, int key);
+    
+        /**
+         * @brief Bind a mouse button to an action ID.
+         * @param actionId The action identifier.
+         * @param button The mouse button index to bind.
+         */
+        void bindMouseAction(int actionId, int button);
+    
+        // ========================================================================
+        // Query API
+        // ========================================================================
+    
+        bool isActionDown(int actionId) const;       ///< Returns true if the action is held down
+        bool wasActionPressed(int actionId) const;  ///< Returns true if the action was pressed this frame
+        bool wasActionReleased(int actionId) const; ///< Returns true if the action was released this frame
+    
+        double getMouseX() const; ///< Current mouse X position (pixels)
+        double getMouseY() const; ///< Current mouse Y position (pixels)
+    
+        OneBinding GetOneBinding(int actionId) const;                 ///< Retrieve the binding for a given action
+        void ChangeBinding(OneBinding newBinding, int actionId);      ///< Update the binding for a given action
+    
+        /// Saves all current action bindings to disk
+        void SaveBindingsToFile();
+    
+    private:
+        // ========================================================================
+        // Internal Input Structures
+        // ========================================================================
+    
+        struct KeyInfo {
+            int keyCode = -1;       ///< Key code
+            KeyState state = KeyState::Up; ///< Current key state
+        };
+    
+        struct MouseInfo {
+            int button = -1;        ///< Mouse button index
+            KeyState state = KeyState::Up; ///< Current button state
+        };
+    
+        static const int MAX_KEYS = 512;   ///< Maximum number of keyboard keys tracked
+        static const int MAX_MOUSE = 8;    ///< Maximum number of mouse buttons tracked
+    
+        KeyInfo keys[MAX_KEYS];            ///< Current keyboard states
+        MouseInfo mouseButtons[MAX_MOUSE]; ///< Current mouse button states
+    
+        double mouseX; ///< Current mouse X position
+        double mouseY; ///< Current mouse Y position
+    
+        int actionToKey[MAX_KEYS];    ///< Maps actions to keyboard keys
+        int actionToMouse[MAX_MOUSE]; ///< Maps actions to mouse buttons
+    
+        // ========================================================================
+        // Internal Polling Methods
+        // ========================================================================
+    
+        /// Polls the keyboard and updates the KeyInfo array
+        void pollKeyboard();
+    
+        /// Polls the mouse and updates MouseInfo array and mouseX/mouseY
+        void pollMouse();
     };
 
-    struct MouseInfo {
-        int button = -1;        ///< Mouse button index
-        KeyState state = KeyState::Up; ///< Current button state
-    };
-
-    static const int MAX_KEYS = 512;   ///< Maximum number of keyboard keys tracked
-    static const int MAX_MOUSE = 8;    ///< Maximum number of mouse buttons tracked
-
-    KeyInfo keys[MAX_KEYS];            ///< Current keyboard states
-    MouseInfo mouseButtons[MAX_MOUSE]; ///< Current mouse button states
-
-    double mouseX; ///< Current mouse X position
-    double mouseY; ///< Current mouse Y position
-
-    int actionToKey[MAX_KEYS];    ///< Maps actions to keyboard keys
-    int actionToMouse[MAX_MOUSE]; ///< Maps actions to mouse buttons
-
-    // ========================================================================
-    // Internal Polling Methods
-    // ========================================================================
-
-    /// Polls the keyboard and updates the KeyInfo array
-    void pollKeyboard();
-
-    /// Polls the mouse and updates MouseInfo array and mouseX/mouseY
-    void pollMouse();
-};
+}

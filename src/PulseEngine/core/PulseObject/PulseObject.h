@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <stdio.h>
 #include "Common/dllExport.h"
-
+#include <string>
 
 
 
@@ -30,6 +30,7 @@ class Archive;
 
 namespace PulseEngine::Registry
 {
+    static const std::string version = "v0.1.0"; 
     class PULSE_ENGINE_DLL_API PulseObject
     {
         public:

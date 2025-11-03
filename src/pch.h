@@ -18,6 +18,7 @@
 #include <map>
 #include <memory>
 
+#ifdef ENGINE_EDITOR
 // === engine editor libraries ===
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h"
@@ -30,6 +31,7 @@
 namespace ed = ax::NodeEditor;
 // #include "PulseEngine/core/FileManager/FileReader/FileReader.h"
 // #include "PulseEngine/core/FileManager/FileManager.h"
+#endif
 
 // === web communication libraries ===
 #define ASIO_STANDALONE

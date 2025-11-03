@@ -19,6 +19,10 @@
 #include "Common/dllExport.h"
 #include "json.hpp"
 
+#include "PulseEngine/core/Input/InputSystem.h"
+#include "PulseEngine/core/Math/Vector.h"
+#include "PulseEngine/core/Math/Mat4.h"
+
 #define GUID_COLLECTION_PATH std::string(ASSET_PATH) + "Guid/"
 #define DEFAULT_SHADOW_MAP_RES 2048
 
@@ -34,7 +38,6 @@ class Shader;
 class GuidCollection;
 class PulseExecutable;
 class IGraphicsAPI;
-class InputSystem;
 class Account;
 
 /**
@@ -108,16 +111,16 @@ public:
     static IGraphicsAPI* graphicsAPI;
     CoroutineManager* coroutineManager = nullptr;
 
-    EDITOR_ONLY(
+    // #ifdef ENGINE_EDITOR
         static InterfaceEditor* editor;
-    )
+    // #endif
     
     Shader* shadowShader;
     Shader* pointLightShadowShader;
     Shader* debugShader;
 
     std::unordered_map<std::string, GuidCollection*> guidCollections;
-    InputSystem* inputSystem;
+    PulseLibs::InputSystem* inputSystem;
 
     PulseEngine::Mat4 view;
     PulseEngine::Mat4 projection;

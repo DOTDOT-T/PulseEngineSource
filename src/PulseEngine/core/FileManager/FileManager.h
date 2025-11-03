@@ -24,6 +24,7 @@ class PulseEngineBackend;
 
 namespace PulseEngine::FileSystem
 {
+    static const std::string version = "v0.1.0";
 
     enum FileType
     {
