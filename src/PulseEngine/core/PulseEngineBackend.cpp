@@ -71,21 +71,21 @@ int PulseEngineBackend::Initialize()
 
     // load the graphic API based on the platform
     //some platform can have multiple graphic API possible.
-    // graphicsAPI = dynamic_cast<IGraphicsAPI*>(ModuleLoader::GetModuleFromPath("Modules/OpenGLApi.dll"));
+    graphicsAPI = dynamic_cast<IGraphicsAPI*>(ModuleLoader::GetModuleFromPath("Modules/Renderer.dll"));
     /**
      * @note For renderer, we wont use dynamic DLL to load the graphic API, we will use inside the game engine dll one. So we need to create a game engine dll for each platform.
      * 
      */
-    #ifdef PULSE_GRAPHIC_OPENGL
-    graphicsAPI = new OpenGLAPI();
-    #endif
+    // #ifdef PULSE_GRAPHIC_OPENGL
+    // graphicsAPI = new OpenGLAPI();
+    // #endif
 
     if(graphicsAPI == nullptr)
     {
         EDITOR_ERROR("No Graphics API found.");
         return -1;
     }
-    graphicsAPI->InitializeApi(GetWindowName("editor").c_str(), &width, &height, this);
+    graphicsAPI->InitializeApi(GetWindowName("editor").c_str(), &width, &height);
     
     #ifdef PULSE_GRAPHIC_OPENGL
     windowContext->SetGLFWWindow(static_cast<GLFWwindow*>(graphicsAPI->GetNativeHandle()));
@@ -94,10 +94,9 @@ int PulseEngineBackend::Initialize()
     coroutineManager = new CoroutineManager;
     inputSystem = new PulseLibs::InputSystem;
 
-    shadowShader = new Shader(std::string(ASSET_PATH) + "shaders/directionalDepth/dirDepth.vert", std::string(ASSET_PATH) + "shaders/directionalDepth/dirDepth.frag");
-    pointLightShadowShader = new Shader(std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.vert", std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.frag", std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.glsl");
-    debugShader = new Shader(std::string(ASSET_PATH) +"shaders/debug.vert", std::string(ASSET_PATH) + "shaders/debug.frag");
-    
+    shadowShader = new Shader(std::string(ASSET_PATH) + "shaders/directionalDepth/dirDepth.vert", std::string(ASSET_PATH) + "shaders/directionalDepth/dirDepth.frag", graphicsAPI);
+    pointLightShadowShader = new Shader(std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.vert", std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.frag", std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.glsl", graphicsAPI);
+    debugShader = new Shader(std::string(ASSET_PATH) +"shaders/debug.vert", std::string(ASSET_PATH) + "shaders/debug.frag", graphicsAPI);
     // === insert base item to the collection ===
     GuidReader::InsertIntoCollection("Entities/simpleActor.pEntity");    
     GuidReader::InsertIntoCollection("Entities/primitiveCube.pEntity"); 
@@ -238,53 +237,7 @@ void PulseEngineBackend::Render()
 // Draws a large quad at y=0 using a grid shader
 void PulseEngineBackend::DrawGridQuad(PulseEngine::Mat4 viewCam,const PulseEngine::Mat4& specificProjection )
 {
-    #ifdef PULSE_GRAPHIC_OPENGL
-    static unsigned int quadVAO = 0, quadVBO = 0;
-    if (quadVAO == 0) {
-        float yOffset = -0.001f; // Slightly below y=0 to avoid z-fighting
-        float quadVertices[] = {
-            // positions
-            -100.0f, yOffset, -100.0f,
-             100.0f, yOffset, -100.0f,
-             100.0f, yOffset,  100.0f,
-            -100.0f, yOffset,  100.0f
-        };
-        glGenVertexArrays(1, &quadVAO);
-        glGenBuffers(1, &quadVBO);
-        glBindVertexArray(quadVAO);
-        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    }
-
-    // Load or use your grid shader
-    static Shader* gridShader = nullptr;
-    if (!gridShader) {
-        gridShader = new Shader(
-            std::string(ASSET_PATH) + "shaders/Grid.vert",
-            std::string(ASSET_PATH) + "shaders/Grid.frag"
-        );
-    }
-
-    gridShader->Use();
-    gridShader->SetMat4("model", PulseEngine::Mat4(1.0f));
-    gridShader->SetMat4("view", viewCam);
-    gridShader->SetMat4("projection", specificProjection);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glEnable(GL_DEPTH_TEST);     
-    glDepthMask(GL_FALSE);       
-
-    glBindVertexArray(quadVAO);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-    glBindVertexArray(0);
-
-    glDepthMask(GL_TRUE);       
-    glDisable(GL_BLEND);
-    #endif
+    graphicsAPI->DrawGridQuad(viewCam, specificProjection, graphicsAPI);
 }
 
 

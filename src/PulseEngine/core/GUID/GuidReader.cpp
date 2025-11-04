@@ -181,7 +181,7 @@ Material* GuidReader::GetMaterialFromJson(nlohmann::json_abi_v3_12_0::json &mate
     std::string vertPath = std::string(ASSET_PATH) + "shaders/basic.vert";
     std::string fragPath = std::string(ASSET_PATH) + "shaders/basic.frag";
     
-    Material* mat = new Material(materialData["name"], new Shader(vertPath, fragPath));
+    Material* mat = new Material(materialData["name"], new Shader(vertPath, fragPath, PulseEngineGraphicsAPI));
     
     // mat->roughness = materialData["roughness"].get<float>();
     mat->specular = materialData["specular"].get<float>();
@@ -199,7 +199,7 @@ Material* GuidReader::GetMaterialFromJson(nlohmann::json_abi_v3_12_0::json &mate
 
         if (key.size() >= 4 && key.compare(0, 4, "txt_") == 0)
         {
-            std::shared_ptr<Texture> txt = std::make_shared<Texture>(it.value().get<std::string>());
+            std::shared_ptr<Texture> txt = std::make_shared<Texture>(it.value().get<std::string>(), PulseEngineGraphicsAPI);
             mat->SetTexture(key.substr(4), txt);
         }
     } 

@@ -97,7 +97,7 @@ void InterfaceEditor::ShowFileGrid(const fs::path& currentDir, fs::path& selecte
                 
                     if (texturesLoaded.find(fullPath) == texturesLoaded.end())
                     {
-                        Texture* texture = new Texture(fullPath);
+                        Texture* texture = new Texture(fullPath, PulseEngineGraphicsAPI);
                         image = texture->id;
                         texturesLoaded[fullPath] = texture->id;
                         delete texture;

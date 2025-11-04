@@ -1,6 +1,8 @@
 #ifndef MATH_UTILS_H
 #define MATH_UTILS_H
 
+#include "PulseEngine/core/Math/Mat3.h"
+#include "PulseEngine/core/Math/Vector.h"
 #include "PulseEngine/core/Math/Mat4.h"
 #include "PulseEngine/core/Math/Vector.h"
 #include <cmath>

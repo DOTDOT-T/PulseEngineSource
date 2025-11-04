@@ -56,37 +56,37 @@ InterfaceEditor::InterfaceEditor()
     synapse->Init();
 
 
-    icons["folder"] = new Texture(("InterfaceEditor/icon/folder.png"));
-    icons["file"] = new Texture(("InterfaceEditor/icon/file.png"));
-    icons["entityFile"] = new Texture(("InterfaceEditor/icon/entityFile.png"));
-    icons["modelFile"] = new Texture(("InterfaceEditor/icon/modelFile.png"));
-    icons["scene"] = new Texture(("InterfaceEditor/icon/scene.png"));
-    icons["cpp"] = new Texture(("InterfaceEditor/icon/cpp.png"));
-    icons["h"] = new Texture(("InterfaceEditor/icon/h.png"));
-    icons["synapse"] = new Texture(("InterfaceEditor/icon/synapse.png"));
+    icons["folder"] = new Texture(("InterfaceEditor/icon/folder.png"), PulseEngineGraphicsAPI);
+    icons["file"] = new Texture(("InterfaceEditor/icon/file.png"), PulseEngineGraphicsAPI);
+    icons["entityFile"] = new Texture(("InterfaceEditor/icon/entityFile.png"), PulseEngineGraphicsAPI);
+    icons["modelFile"] = new Texture(("InterfaceEditor/icon/modelFile.png"), PulseEngineGraphicsAPI);
+    icons["scene"] = new Texture(("InterfaceEditor/icon/scene.png"), PulseEngineGraphicsAPI);
+    icons["cpp"] = new Texture(("InterfaceEditor/icon/cpp.png"), PulseEngineGraphicsAPI);
+    icons["h"] = new Texture(("InterfaceEditor/icon/h.png"), PulseEngineGraphicsAPI);
+    icons["synapse"] = new Texture(("InterfaceEditor/icon/synapse.png"), PulseEngineGraphicsAPI);
 
     ImGui_ImplGlfw_InitForOpenGL(PulseEngineInstance->GetWindowContext()->GetGLFWWindow(), true);
     ImGui_ImplOpenGL3_Init("#version 460");
 
     std::vector<std::string> filenames;
 
-    for (const auto& entry : fs::directory_iterator("./Modules/Interface"))
-    {
-        if (entry.is_regular_file())
-        {
-            filenames.push_back(entry.path().filename().string());
-        }
-    }
+    // for (const auto& entry : fs::directory_iterator("./Modules/Interface"))
+    // {
+    //     if (entry.is_regular_file())
+    //     {
+    //         filenames.push_back(entry.path().filename().string());
+    //     }
+    // }
 
-    for(auto file : filenames)
-    {
-        IModuleInterface* module = dynamic_cast<IModuleInterface*>(ModuleLoader::GetModuleFromPath(std::string("./Modules/Interface/") + file));
-        if(module)
-        {
-            modules.push_back(module);
-            windowStates[module->GetName()] = false;
-        }
-    }
+    // for(auto file : filenames)
+    // {
+    //     IModuleInterface* module = dynamic_cast<IModuleInterface*>(ModuleLoader::GetModuleFromPath(std::string("./Modules/Interface/") + file));
+    //     if(module)
+    //     {
+    //         modules.push_back(module);
+    //         windowStates[module->GetName()] = false;
+    //     }
+    // }
 
     windowStates["EntityAnalyzer"] = true;
     windowStates["viewport"] = true;

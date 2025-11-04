@@ -1,19 +1,22 @@
-#include "PulseEngine/core/WindowContext/WindowContext.h"
 #include "PulseEngine/core/Graphics/OpenGLAPI/OpenGLApi.h"
 #include "PulseEngine/core/Graphics/IGraphicsApi.h"
-#include "PulseEngine/core/PulseEngineBackend.h"
+#include "PulseEngine/core/Meshes/Vertex.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "OpenGLApi.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h" 
-#include "PulseEngine/core/Meshes/Mesh.h"
 
-bool OpenGLAPI::InitializeApi(const char* title, int* width, int* height, PulseEngineBackend* engine)
+#include "PulseEngine/core/Math/Mat3.h"
+#include "PulseEngine/core/Math/Mat4.h"
+#include "PulseEngine/core/Math/Vector.h"
+
+#include "Common/EditorDefines.h"
+#include "OpenGLApi.h"
+
+bool OpenGLAPI::InitializeApi(const char* title, int* width, int* height)
 {
-        this->engine = engine;
     if (!glfwInit())
     {
         EDITOR_ERROR("Failed to initialize GLFW.");
@@ -220,7 +223,7 @@ void OpenGLAPI::GenerateDepthCubeMap(unsigned int *FBO, unsigned int *depthCubeM
     for (unsigned int i = 0; i < 6; ++i)
     {
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT24,
-                     DEFAULT_SHADOW_MAP_RES, DEFAULT_SHADOW_MAP_RES, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+                     2048, 2048, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
     }
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -312,7 +315,7 @@ void OpenGLAPI::GenerateShadowMap(unsigned int *shadowMap, unsigned int *FBO, in
 void OpenGLAPI::BindShadowFramebuffer(unsigned int *FBO) const
 {
     glBindFramebuffer(GL_FRAMEBUFFER, *FBO);
-    glViewport(0, 0, DEFAULT_SHADOW_MAP_RES, DEFAULT_SHADOW_MAP_RES);
+    glViewport(0, 0, 2048, 2048);
     glClear(GL_DEPTH_BUFFER_BIT);
      glCullFace(GL_FRONT); 
 }
@@ -456,6 +459,57 @@ bool OpenGLAPI::ShouldClose() const
         return true; // Consider it closed if window is null
     }    
     return glfwWindowShouldClose(window);
+}
+
+void OpenGLAPI::DrawGridQuad(PulseEngine::Mat4 viewCam,const PulseEngine::Mat4& specificProjection, IGraphicsAPI* graphicsAPI )
+{
+    
+    // static unsigned int quadVAO = 0, quadVBO = 0;
+    // if (quadVAO == 0) {
+    //     float yOffset = -0.001f; // Slightly below y=0 to avoid z-fighting
+    //     float quadVertices[] = {
+    //         // positions
+    //         -100.0f, yOffset, -100.0f,
+    //          100.0f, yOffset, -100.0f,
+    //          100.0f, yOffset,  100.0f,
+    //         -100.0f, yOffset,  100.0f
+    //     };
+    //     glGenVertexArrays(1, &quadVAO);
+    //     glGenBuffers(1, &quadVBO);
+    //     glBindVertexArray(quadVAO);
+    //     glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+    //     glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+    //     glEnableVertexAttribArray(0);
+    //     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // }
+
+    // // Load or use your grid shader
+    // static Shader* gridShader = nullptr;
+    // if (!gridShader) {
+    //     gridShader = new Shader(
+    //         std::string(ASSET_PATH) + "shaders/Grid.vert",
+    //         std::string(ASSET_PATH) + "shaders/Grid.frag",
+    //         graphicsAPI
+    //     );
+    // }
+
+    // gridShader->Use();
+    // gridShader->SetMat4("model", PulseEngine::Mat4(1.0f));
+    // gridShader->SetMat4("view", viewCam);
+    // gridShader->SetMat4("projection", specificProjection);
+
+    // glEnable(GL_BLEND);
+    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // glEnable(GL_DEPTH_TEST);     
+    // glDepthMask(GL_FALSE);       
+
+    // glBindVertexArray(quadVAO);
+    // glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    // glBindVertexArray(0);
+
+    // glDepthMask(GL_TRUE);       
+    // glDisable(GL_BLEND);
 }
 
 void OpenGLAPI::SetWindowSize(int width, int height) const

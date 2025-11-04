@@ -2,13 +2,15 @@
 #pragma once
 
 #include <string>
-#include "Common/common.h"
+// #include "Common/common.h"
 #include "Common/dllExport.h"
+
+class IGraphicsAPI;
 
 class PULSE_ENGINE_DLL_API Texture
 {
 public:
-    Texture(const std::string& filePath);
+    Texture(const std::string& filePath,IGraphicsAPI* graphics);
 
     void Bind(unsigned int slot = 0) const;
     void Unbind() const;
@@ -18,4 +20,5 @@ public:
     unsigned int id;
 private:
     std::string path;
+    IGraphicsAPI* graphicsAPI;
 };

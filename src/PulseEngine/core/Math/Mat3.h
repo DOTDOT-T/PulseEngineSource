@@ -1,9 +1,11 @@
 #ifndef MAT3PULSE_H
 #define MAT3PULSE_H
 
-#include "Common/common.h"
+// #include "Common/common.h"
 #include <cstring>
 #include <cmath>
+
+#include "PulseEngine/core/Math/Vector.h"
 
 namespace PulseEngine
 {

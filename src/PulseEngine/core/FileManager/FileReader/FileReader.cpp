@@ -3,6 +3,11 @@ using namespace PulseEngine::FileSystem;
 
 FileReader::FileReader(const std::string &path)
 {
+        #ifdef ENGINE_EDITOR
+    EDITOR_LOG("inside engine editor")
+    #else
+    EDITOR_LOG("in game")
+    #endif
     filePath = path;
     std::string definePath = std::string(ASSET_PATH) + path;
 

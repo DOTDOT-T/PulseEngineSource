@@ -4,7 +4,7 @@
 
 Shader *Material::GetShader()
 {
-    if(!shader) shader = new Shader(std::string(ASSET_PATH) + "shaders/basic.vert", std::string(ASSET_PATH) + "shaders/basic.frag");
+    if(!shader) shader = new Shader(std::string(ASSET_PATH) + "shaders/basic.vert", std::string(ASSET_PATH) + "shaders/basic.frag", PulseEngineGraphicsAPI);
     return shader;
 }
 

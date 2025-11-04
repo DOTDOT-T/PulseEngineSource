@@ -1,21 +1,22 @@
 #include "Texture.h"
 #include "PulseEngine/core/Graphics/IGraphicsApi.h"
 
-Texture::Texture(const std::string &filePath)
+Texture::Texture(const std::string &filePath, IGraphicsAPI* graphics)
 {
-    PulseEngineGraphicsAPI->GenerateTextureMap(&id, filePath);
+    graphicsAPI = graphics;
+    graphicsAPI->GenerateTextureMap(&id, filePath);
     path = filePath;
 }
 
 
 void Texture::Bind(unsigned int slot) const
 {
-    PulseEngineGraphicsAPI->ActivateTexture(slot);
-    PulseEngineGraphicsAPI->BindTexture(TEXTURE_2D, id);
+    graphicsAPI->ActivateTexture(slot);
+    graphicsAPI->BindTexture(TEXTURE_2D, id);
 }
 
 void Texture::Unbind() const
 {
-    PulseEngineGraphicsAPI->BindTexture(TEXTURE_2D, 0);
+    graphicsAPI->BindTexture(TEXTURE_2D, 0);
 
 }

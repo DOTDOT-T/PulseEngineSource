@@ -19,7 +19,7 @@
             "name": "Debug Engine (without build)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Build/PulseEditor.exe",
+            "program": "${workspaceFolder}/../PulseForgeTools/EngineBuilder/Build/Game.exe",
             "args": ["D:/SVN/Eleves/dlexteriaque/PulseSoftware/PulseEngineSource/Build"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

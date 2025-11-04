@@ -9,13 +9,13 @@
 #include "PulseEngine/core/Math/Mat3.h"
 #include "PulseEngine/core/Math/Vector.h"
 
-class LightData;
-class DirectionalLight;
+class IGraphicsAPI;
+
 
 class PULSE_ENGINE_DLL_API Shader {
 public:
-    Shader(const std::string& vertexPath, const std::string& fragmentPath);
-    Shader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath);
+    Shader(const std::string& vertexPath, const std::string& fragmentPath, IGraphicsAPI* graphicApi);
+    Shader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath, IGraphicsAPI* graphicApi);
     unsigned int getProgramID() const { return shaderID; }
     void Use() const;
     void SetMat4(const std::string& name, const PulseEngine::Mat4& mat) const;
@@ -25,8 +25,9 @@ public:
     void SetBool(const std::string& name, bool b) const;
     void SetInt(const std::string& name, int value) const;
     void SetIntArray(const std::string& name, const int* values, int count) const;
-    void SetLightingData(const std::vector<DirectionalLight*>& data) const;
 
+
+    IGraphicsAPI* graphics = nullptr;
 private:
     unsigned int shaderID;
 

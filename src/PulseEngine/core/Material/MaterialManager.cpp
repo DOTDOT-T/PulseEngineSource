@@ -3,7 +3,8 @@
 #include "Material.h"
 #include <fstream>
 #include "json.hpp"
-#include "PulseEngine/core/GUID/GuidReader.h"
+#include "PulseEngine/core/GUID/GuidCollection.h"
+#include "PulseEngine/core/Material/Texture.h"
 
 std::unordered_map<std::string, Material*> MaterialManager::materials;
 
@@ -31,7 +32,7 @@ Material* MaterialManager::loadMaterial(const std::string &filePath)
 
     
     if(materials[jsonData["name"]]) return materials[jsonData["name"]];
-    Material* material = new Material("new material", new Shader(std::string(ASSET_PATH) + "shaders/basic.vert", std::string(ASSET_PATH) + "shaders/basic.frag"));
+    Material* material = new Material("new material", new Shader(std::string(ASSET_PATH) + "shaders/basic.vert", std::string(ASSET_PATH) + "shaders/basic.frag", PulseEngineGraphicsAPI));
     if (!file.is_open())
     {
         throw std::runtime_error("Failed to open material file: " + filePath);
@@ -65,24 +66,24 @@ Material* MaterialManager::loadMaterial(const std::string &filePath)
 
     if(jsonData.contains("albedo"))
     {
-        Texture* albedoTexture = new Texture(jsonData["albedo"].get<std::string>());
+        Texture* albedoTexture = new Texture(jsonData["albedo"].get<std::string>(), PulseEngineGraphicsAPI);
         material->SetTexture("albedo", std::shared_ptr<Texture>(albedoTexture));
     }
     if(jsonData.contains("normal"))
     {
         
-        Texture* albedoTexture = new Texture(jsonData["normal"].get<std::string>());
+        Texture* albedoTexture = new Texture(jsonData["normal"].get<std::string>(), PulseEngineGraphicsAPI);
         material->SetTexture("normal", std::shared_ptr<Texture>(albedoTexture));
     }
     if(jsonData.contains("height"))
     {
         
-        Texture* albedoTexture = new Texture(jsonData["height"].get<std::string>());
+        Texture* albedoTexture = new Texture(jsonData["height"].get<std::string>(), PulseEngineGraphicsAPI);
         material->SetTexture("height", std::shared_ptr<Texture>(albedoTexture));
     }
     if(jsonData.contains("roughness"))
     {        
-        Texture* albedoTexture = new Texture(jsonData["roughness"].get<std::string>());
+        Texture* albedoTexture = new Texture(jsonData["roughness"].get<std::string>(), PulseEngineGraphicsAPI);
         material->SetTexture("roughness", std::shared_ptr<Texture>(albedoTexture));
     }
     if(jsonData.contains("guid"))
@@ -92,7 +93,7 @@ Material* MaterialManager::loadMaterial(const std::string &filePath)
 
     materials[material->GetName()] = material;
     file.close();
-    GuidReader::InsertIntoCollection(filePath);
+    PulseEngineInstance->guidCollections["guidCollectionMaterials.puid"]->InsertFile(filePath);
     return material;
 }
 

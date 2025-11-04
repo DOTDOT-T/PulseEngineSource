@@ -14,7 +14,12 @@
 #define OPENGLWINDOW_H
 
 #include "PulseEngine/core/Graphics/IGraphicsApi.h"
-#include <GLFW/glfw3.h>
+#include <glad.h>                       // OpenGL function loader
+#include <GLFW/glfw3.h>                 // Cross-platform windowing/input
+#include <glm/glm.hpp>                  // GLM core
+#include <glm/gtc/type_ptr.hpp>         // GLM pointer helpers
+#include <glm/gtc/matrix_transform.hpp> // GLM transformation helpers
+#include <GL/gl.h>                      // OpenGL headers
 
 class OpenGLAPI : public IGraphicsAPI
 {
@@ -22,12 +27,14 @@ public:
     OpenGLAPI() = default;
     virtual ~OpenGLAPI() override;
 
-    bool InitializeApi(const char* title, int* width, int* height, PulseEngineBackend* engine) override;
+    bool InitializeApi(const char* title, int* width, int* height) override;
     void ShutdownApi() override;
 
     void PollEvents() const override;
     void SwapBuffers() const override;
     bool ShouldClose() const override;
+
+    void DrawGridQuad(PulseEngine::Mat4 viewCam,const PulseEngine::Mat4& specificProjection , IGraphicsAPI* graphicsAPI) override;
 
     void SetWindowSize(int width, int height) const override;
     void SetWindowTitle(const char* title) const override;

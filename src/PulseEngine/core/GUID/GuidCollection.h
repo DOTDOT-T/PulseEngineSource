@@ -39,6 +39,7 @@
 
 #include "Common/common.h"
 #include "Common/dllExport.h"
+#include "Common/EditorDefines.h"
 #include <unordered_map>
 #include <string>
 

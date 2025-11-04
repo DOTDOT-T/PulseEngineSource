@@ -54,16 +54,22 @@
 #ifndef IGRAPHICSAPI_H
 #define IGRAPHICSAPI_H
 
-#include "Common/common.h"
+// #include "Common/common.h"
 #include "Common/dllExport.h"
 #include <string>
+#include <vector>
 
 #include "PulseEngine/ModuleLoader/IModule/IModule.h"
-#include "PulseEngine/core/Meshes/Mesh.h"
+
+#include "PulseEngine/core/Math/Vector.h"
+#include "PulseEngine/core/Math/Mat4.h"
+#include "PulseEngine/core/Math/Mat3.h"
+#include "shader.h"
 
 
 
 class PulseEngineBackend;
+class Vertex;
 
 /**
  * @enum TextureType
@@ -118,8 +124,11 @@ public:
      * @param engine Pointer to the Pulse engine backend instance.
      * @return true if initialization succeeds, false otherwise.
      */
-    virtual bool InitializeApi(const char* title, int* width, int* height, PulseEngineBackend* engine) = 0;
+    virtual bool InitializeApi(const char* title, int* width, int* height) = 0;
     virtual void Shutdown() override {}
+
+    virtual void DrawGridQuad(PulseEngine::Mat4 viewCam,const PulseEngine::Mat4& specificProjection , IGraphicsAPI* graphicsAPI) = 0;
+
     /**
      * @brief Shuts down the graphics API and releases all resources.
      */
@@ -246,9 +255,6 @@ public:
 
     /// Pointer to current window height.
     int* height = nullptr;
-
-    /// Pointer to the engine backend, for API-engine communication.
-    PulseEngineBackend* engine = nullptr;
 };
 
 #endif // IGRAPHICSAPI_H
