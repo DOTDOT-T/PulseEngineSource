@@ -271,7 +271,17 @@ void PulseEngineBackend::SpecificRender(Camera *cam, int specificVBO, std::vecto
 
         LightManager::BindLightsToShader(shader, this, entity);
 
-        if(!specificShader) entity->DrawEntity();
+        if(!specificShader) {
+            entity->DrawEntity();
+            if (entity->collider)
+            {
+                EDITOR_LOG("rendering the collider")
+                entity->collider->lineTraceShader->Use();
+                entity->collider->lineTraceShader->SetMat4("view", specificView);
+                entity->collider->lineTraceShader->SetMat4("projection", specificProjection);
+                entity->collider->OnRender();
+            }
+        }
         else
         {
             entity->BindTexturesToShader();

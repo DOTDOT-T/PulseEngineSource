@@ -41,6 +41,9 @@ public:
     virtual void OnStart() = 0;
     virtual void OnUpdate() = 0;
     virtual void OnRender() = 0;
+
+    virtual void OnEditorDisplay() = 0;
+
     virtual ~IScript() = default;
     virtual const char* GetName() const = 0;
     std::vector<ExposedVariable> GetExposedVariables() {return exposedVariables; }

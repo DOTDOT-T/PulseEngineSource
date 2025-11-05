@@ -18,7 +18,7 @@ Mesh::Mesh()
 
 Mesh::~Mesh()
 {
-    PulseEngineGraphicsAPI->DeleteMesh(&VAO, &VBO);
+    PulseEngineGraphicsAPI->DeleteMesh(&VAO, &VBO, &EBO);
     // if (skeleton)
     // {
     //     delete skeleton;

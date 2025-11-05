@@ -55,6 +55,7 @@ void Entity::BaseConstructor()
 {
     collider = new BoxCollider(&this->transform.position, &this->transform.rotation, PulseEngine::Vector3(1.0f, 1.0f, 1.0f));
     collider->owner = new PulseEngine::EntityApi(this);
+    scripts.push_back(collider);
 }
 
 Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position) : PulseObject(name.c_str())
@@ -197,6 +198,11 @@ void Entity::DrawEntity() const
     material->GetShader()->SetMat3("normalMatrix", normalMatrix);
 
     SimplyDrawMesh();
+    // for(IScript* script : scripts)
+    // {
+    //     script->OnRender();
+    // }
+    // if(collider) collider->OnRender();
 }
 
 void Entity::UseShader() const
@@ -216,6 +222,8 @@ void Entity::SimplyDrawMesh() const
 
         mesh->Render(material->GetShader());
     }
+
+
 }
 
 void Entity::CalculateMeshMatrix(RenderableMesh* const & mesh) const

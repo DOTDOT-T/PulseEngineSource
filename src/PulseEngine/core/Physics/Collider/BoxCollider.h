@@ -2,6 +2,8 @@
 #define BOXCOLLIDER_H
 
 #include "PulseEngine/core/Physics/Collider/Collider.h"
+#include "PulseEngine/core/Meshes/Vertex.h"
+#include <vector>
 
 /**
  * @brief Represents an oriented box collider for 3D physics collision detection.
@@ -19,6 +21,8 @@ public:
      * @param size Dimensions of the box along X, Y, Z.
      */
     BoxCollider(PulseEngine::Vector3* position, PulseEngine::Vector3* rotation, const PulseEngine::Vector3& size);
+
+    void OnRender() override;
 
     /**
      * @brief Returns the name of the collider type.
@@ -131,12 +135,16 @@ public:
      */
     PulseEngine::Vector3 GetCenter() const;
 
+    Shader* lineTraceShader;
 private:
     PulseEngine::Vector3* position;    ///< Pointer to the position vector.
     PulseEngine::Vector3* rotation;    ///< Pointer to the rotation vector.
     PulseEngine::Vector3 size;         ///< Size of the box (width, height, depth).
     bool isTrigger = false;            ///< If true, only detects collisions but doesn’t resolve them.
     bool hasFastCalculus = false;      ///< If true, uses fast collision detection.
+    unsigned int VAO, VBO, EBO;
+    std::vector<Vertex> meshVertices;
+    std::vector<unsigned int> meshIndices;
 };
 
 #endif // BOXCOLLIDER_H

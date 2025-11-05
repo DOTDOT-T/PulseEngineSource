@@ -129,6 +129,10 @@ public:
 
     virtual void DrawGridQuad(PulseEngine::Mat4 viewCam,const PulseEngine::Mat4& specificProjection , IGraphicsAPI* graphicsAPI) = 0;
 
+    
+    virtual void ActivateWireframe() = 0;
+    virtual void DesactivateWireframe() = 0;
+
     /**
      * @brief Shuts down the graphics API and releases all resources.
      */
@@ -237,12 +241,14 @@ public:
     virtual void SetupMesh(unsigned int* VAO, unsigned int* VBO, unsigned int* EBO, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) const = 0;
     virtual void RenderMesh(unsigned int* VAO, unsigned int* VBO, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) const = 0;
 
+    virtual void RenderLineMesh(unsigned int* VAO, unsigned int* VBO, const std::vector<PulseEngine::Vector3>& vertices, const std::vector<unsigned int>& indices) = 0;
+
     // ============================================================================
     //  Mesh & Vertex Management
     // ============================================================================
     // Defines vertex array, buffer, and index setup routines.
     // Used by the engine renderer to stream geometry to the GPU.
-    virtual void DeleteMesh(unsigned int* VAO, unsigned int* VBO) const = 0;
+    virtual void DeleteMesh(unsigned int* VAO, unsigned int* VBO, unsigned int* EBO) const = 0;
 
     virtual void SetupSimpleSquare(unsigned int* VAO, unsigned int* VBO , unsigned int* EBO) const = 0;
 

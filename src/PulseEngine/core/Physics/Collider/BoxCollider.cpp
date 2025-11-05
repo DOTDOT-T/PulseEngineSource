@@ -1,15 +1,104 @@
 #include "BoxCollider.h"
 #include "PulseEngine/core/Entity/Entity.h"
 #include "PulseEngine/core/Material/Material.h"
+#include "PulseEngine/core/Graphics/IGraphicsApi.h"
+#include "PulseEngine/core/Math/MathUtils.h"
+#include "PulseEngine/core/Math/Mat4.h"
+#include "PulseEngine/core/Math/Vector.h"
+#include "PulseEngine/core/Meshes/Vertex.h"
+
+#include <vector>
+
 #define _USE_MATH_DEFINES
 #include <cmath>
 
 BoxCollider::BoxCollider(PulseEngine::Vector3* position, PulseEngine::Vector3* rotation, const PulseEngine::Vector3& size)
-    : Collider(), size(size)
+    : Collider(), position(position), rotation(rotation), size(size)
 {
-    this->position = position;
-    this->rotation = rotation;
+    IGraphicsAPI* gAPI = PulseEngineInstance->graphicsAPI;
+    if (!gAPI) return;
+
+    // Calcul du half-size
+    PulseEngine::Vector3 halfSize = GetHalfSize();
+
+    // Définition des vertices du cube
+    PulseEngine::Vector3 vertices[8] = {
+        {-halfSize.x, -halfSize.y, -halfSize.z},
+        { halfSize.x, -halfSize.y, -halfSize.z},
+        { halfSize.x,  halfSize.y, -halfSize.z},
+        {-halfSize.x,  halfSize.y, -halfSize.z},
+        {-halfSize.x, -halfSize.y,  halfSize.z},
+        { halfSize.x, -halfSize.y,  halfSize.z},
+        { halfSize.x,  halfSize.y,  halfSize.z},
+        {-halfSize.x,  halfSize.y,  halfSize.z}
+    };
+
+    
+    unsigned int indices[24] = {
+        0,1, 1,2, 2,3, 3,0, 
+        4,5, 5,6, 6,7, 7,4, 
+        0,4, 1,5, 2,6, 3,7  
+    };
+
+    meshVertices.clear();
+    meshVertices.reserve(8);
+    for (auto v : vertices)
+    {
+        Vertex vert;
+        vert.Position = v;
+        vert.Normal = PulseEngine::Vector3(0.0f);
+        vert.TexCoords = PulseEngine::Vector2(0.0f);
+        vert.BoneIDs = PulseEngine::iVector4(0);
+        vert.Weights = PulseEngine::Vector4(0.0f);
+        vert.Tangent = PulseEngine::Vector3(0.0f);
+        vert.Bitangent = PulseEngine::Vector3(0.0f);
+        meshVertices.push_back(vert);
+    }
+
+    // Indices
+    meshIndices = std::vector<unsigned int>(std::begin(indices), std::end(indices));
+
+    // Création du mesh OpenGL
+    gAPI->SetupMesh(&VAO, &VBO, &EBO, meshVertices, meshIndices);
+
+    // Chargement du shader de ligne
+    lineTraceShader = new Shader(
+        std::string(ASSET_PATH) + "shaders/lineTrace.vert",
+        std::string(ASSET_PATH) + "shaders/lineTrace.frag",
+        gAPI
+    );
 }
+
+
+void BoxCollider::OnRender()
+{
+    IGraphicsAPI* gAPI = PulseEngineInstance->graphicsAPI;
+    if (!gAPI) return;
+
+    gAPI->ActivateWireframe();
+
+    PulseEngine::Mat4 model = PulseEngine::MathUtils::Matrix::Identity();
+    model = PulseEngine::MathUtils::Matrix::Translate(model, *position);
+    model = PulseEngine::MathUtils::Matrix::RotateZ(model, PulseEngine::MathUtils::ToRadians(rotation->z));
+    model = PulseEngine::MathUtils::Matrix::RotateY(model, PulseEngine::MathUtils::ToRadians(rotation->y));
+    model = PulseEngine::MathUtils::Matrix::RotateX(model, PulseEngine::MathUtils::ToRadians(rotation->x));
+
+    // lineTraceShader->Use();
+    // gAPI->SetShaderMat4(lineTraceShader, "view", PulseEngineInstance->view); 
+    // gAPI->SetShaderMat4(lineTraceShader, "projection", PulseEngineInstance->projection);
+    gAPI->SetShaderMat4(lineTraceShader, "model", model); 
+    gAPI->SetShaderVec3(lineTraceShader, "color", PulseEngine::Vector3(1.0f,0.0f,0.0f)); 
+    std::vector<PulseEngine::Vector3> mshVertPos;
+    for (int i = 0; i < 8; ++i)
+    {
+        PulseEngine::Vector3 v = meshVertices[i].Position;
+        mshVertPos.push_back(v); 
+    }
+    gAPI->RenderLineMesh(&VAO, &VBO, mshVertPos, meshIndices);
+
+    gAPI->DesactivateWireframe();
+}
+
 
 PulseEngine::Vector3 BoxCollider::GetOrientedSize(const PulseEngine::Vector3& rotation, const PulseEngine::Vector3& originalSize)
 {

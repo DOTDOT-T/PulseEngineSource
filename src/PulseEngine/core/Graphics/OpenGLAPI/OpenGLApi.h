@@ -72,7 +72,7 @@ public:
 
     void SetupSimpleSquare(unsigned int* VAO, unsigned int* VBO , unsigned int* EBO) const override;
 
-    void DeleteMesh(unsigned int* VAO, unsigned int* VBO) const override;
+    void DeleteMesh(unsigned int* VAO, unsigned int* VBO, unsigned int* EBO) const override;
     void SetupMesh(unsigned int* VAO, unsigned int* VBO, unsigned int* EBO, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) const override;
     void RenderMesh(unsigned int* VAO, unsigned int* VBO, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) const override;
 
@@ -87,6 +87,9 @@ public:
     void ActivateBackCull() const override;
 
     void GenerateFrameBuffer(unsigned int* previewFBO, unsigned int* previewTexture, unsigned int* rbo, unsigned int previewWidth,unsigned int previewHeight) override;
+    void RenderLineMesh(unsigned int* VAO, unsigned int* VBO, const std::vector<PulseEngine::Vector3>& vertices, const std::vector<unsigned int>& indices) override;
+    void ActivateWireframe() override;
+    void DesactivateWireframe() override;
 
     GLFWwindow* window = nullptr;
     GLuint fbo, fboTexture, rbo;

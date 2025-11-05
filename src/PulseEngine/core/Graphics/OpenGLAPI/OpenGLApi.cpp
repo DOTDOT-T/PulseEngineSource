@@ -362,10 +362,11 @@ void OpenGLAPI::SetupSimpleSquare(unsigned int* VAO, unsigned int* VBO , unsigne
     glBindVertexArray(0);
 }
 
-void OpenGLAPI::DeleteMesh(unsigned int* VAO, unsigned int* VBO) const
+void OpenGLAPI::DeleteMesh(unsigned int* VAO, unsigned int* VBO, unsigned int* EBO) const
 {
     glDeleteVertexArrays(1, VAO);
     glDeleteBuffers(1, VBO);
+    glDeleteBuffers(1, EBO);
 }
 
 void OpenGLAPI::SetupMesh(unsigned int *VAO, unsigned int *VBO, unsigned int* EBO, const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices) const
@@ -535,19 +536,13 @@ void OpenGLAPI::PollEvents() const
 
 void OpenGLAPI::StartFrame() const
 {
-    EDITOR_ONLY(
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        glViewport(0, 0, fboWidth, fboHeight);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-    )
-    IN_GAME_ONLY(
+
         glfwGetFramebufferSize(window, width, height);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, *width, *height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0.52f, 0.8f, 0.92f, 1.0f);
-    )
+    
 }
 
 void OpenGLAPI::SpecificStartFrame(int specificVBO, const PulseEngine::Vector2& frameSize) const
@@ -600,6 +595,33 @@ void OpenGLAPI::GenerateFrameBuffer(unsigned int *previewFBO, unsigned int *prev
         std::cerr << "Preview framebuffer not complete!" << std::endl;
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void OpenGLAPI::RenderLineMesh(unsigned int *VAO, unsigned int *VBO, const std::vector<PulseEngine::Vector3> &vertices, const std::vector<unsigned int> &indices)
+{     
+    glBindVertexArray(*VAO);
+
+    if (!indices.empty())
+    {
+        glDrawElements(GL_LINES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
+    }
+    else
+    {
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(vertices.size()));
+    }
+
+    glBindVertexArray(0);
+}
+
+void OpenGLAPI::ActivateWireframe()
+{
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glLineWidth(1.5f);
+}
+
+void OpenGLAPI::DesactivateWireframe()
+{
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 unsigned int OpenGLAPI::CreateShader(const std::string& vertexPath, const std::string& fragmentPath)
