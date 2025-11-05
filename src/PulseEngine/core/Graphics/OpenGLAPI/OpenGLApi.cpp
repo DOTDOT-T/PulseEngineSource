@@ -512,6 +512,7 @@ void OpenGLAPI::DrawGridQuad(PulseEngine::Mat4 viewCam,const PulseEngine::Mat4& 
     // glDisable(GL_BLEND);
 }
 
+
 void OpenGLAPI::SetWindowSize(int width, int height) const
 {
     glfwSetWindowSize(window, width, height);
@@ -545,7 +546,7 @@ void OpenGLAPI::StartFrame() const
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, *width, *height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glClearColor(0.8f, 0.8f, 0.6f, 1.0f);
+        glClearColor(0.52f, 0.8f, 0.92f, 1.0f);
     )
 }
 
@@ -554,22 +555,51 @@ void OpenGLAPI::SpecificStartFrame(int specificVBO, const PulseEngine::Vector2& 
     glBindFramebuffer(GL_FRAMEBUFFER, specificVBO);
     glViewport(0, 0, frameSize.x, frameSize.y);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    glClearColor(0.52f, 0.8f, 0.92f, 1.0f);
 }
 
-void OpenGLAPI::EndFrame() const
+void OpenGLAPI::EndFrame(bool onlyUnbind) const
 {
     EDITOR_ONLY(
         glBindFramebuffer(GL_FRAMEBUFFER, 0); // Go back to default framebuffer
-        glViewport(0, 0, 1920, 1080); // Reset to default screen size
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
+        if(!onlyUnbind)
+        {
+            glViewport(0, 0, 1920, 1080); // Reset to default screen size
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
+        }
     )
 }
 
 void OpenGLAPI::ActivateBackCull() const
 {
     glCullFace(GL_BACK); 
+}
+
+void OpenGLAPI::GenerateFrameBuffer(unsigned int *previewFBO, unsigned int *previewTexture, unsigned int *rbo, unsigned int previewWidth,unsigned int previewHeight)
+{
+    if(*previewFBO == 0)
+        glGenFramebuffers(1, previewFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, *previewFBO);
+
+    glGenTextures(1, previewTexture);
+    
+    glBindTexture(GL_TEXTURE_2D, *previewTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, previewWidth, previewHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *previewTexture, 0);
+
+    if(*rbo == 0)
+        glGenRenderbuffers(1, rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, *rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, previewWidth, previewHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, *rbo);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cerr << "Preview framebuffer not complete!" << std::endl;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 unsigned int OpenGLAPI::CreateShader(const std::string& vertexPath, const std::string& fragmentPath)

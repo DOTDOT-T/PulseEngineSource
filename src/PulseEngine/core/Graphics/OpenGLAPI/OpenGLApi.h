@@ -35,7 +35,7 @@ public:
     bool ShouldClose() const override;
 
     void DrawGridQuad(PulseEngine::Mat4 viewCam,const PulseEngine::Mat4& specificProjection , IGraphicsAPI* graphicsAPI) override;
-
+    
     void SetWindowSize(int width, int height) const override;
     void SetWindowTitle(const char* title) const override;
 
@@ -83,8 +83,10 @@ public:
     void StartFrame() const override;
     void SpecificStartFrame(int specificVBO, const PulseEngine::Vector2& frameSize) const override;
 
-    void EndFrame() const override;
+    void EndFrame(bool onlyUnbind) const override;
     void ActivateBackCull() const override;
+
+    void GenerateFrameBuffer(unsigned int* previewFBO, unsigned int* previewTexture, unsigned int* rbo, unsigned int previewWidth,unsigned int previewHeight) override;
 
     GLFWwindow* window = nullptr;
     GLuint fbo, fboTexture, rbo;

@@ -16,6 +16,7 @@
 #include "PulseEngine/core/Meshes/RenderableMesh.h"
 #include "PulseEngine/core/Meshes/SkeletalMesh.h"
 #include "PulseEngine/core/Meshes/StaticMesh.h"
+#include "PulseEngine/core/Graphics/IGraphicsApi.h"
 
 #include <memory>
 #include <unordered_map>
@@ -80,50 +81,23 @@ void PulseInterfaceAPI::RenderCameraToInterface(PulseEngine::Vector2* previewDat
     // Create or bind a framebuffer/render target
     unsigned int previewFBO = previewData->x;
     unsigned int previewTexture = previewData->y;
+    static unsigned int rbo = 0;
     static int previewWidth = imageSize.x, previewHeight = imageSize.y;
+
 
     if (previewFBO == 0 || previewWidth != imageSize.x || previewHeight != imageSize.y)
     {
         previewWidth = imageSize.x;
         previewHeight = imageSize.y;
-    
-        if (previewFBO == 0)
-        {
-            glGenFramebuffers(1, &previewFBO);
-        }
-        glBindFramebuffer(GL_FRAMEBUFFER, previewFBO);
-    
-        if (previewTexture == 0)
-        {
-            glGenTextures(1, &previewTexture);
-        }
-        glBindTexture(GL_TEXTURE_2D, previewTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, previewWidth, previewHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, previewTexture, 0);
-    
-        static unsigned int rbo = 0;
-        if (rbo == 0)
-            glGenRenderbuffers(1, &rbo);
-        glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, previewWidth, previewHeight);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-    
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-            std::cerr << "Preview framebuffer not complete!" << std::endl;
-    
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        PulseEngineGraphicsAPI->GenerateFrameBuffer(&previewFBO, &previewTexture, &rbo, previewWidth, previewHeight);
+                
     }
 
-
-    glBindFramebuffer(GL_FRAMEBUFFER, previewFBO);
-    glViewport(0, 0, previewWidth, previewHeight);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    PulseEngineGraphicsAPI->SpecificStartFrame(previewFBO, PulseEngine::Vector2(previewWidth, previewHeight));
     
     PulseEngineInstance->SpecificRender(camera, previewFBO, entitiesToRender, imageSize, shader);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    PulseEngineGraphicsAPI->EndFrame(true);
 
     previewData->x = previewFBO;
     previewData->y = previewTexture;

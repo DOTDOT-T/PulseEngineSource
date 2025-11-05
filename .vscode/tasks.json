@@ -4,7 +4,7 @@
         {
             "label": "Build Engine DLLs",
             "type": "shell",
-            "command": "${workspaceFolder}\\BuilderScript\\scriptsEngineGenerator\\build_dll.bat",
+            "command": "${workspaceFolder}/../PulseForgeTools/EngineBuilder/BuildToDll.bat",
             "group": "build",
             "problemMatcher": ["$gcc"]
         }

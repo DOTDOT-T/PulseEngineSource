@@ -22,6 +22,8 @@ IModule *ModuleLoader::GetModuleFromPath(const std::string &modulePath)
         return nullptr;
     }
 
+    EDITOR_LOG("Module : " << modulePath << " loaded successfully")
+
     return moduleInstance;
 
 }

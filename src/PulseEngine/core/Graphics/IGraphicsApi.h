@@ -193,11 +193,13 @@ public:
     /**
      * @brief Ends the rendering frame. Usually includes buffer swapping or command submission.
      */
-    virtual void EndFrame() const = 0;
+    virtual void EndFrame(bool onlyUnbind = false) const = 0;
     virtual void ActivateBackCull() const = 0;
 
     virtual unsigned int CreateShader(const std::string& vertexPath, const std::string& fragmentPath) = 0;
     virtual unsigned int CreateShader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath) = 0;
+
+    virtual void GenerateFrameBuffer(unsigned int* previewFBO, unsigned int* previewTexture, unsigned int* rbo, unsigned int previewWidth,unsigned int previewHeight) = 0;
 
     // ============================================================================
     //  Shader Management

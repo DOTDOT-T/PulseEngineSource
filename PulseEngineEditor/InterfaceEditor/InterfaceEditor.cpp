@@ -70,29 +70,23 @@ InterfaceEditor::InterfaceEditor()
 
     std::vector<std::string> filenames;
 
-    // for (const auto& entry : fs::directory_iterator("./Modules/Interface"))
-    // {
-    //     if (entry.is_regular_file())
-    //     {
-    //         filenames.push_back(entry.path().filename().string());
-    //     }
-    // }
+     for (const auto& entry : fs::directory_iterator("./Modules/Interface"))
+     {
+         if (entry.is_regular_file())
+         {
+             filenames.push_back(entry.path().filename().string());
+         }
+     }
 
-    // for(auto file : filenames)
-    // {
-    //     IModuleInterface* module = dynamic_cast<IModuleInterface*>(ModuleLoader::GetModuleFromPath(std::string("./Modules/Interface/") + file));
-    //     if(module)
-    //     {
-    //         modules.push_back(module);
-    //         windowStates[module->GetName()] = false;
-    //     }
-    // }
-
-    windowStates["EntityAnalyzer"] = true;
-    windowStates["viewport"] = true;
-    windowStates["EngineConfig"] = true;
-    windowStates["SceneData"] = true;
-    windowStates["assetManager"] = true;
+     for(auto file : filenames)
+     {
+         IModuleInterface* module = dynamic_cast<IModuleInterface*>(ModuleLoader::GetModuleFromPath(std::string("./Modules/Interface/") + file));
+         if(module)
+         {
+             modules.push_back(module);
+             windowStates[module->GetName()] = false;
+         }
+     }
 
 
     fileClickedCallbacks.push_back(
