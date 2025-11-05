@@ -15,6 +15,28 @@
 BoxCollider::BoxCollider(PulseEngine::Vector3* position, PulseEngine::Vector3* rotation, const PulseEngine::Vector3& size)
     : Collider(), position(position), rotation(rotation), size(size)
 {
+
+    AddExposedVariable(EXPOSE_VAR(isTrigger, BOOL));
+    REGISTER_VAR(isTrigger);
+    AddExposedVariable(EXPOSE_VAR(boxColor.r, FLOAT));
+    REGISTER_VAR(boxColor.r);
+    AddExposedVariable(EXPOSE_VAR(boxColor.g, FLOAT));
+    REGISTER_VAR(boxColor.g);
+    AddExposedVariable(EXPOSE_VAR(boxColor.b, FLOAT));
+    REGISTER_VAR(boxColor.b);
+    // AddExposedVariable(EXPOSE_VAR(this->size.x, FLOAT));
+    // REGISTER_VAR(this->size.x);
+    // AddExposedVariable(EXPOSE_VAR(this->size.y, FLOAT));
+    // REGISTER_VAR(this->size.y);
+    // AddExposedVariable(EXPOSE_VAR(this->size.z, FLOAT));
+    // REGISTER_VAR(this->size.z);
+    // AddExposedVariable(EXPOSE_VAR(decalPosition.x, FLOAT));
+    // REGISTER_VAR(decalPosition.x);
+    // AddExposedVariable(EXPOSE_VAR(decalPosition.y, FLOAT));
+    // REGISTER_VAR(decalPosition.y);
+    // AddExposedVariable(EXPOSE_VAR(decalPosition.z, FLOAT));
+    // REGISTER_VAR(decalPosition.z);
+
     IGraphicsAPI* gAPI = PulseEngineInstance->graphicsAPI;
     if (!gAPI) return;
 
@@ -67,6 +89,8 @@ BoxCollider::BoxCollider(PulseEngine::Vector3* position, PulseEngine::Vector3* r
         std::string(ASSET_PATH) + "shaders/lineTrace.frag",
         gAPI
     );
+
+
 }
 
 
@@ -78,7 +102,7 @@ void BoxCollider::OnRender()
     gAPI->ActivateWireframe();
 
     PulseEngine::Mat4 model = PulseEngine::MathUtils::Matrix::Identity();
-    model = PulseEngine::MathUtils::Matrix::Translate(model, *position);
+    model = PulseEngine::MathUtils::Matrix::Translate(model, (*position));
     model = PulseEngine::MathUtils::Matrix::RotateZ(model, PulseEngine::MathUtils::ToRadians(rotation->z));
     model = PulseEngine::MathUtils::Matrix::RotateY(model, PulseEngine::MathUtils::ToRadians(rotation->y));
     model = PulseEngine::MathUtils::Matrix::RotateX(model, PulseEngine::MathUtils::ToRadians(rotation->x));
@@ -87,7 +111,7 @@ void BoxCollider::OnRender()
     // gAPI->SetShaderMat4(lineTraceShader, "view", PulseEngineInstance->view); 
     // gAPI->SetShaderMat4(lineTraceShader, "projection", PulseEngineInstance->projection);
     gAPI->SetShaderMat4(lineTraceShader, "model", model); 
-    gAPI->SetShaderVec3(lineTraceShader, "color", PulseEngine::Vector3(1.0f,0.0f,0.0f)); 
+    gAPI->SetShaderVec3(lineTraceShader, "color", PulseEngine::Vector3(boxColor.r/255.0f,boxColor.g/255.0f,boxColor.b/255.0f)); 
     std::vector<PulseEngine::Vector3> mshVertPos;
     for (int i = 0; i < 8; ++i)
     {
@@ -99,6 +123,9 @@ void BoxCollider::OnRender()
     gAPI->DesactivateWireframe();
 }
 
+void BoxCollider::OnEditorDisplay()
+{
+}
 
 PulseEngine::Vector3 BoxCollider::GetOrientedSize(const PulseEngine::Vector3& rotation, const PulseEngine::Vector3& originalSize)
 {

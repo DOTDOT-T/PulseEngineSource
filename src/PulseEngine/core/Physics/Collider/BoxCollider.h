@@ -23,6 +23,7 @@ public:
     BoxCollider(PulseEngine::Vector3* position, PulseEngine::Vector3* rotation, const PulseEngine::Vector3& size);
 
     void OnRender() override;
+    void OnEditorDisplay() override;
 
     /**
      * @brief Returns the name of the collider type.
@@ -142,9 +143,12 @@ private:
     PulseEngine::Vector3 size;         ///< Size of the box (width, height, depth).
     bool isTrigger = false;            ///< If true, only detects collisions but doesn’t resolve them.
     bool hasFastCalculus = false;      ///< If true, uses fast collision detection.
-    unsigned int VAO, VBO, EBO;
+    unsigned int VAO = 0, VBO = 0, EBO = 0;
     std::vector<Vertex> meshVertices;
     std::vector<unsigned int> meshIndices;
+    
+    PulseEngine::Color boxColor = PulseEngine::Color(1.0f, 0.0f, 0.0f);
+    // PulseEngine::Vector3 decalPosition; 
 };
 
 #endif // BOXCOLLIDER_H

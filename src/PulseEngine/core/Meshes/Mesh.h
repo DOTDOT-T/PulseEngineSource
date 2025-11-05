@@ -114,7 +114,7 @@ private:
     std::size_t guid = 0;
     std::size_t muid = 0;
 
-    unsigned int VAO; ///< Vertex Array Object.
-    unsigned int VBO; ///< Vertex Buffer Object.
-    unsigned int EBO; ///< Element Buffer Object.
+    unsigned int VAO = 0; ///< Vertex Array Object.
+    unsigned int VBO = 0; ///< Vertex Buffer Object.
+    unsigned int EBO = 0; ///< Element Buffer Object.
 };

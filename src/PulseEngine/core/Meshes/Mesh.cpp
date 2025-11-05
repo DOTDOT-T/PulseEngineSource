@@ -33,6 +33,9 @@ Mesh::~Mesh()
 
 void Mesh::SetupMesh()
 {
+    VAO = 0;
+    VBO = 0;
+    EBO = 0;
     PulseEngineGraphicsAPI->SetupMesh(&VAO, &VBO, &EBO, vertices, indices);
 }
 

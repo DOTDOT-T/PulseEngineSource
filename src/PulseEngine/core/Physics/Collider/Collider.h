@@ -22,6 +22,7 @@ class PULSE_ENGINE_DLL_API Collider : public IScript
         void OnStart() override {}
         void OnUpdate() override {}
         void OnRender() override {}
+        void OnEditorDisplay() override {}
         const char* GetName() const override { return "Collider"; }
         std::vector<ExposedVariable> GetExposedVariables();
 

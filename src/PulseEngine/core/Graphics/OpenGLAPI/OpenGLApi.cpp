@@ -371,7 +371,7 @@ void OpenGLAPI::DeleteMesh(unsigned int* VAO, unsigned int* VBO, unsigned int* E
 
 void OpenGLAPI::SetupMesh(unsigned int *VAO, unsigned int *VBO, unsigned int* EBO, const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices) const
 {
-        glGenVertexArrays(1, VAO);
+    glGenVertexArrays(1, VAO);
     glGenBuffers(1, VBO);
     glGenBuffers(1, EBO);
 
