@@ -53,7 +53,7 @@ Entity::Entity() : PulseObject()
 
 void Entity::BaseConstructor()
 {
-    collider = new BoxCollider(&this->transform.position, &this->transform.rotation, PulseEngine::Vector3(1.0f, 1.0f, 1.0f));
+    collider = new BoxCollider(&(this->transform.position), &(this->transform.rotation), PulseEngine::Vector3(1.0f, 1.0f, 1.0f));
     collider->owner = new PulseEngine::EntityApi(this);
     scripts.push_back(collider);
 }

@@ -105,6 +105,10 @@ namespace PulseEngine
         {
             return Vector3(x * scalar, y * scalar, z * scalar);
         }
+        Vector3 operator*(const PulseEngine::Vector3& vec) const
+        {
+            return Vector3(x * vec.x, y * vec.y, z * vec.z);
+        }
 
         // Multiply scalar by vector (friend function)
         friend Vector3 operator*(float scalar, const Vector3& vec)

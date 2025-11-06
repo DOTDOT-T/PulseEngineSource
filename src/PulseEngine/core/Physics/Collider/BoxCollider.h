@@ -35,6 +35,8 @@ public:
         return "BoxCollider";
     }
 
+    bool SAT_MinimumTranslation(const BoxCollider& B, PulseEngine::Vector3& outAxis, float& outDepth) const;
+
     /**
      * @brief Computes the oriented size of the box given a rotation.
      * @param rotation Rotation vector.
@@ -149,6 +151,8 @@ private:
     std::vector<unsigned int> meshIndices;
     
     PulseEngine::Color boxColor = PulseEngine::Color(1.0f, 0.0f, 0.0f);
+    PulseEngine::Vector3 angularVelocity = PulseEngine::Vector3(0.0f);
+
     // PulseEngine::Vector3 decalPosition; 
 };
 
