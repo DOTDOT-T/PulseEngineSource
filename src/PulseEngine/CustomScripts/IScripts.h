@@ -21,6 +21,7 @@ struct ExposedVariable
     {
         INT,
         FLOAT,
+        FLOAT3,
         BOOL,
         STRING
     };

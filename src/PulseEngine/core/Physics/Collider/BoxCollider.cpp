@@ -15,27 +15,15 @@
 BoxCollider::BoxCollider(PulseEngine::Vector3* position, PulseEngine::Vector3* rotation, const PulseEngine::Vector3& size)
     : Collider(), position(position), rotation(rotation), size(size)
 {
-
+    hasFastCalculus = false;
     AddExposedVariable(EXPOSE_VAR(isTrigger, BOOL));
     REGISTER_VAR(isTrigger);
-    AddExposedVariable(EXPOSE_VAR(boxColor.r, FLOAT));
-    REGISTER_VAR(boxColor.r);
-    AddExposedVariable(EXPOSE_VAR(boxColor.g, FLOAT));
-    REGISTER_VAR(boxColor.g);
-    AddExposedVariable(EXPOSE_VAR(boxColor.b, FLOAT));
-    REGISTER_VAR(boxColor.b);
-    // AddExposedVariable(EXPOSE_VAR(this->size.x, FLOAT));
-    // REGISTER_VAR(this->size.x);
-    // AddExposedVariable(EXPOSE_VAR(this->size.y, FLOAT));
-    // REGISTER_VAR(this->size.y);
-    // AddExposedVariable(EXPOSE_VAR(this->size.z, FLOAT));
-    // REGISTER_VAR(this->size.z);
-    // AddExposedVariable(EXPOSE_VAR(decalPosition.x, FLOAT));
+    AddExposedVariable(EXPOSE_VAR(boxColor, FLOAT3));
+    REGISTER_VAR(boxColor);
+    AddExposedVariable(EXPOSE_VAR(this->size, FLOAT3));
+    REGISTER_VAR(this->size);
+    // AddExposedVariable(EXPOSE_VAR(decalPosition.x, FLOAT3));
     // REGISTER_VAR(decalPosition.x);
-    // AddExposedVariable(EXPOSE_VAR(decalPosition.y, FLOAT));
-    // REGISTER_VAR(decalPosition.y);
-    // AddExposedVariable(EXPOSE_VAR(decalPosition.z, FLOAT));
-    // REGISTER_VAR(decalPosition.z);
 
     IGraphicsAPI* gAPI = PulseEngineInstance->graphicsAPI;
     if (!gAPI) return;
@@ -45,14 +33,14 @@ BoxCollider::BoxCollider(PulseEngine::Vector3* position, PulseEngine::Vector3* r
 
     // Définition des vertices du cube
     PulseEngine::Vector3 vertices[8] = {
-        {-halfSize.x, -halfSize.y, -halfSize.z},
-        { halfSize.x, -halfSize.y, -halfSize.z},
-        { halfSize.x,  halfSize.y, -halfSize.z},
-        {-halfSize.x,  halfSize.y, -halfSize.z},
-        {-halfSize.x, -halfSize.y,  halfSize.z},
-        { halfSize.x, -halfSize.y,  halfSize.z},
-        { halfSize.x,  halfSize.y,  halfSize.z},
-        {-halfSize.x,  halfSize.y,  halfSize.z}
+        {-0.5f, -0.5f, -0.5f},
+        { 0.5f, -0.5f, -0.5f},
+        { 0.5f,  0.5f, -0.5f},
+        {-0.5f,  0.5f, -0.5f},
+        {-0.5f, -0.5f,  0.5f},
+        { 0.5f, -0.5f,  0.5f},
+        { 0.5f,  0.5f,  0.5f},
+        {-0.5f,  0.5f,  0.5f}
     };
 
     
@@ -93,6 +81,30 @@ BoxCollider::BoxCollider(PulseEngine::Vector3* position, PulseEngine::Vector3* r
 
 }
 
+void BoxCollider::OnUpdate()
+{
+    boxColor = othersCollider.size() > 0 ? PulseEngine::Color(0.0f,255.0f,0.0f) : PulseEngine::Color(255.0f, 0.0f, 0.0f);
+
+    if (physicBody == PhysicBody::STATIC)
+        return;
+
+    PulseEngine::Vector3 gravity(0.0f, -9.81f, 0.0f);
+    PulseEngine::Vector3 totalForce = force + (mass * gravity);
+
+    PulseEngine::Vector3 acceleration = totalForce / mass;
+
+    velocity += acceleration * PulseEngineInstance->GetDeltaTime();
+
+
+    velocity *= (1.0f - std::min(0.99f, 0.05f * othersCollider.size()) * PulseEngineInstance->GetDeltaTime()); 
+
+    SetPosition(GetPosition() + velocity * PulseEngineInstance->GetDeltaTime());
+
+    force = PulseEngine::Vector3(0, 0, 0);
+    
+
+
+}
 
 void BoxCollider::OnRender()
 {
@@ -106,6 +118,7 @@ void BoxCollider::OnRender()
     model = PulseEngine::MathUtils::Matrix::RotateZ(model, PulseEngine::MathUtils::ToRadians(rotation->z));
     model = PulseEngine::MathUtils::Matrix::RotateY(model, PulseEngine::MathUtils::ToRadians(rotation->y));
     model = PulseEngine::MathUtils::Matrix::RotateX(model, PulseEngine::MathUtils::ToRadians(rotation->x));
+    model = PulseEngine::MathUtils::Matrix::Scale(model, size);
 
     // lineTraceShader->Use();
     // gAPI->SetShaderMat4(lineTraceShader, "view", PulseEngineInstance->view); 
@@ -249,10 +262,10 @@ bool BoxCollider::SeparatedAxisDetection(BoxCollider* otherBox)
 bool BoxCollider::FastCheckCollision(BoxCollider *otherBox)
 {
     PulseEngine::Vector3 posA = this->GetPosition();
-    PulseEngine::Vector3 sizeA = GetOrientedSize(*this->rotation, this->GetSize());
+    PulseEngine::Vector3 sizeA = this->GetSize();
 
     PulseEngine::Vector3 posB = otherBox->GetPosition();
-    PulseEngine::Vector3 sizeB = GetOrientedSize(*otherBox->rotation, otherBox->GetSize());
+    PulseEngine::Vector3 sizeB = otherBox->GetSize();
 
     sizeA.x /= 2.0f;
     sizeA.y /= 2.0f;
@@ -268,7 +281,7 @@ bool BoxCollider::FastCheckCollision(BoxCollider *otherBox)
 
     bool collisionDetected = xOverlap && yOverlap && zOverlap;
 
-    return xOverlap && yOverlap && zOverlap;
+    return collisionDetected;
 }
 
 #pragma endregion
@@ -286,41 +299,60 @@ void BoxCollider::ResolveCollision(Collider* other)
     PulseEngine::Vector3 posB = otherBox->GetPosition();
     PulseEngine::Vector3 sizeB = GetOrientedSize(*otherBox->rotation, otherBox->GetSize());
 
-
-    sizeA.x /= 2.0f;
-    sizeA.y /= 2.0f;
-    sizeA.z /= 2.0f;
-    sizeB.x /= 2.0f;
-    sizeB.y /= 2.0f;
-    sizeB.z /= 2.0f;
-
-    float deltaX = posB.x - posA.x;
-    float intersectX = (sizeA.x + sizeB.x) - std::abs(deltaX);
-
-    float deltaY = posB.y - posA.y;
-    float intersectY = (sizeA.y + sizeB.y) - std::abs(deltaY);
-
-    float deltaZ = posB.z - posA.z;
-    float intersectZ = (sizeA.z + sizeB.z) - std::abs(deltaZ);
-
-    // Trouve le plus petit axe d'intersection
-    if (intersectX < intersectY && intersectX < intersectZ)
+    if(other->physicBody == PhysicBody::MOVABLE && this->physicBody == PhysicBody::MOVABLE)
     {
-        float pushX = (deltaX > 0) ? -intersectX : intersectX;
-        posA.x += pushX;
-    }
-    else if (intersectY < intersectZ)
-    {
-        float pushY = (deltaY > 0) ? -intersectY : intersectY;
-        posA.y += pushY;
+        PulseEngine::Vector3 normal = (other->GetPosition() - GetPosition()).Normalized();
+        float relativeVel = (other->velocity - velocity).Dot(normal);
+
+        if (relativeVel > 0.0f)
+            return; 
+
+        float e = 0.5f;
+        float j = -(1 + e) * relativeVel / (1 / mass + 1 / other->mass);
+
+        PulseEngine::Vector3 impulse = j * normal;
+
+        velocity -= impulse / mass;
+        other->velocity += impulse / other->mass;
     }
     else
     {
-        float pushZ = (deltaZ > 0) ? -intersectZ : intersectZ;
-        posA.z += pushZ;
-    }
+        sizeA.x /= 2.0f;
+        sizeA.y /= 2.0f;
+        sizeA.z /= 2.0f;
+        sizeB.x /= 2.0f;
+        sizeB.y /= 2.0f;
+        sizeB.z /= 2.0f;
 
-    this->SetPosition(posA);
+        float deltaX = posB.x - posA.x;
+        float intersectX = (sizeA.x + sizeB.x) - std::abs(deltaX);
+
+        float deltaY = posB.y - posA.y;
+        float intersectY = (sizeA.y + sizeB.y) - std::abs(deltaY);
+
+        float deltaZ = posB.z - posA.z;
+        float intersectZ = (sizeA.z + sizeB.z) - std::abs(deltaZ);
+
+        // Trouve le plus petit axe d'intersection
+        if (intersectX < intersectY && intersectX < intersectZ)
+        {
+            float pushX = (deltaX > 0) ? -intersectX : intersectX;
+            posA.x += pushX;
+        }
+        else if (intersectY < intersectZ)
+        {
+            float pushY = (deltaY > 0) ? -intersectY : intersectY;
+            posA.y += pushY;
+            velocity.y = 0.0f;
+        }
+        else
+        {
+            float pushZ = (deltaZ > 0) ? -intersectZ : intersectZ;
+            posA.z += pushZ;
+        }
+
+        this->SetPosition(posA);
+    }
 }
 
 PulseEngine::Vector3 BoxCollider::GetCenter() const
@@ -346,7 +378,9 @@ PulseEngine::Vector3 BoxCollider::GetAxis(int index) const
     PulseEngine::Mat3 rotZ = PulseEngine::Mat3::RotationZ(radZ);
 
     // Rotation finale : Y * X * Z
-    PulseEngine::Mat3 rotationMatrix = rotY * rotX * rotZ;
+    PulseEngine::Mat3 rotationMatrix = rotZ * rotY * rotX;
+
+
 
     // Axes locaux de base (avant rotation)
     switch (index)

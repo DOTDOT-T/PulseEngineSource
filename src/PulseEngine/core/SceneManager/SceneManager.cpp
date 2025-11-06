@@ -6,6 +6,9 @@
 #include "PulseEngine/core/Lights/LightManager.h"
 #include "PulseEngine/core/SceneManager/SpatialPartition/SpatialPartition.h"
 #include "PulseEngine/core/SceneManager/SpatialPartition/SimpleSpatial/SimpleSpatial.h"
+#include "PulseEngine/core/Physics/Collider/Collider.h"
+#include "PulseEngine/core/Physics/Collider/BoxCollider.h"
+#include "PulseEngine/core/Physics/CollisionManager.h"
 
 #include <algorithm>
 
@@ -118,6 +121,18 @@ void SceneManager::UpdateScene()
      */
     for (auto& [transform, node] : allEntities)
         spatialPartition->Update(node->entity);
+
+    //after moving them, we can check for physics collision, and move them back to their original place if they are colliding.
+    for(auto trans : allEntities)
+    {
+        Entity* entA = trans.second->entity;
+        for(auto trans : allEntities)
+        {
+            Entity* entB = trans.second->entity;
+            CollisionManager::ManageCollision(dynamic_cast<Collider*>(entA->collider), dynamic_cast<Collider*>(entB->collider));
+
+        }
+    }
 }
 
 void SceneManager::RenderScene()

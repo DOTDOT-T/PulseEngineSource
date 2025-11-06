@@ -22,6 +22,7 @@ public:
      */
     BoxCollider(PulseEngine::Vector3* position, PulseEngine::Vector3* rotation, const PulseEngine::Vector3& size);
 
+    void OnUpdate() override;
     void OnRender() override;
     void OnEditorDisplay() override;
 

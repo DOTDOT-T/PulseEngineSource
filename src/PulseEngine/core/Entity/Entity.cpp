@@ -83,12 +83,12 @@ void Entity::UpdateEntity(PulseEngine::Mat4 parentMatrix)
     internalClock += PulseEngineInstance->GetDeltaTime();
     UpdateModelMatrix(parentMatrix);
     collider->SetRotation(transform.rotation);
-    IN_GAME_ONLY(
+    // IN_GAME_ONLY(
         for (size_t i = 0; i < scripts.size(); ++i)
         {
             scripts[i]->OnUpdate();
         }
-    )
+    // )
     for (const auto &mesh : meshes)
     {
         mesh->Update();

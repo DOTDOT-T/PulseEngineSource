@@ -538,27 +538,32 @@ void InterfaceEditor::EntityAnalyzerWindow()
                 switch (var.type)
                 {
                     case ExposedVariable::Type::INT:
-                        ImGui::TextColored(ImVec4(0.6f, 0.8f, 1.0f, 1.0f), "🧩 %s", var.name.c_str());
+                        ImGui::TextColored(ImVec4(0.6f, 0.8f, 1.0f, 1.0f), "%s", var.name.c_str());
                         ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
                         ImGui::SetNextItemWidth(-1);
                         ImGui::DragInt("##int", reinterpret_cast<int*>(var.ptr), 1.0f);
                         break;
 
                     case ExposedVariable::Type::FLOAT:
-                        ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "📈 %s", var.name.c_str());
+                        ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s", var.name.c_str());
                         ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
                         ImGui::SetNextItemWidth(-1);
                         ImGui::DragFloat("##float", reinterpret_cast<float*>(var.ptr), 0.1f);
                         break;
-
+                    case ExposedVariable::Type::FLOAT3:
+                        ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s", var.name.c_str());
+                        ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
+                        ImGui::SetNextItemWidth(-1);
+                        ImGui::DragFloat3("##float3", reinterpret_cast<float*>(var.ptr), 0.1f);
+                        break;
                     case ExposedVariable::Type::BOOL:
-                        ImGui::TextColored(ImVec4(1.0f, 0.85f, 0.4f, 1.0f), "🔘 %s", var.name.c_str());
+                        ImGui::TextColored(ImVec4(1.0f, 0.85f, 0.4f, 1.0f), "%s", var.name.c_str());
                         ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
                         ImGui::Checkbox("##bool", reinterpret_cast<bool*>(var.ptr));
                         break;
 
                     case ExposedVariable::Type::STRING:
-                        ImGui::TextColored(ImVec4(0.8f, 0.6f, 1.0f, 1.0f), "📝 %s", var.name.c_str());
+                        ImGui::TextColored(ImVec4(0.8f, 0.6f, 1.0f, 1.0f), "%s", var.name.c_str());
                         ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
                         ImGui::SetNextItemWidth(-1);
                         ImGui::InputText("##str", reinterpret_cast<char*>(var.ptr), 256);

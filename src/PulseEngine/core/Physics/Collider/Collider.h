@@ -4,6 +4,13 @@
 #include "PulseEngine/core/PulseEngineBackend.h"
 #include "Common/common.h"
 #include "PulseEngine/CustomScripts/IScripts.h"
+#include "PulseEngine/core/Math/Transform/Transform.h"
+
+enum PhysicBody
+{
+    STATIC,
+    MOVABLE
+};
 
 
 /**
@@ -14,7 +21,17 @@
 class PULSE_ENGINE_DLL_API Collider : public IScript
 {
     public:
-        Collider() : IScript() {}
+        Collider() : IScript() 
+        {
+            AddExposedVariable(EXPOSE_VAR(decalPosition, FLOAT3));
+            REGISTER_VAR(decalPosition);
+            AddExposedVariable(EXPOSE_VAR(velocity, FLOAT3));
+            REGISTER_VAR(velocity);
+            AddExposedVariable(EXPOSE_VAR(mass, FLOAT));
+            REGISTER_VAR(mass);
+            AddExposedVariable(EXPOSE_VAR(physicBody, INT));
+            REGISTER_VAR(physicBody);
+        }
         virtual ~Collider() = default;
 
 
@@ -37,6 +54,14 @@ class PULSE_ENGINE_DLL_API Collider : public IScript
         virtual void SetPosition(const PulseEngine::Vector3& position) = 0;
 
         std::vector<Collider*> othersCollider;
+        PulseEngine::Transform lastTransform;
+        PulseEngine::Vector3 decalPosition;
+        PulseEngine::Vector3 velocity;
+        PulseEngine::Vector3 force;
+        int physicBody = (int)PhysicBody::STATIC;
+
+
+        float mass = 60.0f;
 };
 
 

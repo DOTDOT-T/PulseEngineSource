@@ -246,12 +246,12 @@ namespace PulseEngine
 
             inline PulseEngine::Mat4 Scale(const PulseEngine::Mat4& mat, const PulseEngine::Vector3& scale)
             {
-                PulseEngine::Mat4 result = mat;
-                float* m = result.Ptr();
-                m[0] *= scale.x;
-                m[5] *= scale.y;
-                m[10] *= scale.z;
-                return result;
+                PulseEngine::Mat4 s = Identity();
+                float* m = s.Ptr();
+                m[0] = scale.x;
+                m[5] = scale.y;
+                m[10] = scale.z;
+                return mat * s;
             }
 
             inline Mat4 Orthographic(float left, float right, float bottom, float top, float nearVal, float farVal)
