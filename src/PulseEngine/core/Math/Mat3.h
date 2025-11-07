@@ -70,6 +70,19 @@ namespace PulseEngine
             std::memcpy(m, values, sizeof(m));
         }
 
+        Mat3 Inversed() const
+        {
+            Mat3 inv;
+        
+            // Transpose the 3x3 rotation part
+            inv.m[0][0] = m[0][0]; inv.m[0][1] = m[1][0]; inv.m[0][2] = m[2][0];
+            inv.m[1][0] = m[0][1]; inv.m[1][1] = m[1][1]; inv.m[1][2] = m[2][1];
+            inv.m[2][0] = m[0][2]; inv.m[2][1] = m[1][2]; inv.m[2][2] = m[2][2];
+        
+            return inv;
+        }
+
+
         /**
          * @brief Access operator to get a row of the matrix.
          * 
@@ -202,6 +215,28 @@ namespace PulseEngine
         {
             return RotationZ(rz) * RotationY(ry) * RotationX(rx);
         }
+
+        static Vector3 ToEulerXYZ(const Mat3& m)
+        {
+            float y = asinf(-m.m[2][0]); // m[2][0] = -sin(y)
+        
+            float x, z;
+        
+            if (cosf(y) > 1e-6f) // not gimbal locked
+            {
+                x = atan2f(m.m[2][1], m.m[2][2]); // X rotation
+                z = atan2f(m.m[1][0], m.m[0][0]); // Z rotation
+            }
+            else
+            {
+                // Gimbal lock (cos(y) ≈ 0)
+                x = atan2f(-m.m[1][2], m.m[1][1]);
+                z = 0.0f;
+            }
+        
+            return Vector3(x, y, z);
+        }
+
 
         /**
          * @brief Multiply this matrix by another matrix.

@@ -22,6 +22,8 @@
 #include <unordered_map>
 #include <fstream>
 
+
+
 void PulseInterfaceAPI::OpenWindow(const std::string &name)
 {
     ImGui::Begin(name.c_str());
@@ -198,19 +200,19 @@ void PulseInterfaceAPI::AddTransformModifierForMesh(RenderableMesh *mesh, const 
         {
             // Position
             ImGui::Text("Position:");
-            if (ImGui::DragFloat3("##Position", &(mesh->position.x), 0.01f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_AlwaysClamp))
+            if (ImGui::DragFloat3("##Position", &(mesh->transform.position.x), 0.01f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_AlwaysClamp))
             {
             }
 
             // Rotation
             ImGui::Text("Rotation:");
-            if (ImGui::DragFloat3("##Rotation", &(mesh->rotation.x), 0.01f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_AlwaysClamp))
+            if (ImGui::DragFloat3("##Rotation", &(mesh->transform.rotation.x), 0.01f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_AlwaysClamp))
             {
             }
 
             // Scale
             ImGui::Text("Scale:");
-            if (ImGui::DragFloat3("##Scale", &(mesh->scale.x), 0.01f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_AlwaysClamp))
+            if (ImGui::DragFloat3("##Scale", &(mesh->transform.scale.x), 0.01f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_AlwaysClamp))
             {
             }
 
@@ -511,4 +513,9 @@ void PulseInterfaceAPI::GizmoDebug()
                          glm::value_ptr(model));
 
     ImGui::End();
+}
+
+ImGuiContext *PulseInterfaceAPI::ImGuiContext()
+{
+    return ImGui::GetCurrentContext();
 }

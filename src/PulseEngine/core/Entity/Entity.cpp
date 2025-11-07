@@ -56,6 +56,7 @@ void Entity::BaseConstructor()
     collider = new BoxCollider(&(this->transform.position), &(this->transform.rotation), PulseEngine::Vector3(1.0f, 1.0f, 1.0f));
     collider->owner = new PulseEngine::EntityApi(this);
     scripts.push_back(collider);
+
 }
 
 Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position) : PulseObject(name.c_str())
@@ -231,12 +232,7 @@ void Entity::CalculateMeshMatrix(RenderableMesh* const & mesh) const
     using namespace PulseEngine;
     Mat4 entityTransform = entityMatrix; // parent/world transform
 
-    Mat4 localTransform = MathUtils::Matrix::Identity();
-    localTransform = MathUtils::Matrix::Translate(localTransform, mesh->position);
-    localTransform = MathUtils::Matrix::RotateZ(localTransform, MathUtils::ToRadians(mesh->rotation.z));
-    localTransform = MathUtils::Matrix::RotateY(localTransform, MathUtils::ToRadians(mesh->rotation.y));
-    localTransform = MathUtils::Matrix::RotateX(localTransform, MathUtils::ToRadians(mesh->rotation.x));
-    localTransform = MathUtils::Matrix::Scale(localTransform, mesh->scale);
+    Mat4 localTransform = mesh->transform.GetLocalMatrix();
 
     mesh->matrix = entityTransform * localTransform;
 
@@ -267,9 +263,36 @@ void Entity::DrawMeshWithShader(Shader* shader) const
     for (const auto &mesh : meshes)
     {        
         shader->SetMat4("model", mesh->matrix);
+        BindTexturesToShader();
         mesh->Render(material->GetShader());
     }
 }
+void Entity::AddMesh(RenderableMesh *mesh, RenderableMesh *parent)
+{
+    meshes.push_back(mesh);
+    HierarchyNode<RenderableMesh>* newHier = new HierarchyNode<RenderableMesh>(mesh);
+
+    if (parent)
+    {
+        // Parcours de tous les nodes racines
+        for (HierarchyNode<RenderableMesh>* rootNode : meshHierarchy)
+        {
+            if (HierarchyNode<RenderableMesh>* parentNode = rootNode->Find(parent))
+            {
+                parentNode->AddChild(newHier);
+                return;
+            }
+        }
+        // Si parent non trouvé, on peut l'ajouter en root
+        meshHierarchy.push_back(newHier);
+    }
+    else
+    {
+        // Pas de parent, ajout direct à la racine
+        meshHierarchy.push_back(newHier);
+    }
+}
+
 
 void Entity::AddScript(IScript *script)
 {

@@ -31,6 +31,14 @@
 #include "Common/common.h"
 #include "Common/dllExport.h"
 
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui.h"
+#include "imgui_internal.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
+#include "imgui-node/imgui_node_editor.h"
+#include "imgui-node/imgui_node_editor_internal.h"
+
 class Entity;
 class Mesh;
 class Material;
@@ -461,6 +469,8 @@ static void SetCursorScreenPos(const PulseEngine::Vector2& pos);
 
 
 static void GizmoDebug();
+
+static ImGuiContext* ImGuiContext();
 
 
 };

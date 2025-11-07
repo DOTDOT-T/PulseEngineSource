@@ -6,6 +6,7 @@
 #include "PulseEngine/core/Math/Mat4.h"
 #include "PulseEngine/core/Math/Vector.h"
 #include "PulseEngine/core/Meshes/Vertex.h"
+#include "PulseEngine/API/EngineApi.h"
 
 #include <vector>
 
@@ -122,18 +123,20 @@ void BoxCollider::OnUpdate()
         }
     }
     velocity -= (velocity *0.1)*PulseEngineInstance->GetDeltaTime();
-    angularVelocity *= 0.90f;
+    PulseEngine::Vector3 localInertia = PulseEngine::Vector3(
+    1.0f / 12.0f * mass * (size.y*size.y + size.z*size.z),
+    1.0f / 12.0f * mass * (size.x*size.x + size.z*size.z),
+    1.0f / 12.0f * mass * (size.x*size.x + size.y*size.y)
+    );
+
+    angularVelocity.x -= angularVelocity.x * PulseEngineInstance->GetDeltaTime() * 0.5f / localInertia.x;
+    angularVelocity.y -= angularVelocity.y * PulseEngineInstance->GetDeltaTime() * 0.5f / localInertia.y;
+    angularVelocity.z -= angularVelocity.z * PulseEngineInstance->GetDeltaTime() * 0.5f / localInertia.z;
 
     SetPosition(GetPosition() + velocity * PulseEngineInstance->GetDeltaTime());
-    PulseEngine::Mat3 rotMat = 
-        PulseEngine::Mat3::RotationZ(PulseEngine::MathUtils::ToRadians(rotation->z)) *
-        PulseEngine::Mat3::RotationY(PulseEngine::MathUtils::ToRadians(rotation->y)) *
-        PulseEngine::Mat3::RotationX(PulseEngine::MathUtils::ToRadians(rotation->x));
-    
-    // On veut exprimer la vitesse angulaire en local donc on applique la transposée (inverse)
-    PulseEngine::Vector3 localAngularVel =  rotMat.Transpose() * angularVelocity;
 
-    *rotation += localAngularVel * (180.0f / M_PI) * PulseEngineInstance->GetDeltaTime();
+
+    owner->GetTransform()->AddWorldRotation(angularVelocity * (180.0f / M_PI) * PulseEngineInstance->GetDeltaTime());
 
     force = PulseEngine::Vector3(0, 0, 0);
 }
@@ -255,53 +258,57 @@ bool BoxCollider::FastCheckCollision(BoxCollider *otherBox)
 void BoxCollider::ResolveCollision(Collider* other)
 {
     auto* otherBox = dynamic_cast<BoxCollider*>(other);
-    if (!otherBox)
-        return;
+    if (!otherBox || this->isTrigger || otherBox->isTrigger) return;
 
-    // --- Phase 1 : collision SAT ---
+    // --- Phase 1 : SAT collision check ---
     PulseEngine::Vector3 normal;
     float penetration;
     if (!SAT_MinimumTranslation(*otherBox, normal, penetration))
         return;
 
-    // S'assurer que la normale pointe de "this" vers "other"
     PulseEngine::Vector3 posA = this->GetCenter() + decalPosition;
     PulseEngine::Vector3 posB = otherBox->GetCenter() + otherBox->decalPosition;
+
+    // S'assurer que la normale pointe de A vers B
     if ((posB - posA).Dot(normal) < 0.0f)
         normal = PulseEngine::Vector3(-normal.x, -normal.y, -normal.z);
 
-    // --- Phase 2 : correction positionnelle (désenfouissement) ---
-    const float percent = 0.8f;  // correction proportionnelle
-    const float slop = 0.001f;   // marge
-    float correctionMag = std::max(penetration - slop, 0.0f) / (1.0f / mass + 1.0f / otherBox->mass) * percent;
-    PulseEngine::Vector3 correction = correctionMag * normal;
-
-    if (physicBody == PhysicBody::MOVABLE)
-        SetPosition(GetPosition() - correction * (1.0f / mass));
-    if (otherBox->physicBody == PhysicBody::MOVABLE)
-        otherBox->SetPosition(otherBox->GetPosition() + correction * (1.0f / otherBox->mass));
-
-    // --- Phase 3 : calcul du point de contact (approximé) ---
-    PulseEngine::Vector3 contactPoint = 0.5f * (posA + posB - normal * penetration * 0.5f);
-
-    // --- Phase 4 : impulsion linéaire + angulaire ---
-    PulseEngine::Vector3 rA = contactPoint - posA;
-    PulseEngine::Vector3 rB = contactPoint - posB;
-
-    PulseEngine::Vector3 vA = velocity + PulseEngine::Cross(angularVelocity, rA);
-    PulseEngine::Vector3 vB = otherBox->velocity + PulseEngine::Cross(otherBox->angularVelocity, rB);
-
-    PulseEngine::Vector3 relativeVel = vB - vA;
-    float velAlongNormal = relativeVel.Dot(normal);
-
-    if (velAlongNormal > 0.0f)
-        return; // séparées déjà
-
-    float e = 0.2f; // restitution
+    // --- Phase 2 : désenfouissement ---
+    const float percent = 0.2f; // correction douce
+    const float slop = 0.001f;
     float invMassA = (physicBody == PhysicBody::MOVABLE) ? 1.0f / mass : 0.0f;
     float invMassB = (otherBox->physicBody == PhysicBody::MOVABLE) ? 1.0f / otherBox->mass : 0.0f;
 
-    // --- Inertie approximée pour un cube ---
+    float correctionMag = std::max(penetration - slop, 0.0f) / (invMassA + invMassB) * percent;
+    PulseEngine::Vector3 correction = correctionMag * normal;
+
+    if (physicBody == PhysicBody::MOVABLE)
+        SetPosition(GetPosition() - correction * invMassA);
+    if (otherBox->physicBody == PhysicBody::MOVABLE)
+        otherBox->SetPosition(otherBox->GetPosition() + correction * invMassB);
+
+    // --- Phase 3 : collecte des points de contact ---
+    auto halfA = GetHalfSize();
+    auto halfB = otherBox->GetHalfSize();
+    std::vector<PulseEngine::Vector3> contactPoints;
+
+    for (int x = -1; x <= 1; x += 2)
+    for (int y = -1; y <= 1; y += 2)
+    for (int z = -1; z <= 1; z += 2)
+    {
+        PulseEngine::Vector3 corner = posA + PulseEngine::Vector3(x*halfA.x, y*halfA.y, z*halfA.z);
+        float penetrationDepth = (posB - corner).Dot(normal);
+        if (penetrationDepth >= 0)
+            contactPoints.push_back(corner);
+    }
+
+    // fallback au centre si aucun coin trouvé
+    if (contactPoints.empty())
+        contactPoints.push_back(0.5f * (posA + posB));
+
+    // --- Phase 4 : impulsion linéaire + rotation ---
+    float e = 0.0f; // restitution zéro pour éviter rebonds
+
     auto InverseInertia = [](float m, const PulseEngine::Vector3& half) {
         PulseEngine::Vector3 I(
             (1.0f / 12.0f) * m * (half.y*half.y + half.z*half.z),
@@ -311,33 +318,53 @@ void BoxCollider::ResolveCollision(Collider* other)
         return PulseEngine::Vector3(1.0f / I.x, 1.0f / I.y, 1.0f / I.z);
     };
 
-    PulseEngine::Vector3 invInertiaA = InverseInertia(mass, GetHalfSize());
-    PulseEngine::Vector3 invInertiaB = InverseInertia(otherBox->mass, otherBox->GetHalfSize());
+    PulseEngine::Vector3 invInertiaA = InverseInertia(mass, halfA);
+    PulseEngine::Vector3 invInertiaB = InverseInertia(otherBox->mass, halfB);
 
-    // --- Denominateur complet du coefficient d’impulsion ---
-    PulseEngine::Vector3 raCrossN = PulseEngine::Cross(rA, normal);
-    PulseEngine::Vector3 rbCrossN = PulseEngine::Cross(rB, normal);
+    for (auto& contact : contactPoints)
+    {
+        PulseEngine::Vector3 rA = contact - posA;
+        PulseEngine::Vector3 rB = contact - posB;
 
-    float angularFactorA = raCrossN.Dot(invInertiaA * raCrossN);
-    float angularFactorB = rbCrossN.Dot(invInertiaB * rbCrossN);
+        PulseEngine::Vector3 vA = velocity + PulseEngine::Cross(angularVelocity, rA);
+        PulseEngine::Vector3 vB = otherBox->velocity + PulseEngine::Cross(otherBox->angularVelocity, rB);
 
-    float j = -(1.0f + e) * velAlongNormal;
-    j /= invMassA + invMassB + angularFactorA + angularFactorB;
+        PulseEngine::Vector3 relativeVel = vB - vA;
+        float velAlongNormal = relativeVel.Dot(normal);
+        if (velAlongNormal > 0.0f) continue;
 
-    PulseEngine::Vector3 impulse = j * normal;
+        PulseEngine::Vector3 raCrossN = PulseEngine::Cross(rA, normal);
+        PulseEngine::Vector3 rbCrossN = PulseEngine::Cross(rB, normal);
 
-    // --- Appliquer l’impulsion linéaire ---
-    if (physicBody == PhysicBody::MOVABLE)
-        velocity -= impulse * invMassA;
-    if (otherBox->physicBody == PhysicBody::MOVABLE)
-        otherBox->velocity += impulse * invMassB;
+        float angularFactorA = raCrossN.Dot(invInertiaA * raCrossN);
+        float angularFactorB = rbCrossN.Dot(invInertiaB * rbCrossN);
 
-    // --- Appliquer le couple (rotation) ---
-    if (physicBody == PhysicBody::MOVABLE)
-        angularVelocity -= invInertiaA * PulseEngine::Cross(rA, impulse);
-    if (otherBox->physicBody == PhysicBody::MOVABLE)
-        otherBox->angularVelocity += invInertiaB * PulseEngine::Cross(rB, impulse);
+        float j = -(1.0f + e) * velAlongNormal;
+        j /= invMassA + invMassB + angularFactorA + angularFactorB;
+
+        PulseEngine::Vector3 impulse = j * normal;
+
+        // --- Appliquer l’impulsion sur A si movable ---
+        if (physicBody == PhysicBody::MOVABLE)
+        {
+            velocity -= impulse * invMassA;
+            angularVelocity -= invInertiaA * PulseEngine::Cross(rA, impulse);
+        }
+
+        // --- Appliquer l’impulsion sur B si movable ---
+        if (otherBox->physicBody == PhysicBody::MOVABLE)
+        {
+            otherBox->velocity += impulse * invMassB;
+            otherBox->angularVelocity += invInertiaB * PulseEngine::Cross(rB, impulse);
+        }
+    }
+
+    // --- Damping angulaire pour stabiliser ---
+    if (physicBody == PhysicBody::MOVABLE) angularVelocity *= 0.95f;
+    if (otherBox->physicBody == PhysicBody::MOVABLE) otherBox->angularVelocity *= 0.95f;
 }
+
+
 
 PulseEngine::Vector3 BoxCollider::GetCenter() const
 {

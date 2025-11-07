@@ -22,6 +22,8 @@
 #include "PulseEngine/core/Meshes/RenderableMesh.h"
 #include "PulseEngine/core/PulseObject/PulseObject.h"
 #include "PulseEngine/core/PulseObject/TypeRegister/TypeRegister.h"
+#include "PulseEngine/core/SceneManager/HierarchyNode.h"
+#include "PulseEngine/core/Math/Transform/Transform.h"
 
 #include <string>
 #include <vector>
@@ -137,7 +139,7 @@ public:
     // ------------------------------------------------------------------------
 
     /// Adds a mesh to the entity.
-    void AddMesh(RenderableMesh* mesh) {meshes.push_back(mesh); }
+    void AddMesh(RenderableMesh* mesh, RenderableMesh* parent = nullptr);
         
     /// Attaches a behavior script to the entity.
     void AddScript(IScript* script);
@@ -164,6 +166,7 @@ public:
     Material* GetMaterial() {return material; }
     std::vector<IScript*>& GetScripts() {return scripts; }
     std::vector<RenderableMesh*>& GetMeshes() {return meshes; }
+    std::vector<HierarchyNode<RenderableMesh>*>& GetMeshesHierarchy() {return meshHierarchy; }
 
     // ------------------------------------------------------------------------
     // Setters
@@ -213,6 +216,7 @@ private:
     std::size_t muid = 0;
 
     std::vector<RenderableMesh*> meshes;
+    std::vector<HierarchyNode<RenderableMesh>*> meshHierarchy;
     std::vector<IScript*> scripts;
 
     float internalClock = 0.0f;

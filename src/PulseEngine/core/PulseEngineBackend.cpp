@@ -227,9 +227,9 @@ void PulseEngineBackend::Render()
     // }
 
         // Draw grid quad in editor only
-    EDITOR_ONLY(
+#ifdef ENGINE_EDITOR
         DrawGridQuad(view, projection);
-    )
+#endif
 
     graphicsAPI->EndFrame();
 }
@@ -275,7 +275,6 @@ void PulseEngineBackend::SpecificRender(Camera *cam, int specificVBO, std::vecto
             entity->DrawEntity();
             if (entity->collider)
             {
-                EDITOR_LOG("rendering the collider")
                 entity->collider->lineTraceShader->Use();
                 entity->collider->lineTraceShader->SetMat4("view", specificView);
                 entity->collider->lineTraceShader->SetMat4("projection", specificProjection);
@@ -290,9 +289,9 @@ void PulseEngineBackend::SpecificRender(Camera *cam, int specificVBO, std::vecto
         } 
     }
         // Draw grid quad in editor only
-    EDITOR_ONLY(
+#ifdef ENGINE_EDITOR
         DrawGridQuad(specificView, specificProjection);
-    )
+#endif
 
     graphicsAPI->EndFrame();
 }

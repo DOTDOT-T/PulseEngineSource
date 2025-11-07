@@ -10,6 +10,7 @@
 #include "PulseEngine/core/Meshes/Vertex.h"
 #include "PulseEngine/core/Math/Vector.h"
 #include "PulseEngine/core/Math/MathUtils.h"
+#include "PulseEngine/core/Math/Transform/Transform.h"
 
 class Skeleton;
 class Shader;
@@ -93,9 +94,11 @@ public:
     std::size_t GetGuid() const { return guid; }
     void SetGuid(std::size_t newGuid) { guid = newGuid; }
 
-    PulseEngine::Vector3 position = PulseEngine::Vector3(0.0f, 0.0f, 0.0f); ///< Position of the mesh in local space.
-    PulseEngine::Vector3 rotation = PulseEngine::Vector3(0.0f, 0.0f, 0.0f); ///< Rotation of the mesh in local space.
-    PulseEngine::Vector3 scale = PulseEngine::Vector3(1.0f, 1.0f, 1.0f); ///< Scale of the mesh in local space.
+    // PulseEngine::Vector3 position = PulseEngine::Vector3(0.0f, 0.0f, 0.0f); ///< Position of the mesh in local space.
+    // PulseEngine::Vector3 rotation = PulseEngine::Vector3(0.0f, 0.0f, 0.0f); ///< Rotation of the mesh in local space.
+    // PulseEngine::Vector3 scale = PulseEngine::Vector3(1.0f, 1.0f, 1.0f); ///< Scale of the mesh in local space.
+
+    PulseEngine::Transform transform;
 
     PulseEngine::Mat4 matrix;
 private:

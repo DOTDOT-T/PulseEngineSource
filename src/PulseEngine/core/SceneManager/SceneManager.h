@@ -16,6 +16,7 @@
 #include "common/dllExport.h"
 #include "PulseEngine/core/PulseObject/PulseObject.h"
 
+
 class Entity;
 class SpatialPartition;
 

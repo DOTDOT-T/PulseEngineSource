@@ -105,17 +105,17 @@ Entity *GuidReader::GetEntityFromJson(nlohmann::json_abi_v3_12_0::json &entityDa
                 }
 
                 RenderableMesh* msh = GetMeshFromGuid(meshGuid);
-                msh->position.x = mesh["Position"][0].get<float>();
-                msh->position.y = mesh["Position"][1].get<float>();
-                msh->position.z = mesh["Position"][2].get<float>();
+                msh->transform.position.x = mesh["Position"][0].get<float>();
+                msh->transform.position.y = mesh["Position"][1].get<float>();
+                msh->transform.position.z = mesh["Position"][2].get<float>();
                             
-                msh->rotation.x = mesh["Rotation"][0].get<float>();
-                msh->rotation.y = mesh["Rotation"][1].get<float>();
-                msh->rotation.z = mesh["Rotation"][2].get<float>();
+                msh->transform.rotation.x = mesh["Rotation"][0].get<float>();
+                msh->transform.rotation.y = mesh["Rotation"][1].get<float>();
+                msh->transform.rotation.z = mesh["Rotation"][2].get<float>();
                             
-                msh->scale.x = mesh["Scale"][0].get<float>();
-                msh->scale.y = mesh["Scale"][1].get<float>();
-                msh->scale.z = mesh["Scale"][2].get<float>();
+                msh->transform.scale.x = mesh["Scale"][0].get<float>();
+                msh->transform.scale.y = mesh["Scale"][1].get<float>();
+                msh->transform.scale.z = mesh["Scale"][2].get<float>();
                 msh->SetGuid(meshGuid);
                 msh->SetName(mesh["Name"].get<std::string>());
 

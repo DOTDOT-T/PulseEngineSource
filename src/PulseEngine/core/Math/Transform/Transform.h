@@ -51,6 +51,8 @@ namespace PulseEngine
          */
         PulseEngine::Vector3 GetRight() const;
 
+        void AddWorldRotation(const Vector3& deltaEulerDeg);
+
         PulseEngine::Mat4 GetLocalMatrix();
     };
 }

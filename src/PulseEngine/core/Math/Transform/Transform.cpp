@@ -69,6 +69,36 @@ namespace PulseEngine
         return Vector3(rotationMatrix[0][0], rotationMatrix[0][1], rotationMatrix[0][2]).Normalized();
     }
 
+void Transform::AddWorldRotation(const Vector3& deltaEulerDeg)
+{
+    using namespace PulseEngine;
+
+    Vector3 deltaEulerRad = deltaEulerDeg * (M_PI / 180.0f);
+    Vector3 localEulerRad = rotation * (M_PI / 180.0f);
+
+    Mat3 deltaWorld = Mat3::FromEulerXYZ(deltaEulerRad.x, deltaEulerRad.y, deltaEulerRad.z);
+    Mat3 localRot   = Mat3::FromEulerXYZ(localEulerRad.x, localEulerRad.y, localEulerRad.z);
+
+    // Build parent rotation
+    Mat3 parentRot = Mat3::Identity();
+    if (parent)
+    {
+        Vector3 parentEulerRad = parent->rotation * (M_PI / 180.0f);
+        parentRot = Mat3::FromEulerXYZ(parentEulerRad.x, parentEulerRad.y, parentEulerRad.z);
+    }
+
+    Mat3 worldRot = parentRot * localRot;
+    Mat3 newWorldRot = deltaWorld * worldRot;
+
+    // Convert back to local space
+    Mat3 newLocalRot = parentRot.Inversed() * newWorldRot;
+    Vector3 newLocalEuler = Mat3::ToEulerXYZ(newLocalRot);
+    newLocalEuler *= (180.0f / M_PI);
+
+    rotation = newLocalEuler;
+}
+
+
     PulseEngine::Mat4 Transform::GetLocalMatrix()
     {
         Mat4 transformMat = PulseEngine::MathUtils::Matrix::Identity();

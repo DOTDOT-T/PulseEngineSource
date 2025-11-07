@@ -228,6 +228,7 @@ void RenderMainDockSpace()
         ImGui::SetNextWindowPos(viewport->Pos);
         ImGui::SetNextWindowSize(viewport->Size);
         ImGui::SetNextWindowViewport(viewport->ID);
+
         
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
@@ -419,12 +420,10 @@ void InterfaceEditor::EntityAnalyzerWindow()
             }
 
             // Rotation
-            ImGui::Text("Rotation:");
             if (ImGui::DragFloat3("##Rotation", &(rotation.x), 0.1f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_AlwaysClamp))
             {
-                selectedEntity->SetRotation(rotation);
+                selectedEntity->SetRotation(rotation);            
             }
-
             // Scale
             ImGui::Text("Scale:");
             if (ImGui::DragFloat3("##Scale", &(scale.x), 0.1f, -FLT_MAX, FLT_MAX, "%.3f", ImGuiSliderFlags_AlwaysClamp))
@@ -853,7 +852,6 @@ void InterfaceEditor::RenderGizmo(PulseEngine::Transform* transform, PulseEngine
     if (ImGui::IsItemActive() && ImGuizmo::IsOver())
         ImGui::ClearActiveID();
 
-    
 
     // --- Manipulate only if viewport hovered or already active ---
     ImGuizmo::Manipulate(glm::value_ptr(view),
@@ -869,7 +867,7 @@ void InterfaceEditor::RenderGizmo(PulseEngine::Transform* transform, PulseEngine
         float t[3], r[3], s[3];
         ImGuizmo::DecomposeMatrixToComponents(model, t, r, s);
         if(operation == ImGuizmo::OPERATION::TRANSLATE) transform->position = { t[0], t[1], t[2] };
-        if(operation == ImGuizmo::OPERATION::ROTATE) transform->rotation   += { r[0], r[1], r[2] };
+        if(operation == ImGuizmo::OPERATION::ROTATE) transform->AddWorldRotation(PulseEngine::Vector3(r[0], r[1], r[2]));
         if(operation == ImGuizmo::OPERATION::SCALE) transform->scale        = { s[0], s[1], s[2] };
     }
 

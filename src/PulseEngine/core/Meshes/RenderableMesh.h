@@ -21,10 +21,12 @@ public:
     std::size_t GetGuid() const { return guid; }
     void SetGuid(std::size_t newGuid) { guid = newGuid; }
 
-    PulseEngine::Vector3 position = PulseEngine::Vector3(0.0f, 0.0f, 0.0f); ///< Position of the mesh in local space.
-    PulseEngine::Vector3 rotation = PulseEngine::Vector3(0.0f, 0.0f, 0.0f); ///< Rotation of the mesh in local space.
-    PulseEngine::Vector3 scale = PulseEngine::Vector3(1.0f, 1.0f, 1.0f); ///< Scale of the mesh in local space.
+    // PulseEngine::Vector3 position = PulseEngine::Vector3(0.0f, 0.0f, 0.0f); ///< Position of the mesh in local space.
+    // PulseEngine::Vector3 rotation = PulseEngine::Vector3(0.0f, 0.0f, 0.0f); ///< Rotation of the mesh in local space.
+    // PulseEngine::Vector3 scale = PulseEngine::Vector3(1.0f, 1.0f, 1.0f); ///< Scale of the mesh in local space.
     PulseEngine::Mat4 matrix;
+
+    PulseEngine::Transform transform;
 
 protected:
     std::vector<Mesh*> meshes;
