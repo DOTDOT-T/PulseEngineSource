@@ -19,15 +19,15 @@
             "name": "Debug Engine (without build)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/../PulseForgeTools/EngineBuilder/Build/Game.exe",
+            "program": "D:/SVN/Eleves/dlexteriaque/PulseSoftware/PulseForgeTools/EngineBuilder/Build/Game.exe",
             "args": ["D:/SVN/Eleves/dlexteriaque/PulseSoftware/PulseForgeTools/EngineBuilder/Build"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": true,
             "MIMode": "gdb",
-            "miDebuggerPath": "C:/msys64/mingw64/bin/gdb.exe",
-            "preLaunchTask": "Build Engine DLLs"
+            "miDebuggerPath": "C:/msys64/mingw64/bin/gdb.exe"
+            // "preLaunchTask": "Build Engine DLLs"
         }
     ]
 }

@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include "PulseEngine/core/PulseObject/PulseObject.h"
+
 //ExposedVariable is used to expose variables to the editor
 #define EXPOSE_VAR(var, typeEnum) ExposedVariable(#var, ExposedVariable::Type::typeEnum, reinterpret_cast<void*>(&var))
 #define REGISTER_VAR(var) RegisterRuntimeVariable(#var, reinterpret_cast<void*>(&var))

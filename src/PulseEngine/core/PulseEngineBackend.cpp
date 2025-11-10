@@ -231,7 +231,7 @@ void PulseEngineBackend::Render()
         DrawGridQuad(view, projection);
 #endif
 
-    graphicsAPI->EndFrame();
+    graphicsAPI->EndFrame(true);
 }
 
 // Draws a large quad at y=0 using a grid shader

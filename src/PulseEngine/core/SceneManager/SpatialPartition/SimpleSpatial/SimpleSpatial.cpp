@@ -45,6 +45,7 @@ void SimpleSpatialPartition::Query(const Frustum &frustum, std::vector<Entity *>
 
         for (Entity* e : entities)
         {
+                outEntities.push_back(e);
             if (!e) continue;
 
             AABB aabb = AABB(e->GetPosition() - PulseEngine::Vector3(0.5f), e->GetPosition() + PulseEngine::Vector3(0.5f));

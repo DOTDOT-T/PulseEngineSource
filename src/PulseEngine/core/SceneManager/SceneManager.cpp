@@ -144,6 +144,15 @@ void SceneManager::RenderScene()
     frust.ExtractFromMatrix(PulseEngineInstance->view * PulseEngineInstance->projection);
     spatialPartition->Query(frust, visible);
 
+
+    // PulseEngineGraphicsAPI->SpecificStartFrame(0, PulseEngine::Vector2(1920,1080));
+    
+    // PulseEngineInstance->SpecificRender(PulseEngineInstance->GetActiveCamera(), 0, visible, PulseEngine::Vector2(1920,1080));
+
+    // PulseEngineGraphicsAPI->EndFrame(true);
+
+
+
     for(Entity* ent : visible)
     {
         Entity* drawable = ent;
@@ -156,9 +165,13 @@ void SceneManager::RenderScene()
 
         LightManager::BindLightsToShader(shader, PulseEngineInstance, drawable);
 
-        drawable->DrawEntity();
+        // drawable->DrawEntity();
+        drawable->DrawMeshWithShader(shader);
+                drawable->collider->lineTraceShader->Use();
+                drawable->collider->lineTraceShader->SetMat4("view", PulseEngineInstance->view);
+                drawable->collider->lineTraceShader->SetMat4("projection", PulseEngineInstance->projection);
+                drawable->collider->OnRender();
     }
-
 
     // RenderEntityHierarchy(&root);
 }

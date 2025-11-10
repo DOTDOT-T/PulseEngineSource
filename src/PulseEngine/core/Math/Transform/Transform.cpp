@@ -56,9 +56,9 @@ namespace PulseEngine
         return rotated + position;
     }
 
-    Vector3 Transform::GetForward() const
+    Vector3 Transform::GetForward()
     {
-        Mat4 rotationMatrix = MathUtils::CreateRotationMatrix(rotation);
+       PulseEngine::Mat4 rotationMatrix = GetWorldMatrix();
         // Forward is the -Z axis in most right-handed systems
         return Vector3(-rotationMatrix[2][0], -rotationMatrix[2][1], -rotationMatrix[2][2]).Normalized();
     }
@@ -108,7 +108,21 @@ void Transform::AddWorldRotation(const Vector3& deltaEulerDeg)
         transformMat = PulseEngine::MathUtils::Matrix::RotateX(transformMat, PulseEngine::MathUtils::ToRadians(rotation.x));
         transformMat = PulseEngine::MathUtils::Matrix::Scale(transformMat, scale);
 
-        return transformMat;
+        return parent ? parent->GetLocalMatrix() * transformMat : transformMat;
+    }
+
+    PulseEngine::Mat4 Transform::GetWorldMatrix()
+    {
+        if (parent)
+            return parent->GetWorldMatrix() * GetLocalMatrix();
+        else
+            return GetLocalMatrix();
+    }
+
+    PulseEngine::Vector3 Transform::GetWorldPosition()
+    {
+        PulseEngine::Mat4 world = GetWorldMatrix();
+        return Vector3(world[3][0], world[3][1], world[3][2]);
     }
 
     Vector3 Transform::GetUp() const

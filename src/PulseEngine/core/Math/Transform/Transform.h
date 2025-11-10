@@ -37,7 +37,7 @@ namespace PulseEngine
          * 
          * @return PulseEngine::Vector3 
          */
-        PulseEngine::Vector3 GetForward() const;
+        PulseEngine::Vector3 GetForward();
         /**
          * @brief Get the Up vector of the transform.
          * 
@@ -54,6 +54,8 @@ namespace PulseEngine
         void AddWorldRotation(const Vector3& deltaEulerDeg);
 
         PulseEngine::Mat4 GetLocalMatrix();
+        PulseEngine::Mat4 GetWorldMatrix() ;
+        PulseEngine::Vector3 GetWorldPosition();
     };
 }
 

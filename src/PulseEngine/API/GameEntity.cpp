@@ -9,6 +9,7 @@
 #include "PulseEngine/core/GUID/GuidGenerator.h"
 #include "PulseEngine/core/GUID/GuidCollection.h"
 #include "PulseEngine/core/SceneManager/SceneManager.h"
+#include "GameEntity.h"
 
 Entity *PulseEngine::GameEntity::Instantiate(const std::string &path, PulseEngine::Vector3 position, PulseEngine::Vector3 rotation, PulseEngine::Vector3 scale)
 {
@@ -58,6 +59,18 @@ std::vector<Entity *> PulseEngine::GameEntity::GetAllEntitiesByTag(const std::st
     for(Entity* entity : PulseEngineInstance->entities)
     {
         if(entity->HasTag(tag))
+        {
+            entitiesWithTag.push_back(entity);
+        }
+    }
+    return entitiesWithTag;
+}
+std::vector<Entity*> PulseEngine::GameEntity::GetAllEntitiesContainingName(const std::string &name)
+{
+    std::vector<Entity*> entitiesWithTag;
+    for (Entity* entity : PulseEngineInstance->entities)
+    {
+        if (entity->GetName().find(name) != std::string::npos)
         {
             entitiesWithTag.push_back(entity);
         }

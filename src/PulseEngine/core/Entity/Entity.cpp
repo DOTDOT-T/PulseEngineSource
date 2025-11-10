@@ -22,7 +22,18 @@ void Entity::Serialize(Archive &ar)
     
     ar.Serialize("name", name);
     transform.Serialize(ar);
+
+    uint64_t nmbrScript = ar.IsLoading() ? 0 : scripts.size();
+    // ar.Serialize("scriptAmount", nmbrScript);   
     
+    // if(ar.IsLoading())
+    // {
+
+    // }
+    // else
+    // {
+    //     collider->Serialize(ar);
+    // }
 }
 
 void Entity::Deserialize(Archive &ar)
@@ -84,12 +95,12 @@ void Entity::UpdateEntity(PulseEngine::Mat4 parentMatrix)
     internalClock += PulseEngineInstance->GetDeltaTime();
     UpdateModelMatrix(parentMatrix);
     collider->SetRotation(transform.rotation);
-    // IN_GAME_ONLY(
+    IN_GAME_ONLY(
         for (size_t i = 0; i < scripts.size(); ++i)
         {
             scripts[i]->OnUpdate();
         }
-    // )
+    )
     for (const auto &mesh : meshes)
     {
         mesh->Update();
@@ -267,7 +278,7 @@ void Entity::DrawMeshWithShader(Shader* shader) const
         mesh->Render(material->GetShader());
     }
 }
-void Entity::AddMesh(RenderableMesh *mesh, RenderableMesh *parent)
+HierarchyNode<RenderableMesh>* Entity::AddMesh(RenderableMesh *mesh, RenderableMesh *parent)
 {
     meshes.push_back(mesh);
     HierarchyNode<RenderableMesh>* newHier = new HierarchyNode<RenderableMesh>(mesh);
@@ -280,7 +291,7 @@ void Entity::AddMesh(RenderableMesh *mesh, RenderableMesh *parent)
             if (HierarchyNode<RenderableMesh>* parentNode = rootNode->Find(parent))
             {
                 parentNode->AddChild(newHier);
-                return;
+                return newHier;
             }
         }
         // Si parent non trouvé, on peut l'ajouter en root
@@ -291,6 +302,8 @@ void Entity::AddMesh(RenderableMesh *mesh, RenderableMesh *parent)
         // Pas de parent, ajout direct à la racine
         meshHierarchy.push_back(newHier);
     }
+
+    return newHier;
 }
 
 
@@ -311,6 +324,12 @@ void Entity::RemoveScript(IScript* script)
         scripts.erase(it);
     }
 }
+
+HierarchyNode<RenderableMesh>* Entity::AddMeshHierarchy(RenderableMesh* mesh, HierarchyNode<RenderableMesh>* parent)
+{
+    return AddMesh(mesh, parent ? parent->item : nullptr);
+}
+
 
 void Entity::AddTag(const std::string &tag)
 {

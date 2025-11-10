@@ -33,6 +33,8 @@ namespace PulseEngine
          * @return a simple list of entities.
          */
         static std::vector<Entity*> GetAllEntitiesByTag(const std::string& tag);
+
+        static std::vector<Entity*> GetAllEntitiesContainingName(const std::string& name);
     };
 }
 

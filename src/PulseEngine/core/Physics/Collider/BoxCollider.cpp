@@ -13,6 +13,31 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
+#include "PulseEngine/core/FileManager/Archive/Archive.h"
+
+// PULSE_REGISTER_CLASS_CPP(BoxCollider)
+
+
+// void BoxCollider::Serialize(Archive& ar)
+// {
+//     ar.Serialize("physicType", physicBody);
+//     ar.Serialize("mass", mass);
+//     ar.Serialize("size.x", size.x);
+//     ar.Serialize("size.y", size.y);
+//     ar.Serialize("size.z", size.z);
+// }
+
+// void BoxCollider::Deserialize(Archive& ar)
+// {
+
+// }
+// const char* BoxCollider::ToString()
+// {
+//     return "BoxCollider";
+// }
+
+
+
 BoxCollider::BoxCollider(PulseEngine::Vector3* position, PulseEngine::Vector3* rotation, const PulseEngine::Vector3& size)
     : Collider(), position(position), rotation(rotation), size(size)
 {
@@ -80,6 +105,10 @@ BoxCollider::BoxCollider(PulseEngine::Vector3* position, PulseEngine::Vector3* r
     );
 
 
+}
+
+BoxCollider::BoxCollider()
+{
 }
 
 void BoxCollider::OnUpdate()

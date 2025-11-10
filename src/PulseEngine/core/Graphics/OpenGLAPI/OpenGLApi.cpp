@@ -92,6 +92,7 @@ void OpenGLAPI::ShutdownApi()
 
 void OpenGLAPI::UseShader(unsigned int shaderID) const
 {
+    
     glUseProgram(shaderID);
 }
 
@@ -416,7 +417,6 @@ void OpenGLAPI::SetupMesh(unsigned int *VAO, unsigned int *VBO, unsigned int* EB
 void OpenGLAPI::RenderMesh(unsigned int *VAO, unsigned int *VBO, const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices) const
 {
      glBindVertexArray(*VAO);
-
     if (!indices.empty())
     {
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
@@ -555,8 +555,8 @@ void OpenGLAPI::SpecificStartFrame(int specificVBO, const PulseEngine::Vector2& 
 
 void OpenGLAPI::EndFrame(bool onlyUnbind) const
 {
-    EDITOR_ONLY(
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); // Go back to default framebuffer
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    EDITOR_ONLY( // Go back to default framebuffer
         if(!onlyUnbind)
         {
             glViewport(0, 0, 1920, 1080); // Reset to default screen size

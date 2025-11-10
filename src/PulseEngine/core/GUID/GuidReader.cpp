@@ -65,89 +65,100 @@ Entity *GuidReader::GetEntityFromGuid(std::size_t guid)
     }
 }
 
-Entity *GuidReader::GetEntityFromJson(nlohmann::json_abi_v3_12_0::json &entityData, Entity *entity)
+Entity* GuidReader::GetEntityFromJson(nlohmann::json& entityData, Entity* entity)
 {
-    if(entityData.contains("Guid"))
+    if (entityData.contains("Guid"))
     {
         std::size_t entityGuid = 0;
         if (entityData["Guid"].is_string())
-        {
             entityGuid = std::stoull(entityData["Guid"].get<std::string>());
-        }
         else if (entityData["Guid"].is_number_unsigned())
-        {
             entityGuid = entityData["Guid"].get<std::size_t>();
-        }
+
         entity->SetGuid(entityGuid);
         EDITOR_LOG("Loading entity with GUID: " + std::to_string(entityGuid))
     }
-    if (entityData.contains("Meshes"))
+
+    // ------------------------------
+    // Recursive mesh loader
+    // ------------------------------
+    std::function<RenderableMesh*(const nlohmann::json&, HierarchyNode<RenderableMesh>* parent)> LoadMeshHierarchy =
+        [&](const nlohmann::json& meshJson, HierarchyNode<RenderableMesh>* parent) -> RenderableMesh*
     {
+        std::size_t meshGuid = 0;
+        if (meshJson["Guid"].is_string())
+            meshGuid = std::stoull(meshJson["Guid"].get<std::string>());
+        else if (meshJson["Guid"].is_number_unsigned())
+            meshGuid = meshJson["Guid"].get<std::size_t>();
 
-        for (const auto &mesh : entityData["Meshes"])
+        RenderableMesh* mesh = GetMeshFromGuid(meshGuid);
+        if (!mesh)
         {
+            EDITOR_ERROR("Failed to load mesh with GUID: " + std::to_string(meshGuid))
+            return nullptr;
+        }
 
-            std::size_t meshGuid = 0;
-            try
+        mesh->transform.position = {
+            meshJson["Position"][0].get<float>(),
+            meshJson["Position"][1].get<float>(),
+            meshJson["Position"][2].get<float>()
+        };
+
+        mesh->transform.rotation = {
+            meshJson["Rotation"][0].get<float>(),
+            meshJson["Rotation"][1].get<float>(),
+            meshJson["Rotation"][2].get<float>()
+        };
+
+        mesh->transform.scale = {
+            meshJson["Scale"][0].get<float>(),
+            meshJson["Scale"][1].get<float>(),
+            meshJson["Scale"][2].get<float>()
+        };
+
+        mesh->SetGuid(meshGuid);
+        mesh->SetName(meshJson["Name"].get<std::string>());
+
+        // Register in hierarchy
+        auto* node = entity->AddMeshHierarchy(mesh, parent); 
+        mesh->transform.parent = parent ? &parent->item->transform : nullptr;
+
+        EDITOR_LOG("Loaded mesh: " + mesh->GetName() + " with GUID: " + std::to_string(meshGuid))
+
+        // Recursively load children
+        if (meshJson.contains("Children"))
+        {
+            for (const auto& childJson : meshJson["Children"])
             {
-                if (mesh["Guid"].is_string())
-                {
-                    meshGuid = std::stoull(mesh["Guid"].get<std::string>());
-                }
-                else if (mesh["Guid"].is_number_unsigned())
-                {
-                    meshGuid = mesh.get<std::size_t>();
-                }
-                else
-                {
-                    EDITOR_ERROR("[GetEntityFromGuid] Invalid mesh GUID format.")
-                    continue;
-                }
-
-                RenderableMesh* msh = GetMeshFromGuid(meshGuid);
-                msh->transform.position.x = mesh["Position"][0].get<float>();
-                msh->transform.position.y = mesh["Position"][1].get<float>();
-                msh->transform.position.z = mesh["Position"][2].get<float>();
-                            
-                msh->transform.rotation.x = mesh["Rotation"][0].get<float>();
-                msh->transform.rotation.y = mesh["Rotation"][1].get<float>();
-                msh->transform.rotation.z = mesh["Rotation"][2].get<float>();
-                            
-                msh->transform.scale.x = mesh["Scale"][0].get<float>();
-                msh->transform.scale.y = mesh["Scale"][1].get<float>();
-                msh->transform.scale.z = mesh["Scale"][2].get<float>();
-                msh->SetGuid(meshGuid);
-                msh->SetName(mesh["Name"].get<std::string>());
-
-                if (msh)
-                {
-                    EDITOR_LOG("Loaded mesh: " + msh->GetName() + " with GUID: " + std::to_string(meshGuid))
-                    entity->AddMesh(msh);
-                }
-                else
-                {
-                    EDITOR_ERROR("Failed to load mesh with GUID: " + std::to_string(meshGuid))
-                }
-            }
-            catch (const std::exception &e)
-            {
-                EDITOR_ERROR("[GetEntityFromGuid] Error parsing mesh guid: " << e.what())
+                LoadMeshHierarchy(childJson, node);
             }
         }
+
+        return mesh;
+    };
+
+    // Root meshes
+    if (entityData.contains("Meshes"))
+    {
+        for (const auto& meshJson : entityData["Meshes"])
+        {
+            LoadMeshHierarchy(meshJson, nullptr);
+        }
     }
-    EDITOR_LOG("Entity has " << entity->GetMeshes().size() << " meshes.")
+
+    EDITOR_LOG("Entity has " << entity->GetMeshesHierarchy().size() << " meshes in hierarchy.")
+
+    // ------------------------------
+    // Scripts
+    // ------------------------------
     if (entityData.contains("Scripts"))
     {
-
-        for (const auto &script : entityData["Scripts"])
+        for (const auto& script : entityData["Scripts"])
         {
-
-            IScript *scriptLoaded = ScriptsLoader::GetScriptFromCallName(script["Name"]);
+            IScript* scriptLoaded = ScriptsLoader::GetScriptFromCallName(script["Name"]);
             if (!scriptLoaded)
-            {
-
                 continue;
-            }
+
             scriptLoaded->isEntityLinked = true;
             scriptLoaded->SetGUID(script["Guid"].get<std::size_t>());
             scriptLoaded->owner = new PulseEngine::EntityApi(entity);
@@ -156,18 +167,21 @@ Entity *GuidReader::GetEntityFromJson(nlohmann::json_abi_v3_12_0::json &entityDa
     }
 
     EDITOR_LOG("Entity has " << entity->GetScripts().size() << " scripts.")
+
+    // ------------------------------
+    // Material
+    // ------------------------------
     if (entityData.contains("Material"))
     {
-        nlohmann::json_abi_v3_12_0::json jsonFile;
         Material* mat = nullptr;
-        for(auto& material : GuidReader::GetAllAvailableFiles("guidCollectionMaterials.puid"))
+        for (auto& material : GuidReader::GetAllAvailableFiles("guidCollectionMaterials.puid"))
         {
-            if(material.first == entityData["Material"])
+            if (material.first == entityData["Material"])
             {
                 mat = MaterialManager::loadMaterial(material.second);
+                break;
             }
         }
-
         entity->SetMaterial(mat);
     }
 
@@ -175,6 +189,7 @@ Entity *GuidReader::GetEntityFromJson(nlohmann::json_abi_v3_12_0::json &entityDa
 
     return entity;
 }
+
 
 Material* GuidReader::GetMaterialFromJson(nlohmann::json_abi_v3_12_0::json &materialData)
 {

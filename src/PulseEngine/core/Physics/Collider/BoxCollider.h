@@ -21,6 +21,7 @@ public:
      * @param size Dimensions of the box along X, Y, Z.
      */
     BoxCollider(PulseEngine::Vector3* position, PulseEngine::Vector3* rotation, const PulseEngine::Vector3& size);
+    BoxCollider();
 
     void OnUpdate() override;
     void OnRender() override;

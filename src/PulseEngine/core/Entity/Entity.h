@@ -139,7 +139,7 @@ public:
     // ------------------------------------------------------------------------
 
     /// Adds a mesh to the entity.
-    void AddMesh(RenderableMesh* mesh, RenderableMesh* parent = nullptr);
+    HierarchyNode<RenderableMesh>* AddMesh(RenderableMesh* mesh, RenderableMesh* parent = nullptr);
         
     /// Attaches a behavior script to the entity.
     void AddScript(IScript* script);
@@ -167,6 +167,7 @@ public:
     std::vector<IScript*>& GetScripts() {return scripts; }
     std::vector<RenderableMesh*>& GetMeshes() {return meshes; }
     std::vector<HierarchyNode<RenderableMesh>*>& GetMeshesHierarchy() {return meshHierarchy; }
+    HierarchyNode<RenderableMesh>* AddMeshHierarchy(RenderableMesh* mesh, HierarchyNode<RenderableMesh>* parent);
 
     // ------------------------------------------------------------------------
     // Setters
