@@ -58,9 +58,9 @@ namespace PulseEngine
 
     Vector3 Transform::GetForward()
     {
-       PulseEngine::Mat4 rotationMatrix = GetWorldMatrix();
+        PulseEngine::Mat4 globalMat = GetWorldMatrix();
         // Forward is the -Z axis in most right-handed systems
-        return Vector3(-rotationMatrix[2][0], -rotationMatrix[2][1], -rotationMatrix[2][2]).Normalized();
+        return Vector3(globalMat.data[2][0], globalMat.data[2][1], globalMat.data[2][2]).Normalized();
     }
 
     Vector3 Transform::GetRight() const
@@ -73,8 +73,8 @@ void Transform::AddWorldRotation(const Vector3& deltaEulerDeg)
 {
     using namespace PulseEngine;
 
-    Vector3 deltaEulerRad = deltaEulerDeg * (M_PI / 180.0f);
-    Vector3 localEulerRad = rotation * (M_PI / 180.0f);
+    Vector3 deltaEulerRad = deltaEulerDeg * (PulseEngine::MathUtils::PI / 180.0f);
+    Vector3 localEulerRad = rotation * (PulseEngine::MathUtils::PI / 180.0f);
 
     Mat3 deltaWorld = Mat3::FromEulerXYZ(deltaEulerRad.x, deltaEulerRad.y, deltaEulerRad.z);
     Mat3 localRot   = Mat3::FromEulerXYZ(localEulerRad.x, localEulerRad.y, localEulerRad.z);
@@ -83,7 +83,7 @@ void Transform::AddWorldRotation(const Vector3& deltaEulerDeg)
     Mat3 parentRot = Mat3::Identity();
     if (parent)
     {
-        Vector3 parentEulerRad = parent->rotation * (M_PI / 180.0f);
+        Vector3 parentEulerRad = parent->rotation * (PulseEngine::MathUtils::PI / 180.0f);
         parentRot = Mat3::FromEulerXYZ(parentEulerRad.x, parentEulerRad.y, parentEulerRad.z);
     }
 
@@ -93,7 +93,7 @@ void Transform::AddWorldRotation(const Vector3& deltaEulerDeg)
     // Convert back to local space
     Mat3 newLocalRot = parentRot.Inversed() * newWorldRot;
     Vector3 newLocalEuler = Mat3::ToEulerXYZ(newLocalRot);
-    newLocalEuler *= (180.0f / M_PI);
+    newLocalEuler *= (180.0f / PulseEngine::MathUtils::PI);
 
     rotation = newLocalEuler;
 }
@@ -108,7 +108,7 @@ void Transform::AddWorldRotation(const Vector3& deltaEulerDeg)
         transformMat = PulseEngine::MathUtils::Matrix::RotateX(transformMat, PulseEngine::MathUtils::ToRadians(rotation.x));
         transformMat = PulseEngine::MathUtils::Matrix::Scale(transformMat, scale);
 
-        return parent ? parent->GetLocalMatrix() * transformMat : transformMat;
+        return transformMat;
     }
 
     PulseEngine::Mat4 Transform::GetWorldMatrix()
@@ -122,7 +122,7 @@ void Transform::AddWorldRotation(const Vector3& deltaEulerDeg)
     PulseEngine::Vector3 Transform::GetWorldPosition()
     {
         PulseEngine::Mat4 world = GetWorldMatrix();
-        return Vector3(world[3][0], world[3][1], world[3][2]);
+        return Vector3(world.data[3][0], world.data[3][1], world.data[3][2]);
     }
 
     Vector3 Transform::GetUp() const

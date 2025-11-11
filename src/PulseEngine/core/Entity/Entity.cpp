@@ -243,9 +243,9 @@ void Entity::CalculateMeshMatrix(RenderableMesh* const & mesh) const
     using namespace PulseEngine;
     Mat4 entityTransform = entityMatrix; // parent/world transform
 
-    Mat4 localTransform = mesh->transform.GetLocalMatrix();
+    Mat4 localTransform = mesh->transform.GetWorldMatrix();
 
-    mesh->matrix = entityTransform * localTransform;
+    mesh->matrix = localTransform;
 
 }
 

@@ -121,7 +121,7 @@ Entity* GuidReader::GetEntityFromJson(nlohmann::json& entityData, Entity* entity
 
         // Register in hierarchy
         auto* node = entity->AddMeshHierarchy(mesh, parent); 
-        mesh->transform.parent = parent ? &parent->item->transform : nullptr;
+        mesh->transform.parent = parent ? &parent->item->transform : &entity->transform;
 
         EDITOR_LOG("Loaded mesh: " + mesh->GetName() + " with GUID: " + std::to_string(meshGuid))
 
