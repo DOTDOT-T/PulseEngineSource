@@ -22,6 +22,8 @@ namespace PulseEngine
             PulseEngine::Vector3 GetRotation() {return entity->GetRotation(); }
             void SetPosition(const PulseEngine::Vector3& pos) {entity->SetPosition(pos);}
             void SetRotation(const PulseEngine::Vector3& rot) {entity->SetRotation(rot);}
+            void Rotate(const PulseEngine::Vector3& rot) { entity->SetRotation(entity->GetRotation() + rot);}
+            void Move(const PulseEngine::Vector3& move) {entity->transform.position += move;}
 
             Transform* GetTransform() { return &entity->transform; }
     

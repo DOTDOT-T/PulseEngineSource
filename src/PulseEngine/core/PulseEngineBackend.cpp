@@ -321,6 +321,7 @@ void PulseEngineBackend::ClearScene()
     {
         delete ent;
     }
+    
     entities.clear();
 }
 void PulseEngineBackend::DeleteEntity(Entity *entity)
