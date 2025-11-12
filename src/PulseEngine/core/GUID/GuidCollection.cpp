@@ -27,10 +27,12 @@ GuidCollection::GuidCollection(const std::string &collectionPath)
 std::size_t GuidCollection::InsertFile(const std::string &filePath)
 {
     std::size_t guid = GenerateGUIDFromPath(filePath);
-
     std::string guidStr = std::to_string(guid);
+
     while (files.find(guidStr) != files.end())
     {
+        //if the filepath is already inside, we didnt need to try to insert but return the guid
+        if(files[guidStr] == filePath) return guid;
         guid++;
         guidStr = std::to_string(guid);
     }
@@ -45,7 +47,6 @@ std::size_t GuidCollection::InsertFile(const std::string &filePath)
     nlohmann::json_abi_v3_12_0::json jsonData;
     file >> jsonData;
     file.close();
-
 
     jsonData[guidStr] = filePath;
 

@@ -113,7 +113,6 @@ InterfaceEditor::InterfaceEditor()
 
     windowStates["SceneData"] = true;
     windowStates["EntityAnalyzer"] = true;
-    windowStates["EngineConfig"] = true;
     windowStates["assetManager"] = true;
     windowStates["viewport"] = true;
 

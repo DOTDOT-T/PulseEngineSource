@@ -9,6 +9,7 @@
 #include "PulseEngine/core/Physics/Collider/Collider.h"
 #include "PulseEngine/core/Physics/Collider/BoxCollider.h"
 #include "PulseEngine/core/Physics/CollisionManager.h"
+#include "PulseEngine/core/Lights/Lights.h"
 
 #include <algorithm>
 
@@ -155,6 +156,7 @@ void SceneManager::RenderScene()
 
     for(Entity* ent : visible)
     {
+        if(dynamic_cast<LightData*>(ent)) continue; //a light cant be rendered to scene (for now)
         Entity* drawable = ent;
         Shader* shader = drawable->GetMaterial()->GetShader();
 

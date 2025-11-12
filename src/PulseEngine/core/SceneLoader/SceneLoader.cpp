@@ -81,6 +81,7 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
         light->Serialize(dar);
 
         backend->lights.push_back(light);
+        SceneManager::GetInstance()->InsertEntity(light);
     }
 
     // backend->SetWindowName(sceneData["sceneName"]);
