@@ -13,6 +13,7 @@
  */
 class PULSE_ENGINE_DLL_API BoxCollider : public Collider
 {
+    
 public:
     /**
      * @brief Constructs a new BoxCollider with specified position, rotation, and size.

@@ -63,9 +63,9 @@ namespace PulseEngine
         return Vector3(globalMat.data[2][0], globalMat.data[2][1], globalMat.data[2][2]).Normalized();
     }
 
-    Vector3 Transform::GetRight() const
+    Vector3 Transform::GetRight() 
     {
-        Mat4 rotationMatrix = MathUtils::CreateRotationMatrix(rotation);
+        PulseEngine::Mat4 rotationMatrix = GetWorldMatrix();
         return Vector3(rotationMatrix[0][0], rotationMatrix[0][1], rotationMatrix[0][2]).Normalized();
     }
 
@@ -125,9 +125,9 @@ void Transform::AddWorldRotation(const Vector3& deltaEulerDeg)
         return Vector3(world.data[3][0], world.data[3][1], world.data[3][2]);
     }
 
-    Vector3 Transform::GetUp() const
+    Vector3 Transform::GetUp()
     {
-        Mat4 rotationMatrix = MathUtils::CreateRotationMatrix(rotation);
+        PulseEngine::Mat4 rotationMatrix = GetWorldMatrix();
         return Vector3(rotationMatrix[1][0], rotationMatrix[1][1], rotationMatrix[1][2]).Normalized();
     }
 

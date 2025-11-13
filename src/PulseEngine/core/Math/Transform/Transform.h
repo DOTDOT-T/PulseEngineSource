@@ -43,13 +43,13 @@ namespace PulseEngine
          * 
          * @return PulseEngine::Vector3 
          */
-        PulseEngine::Vector3 GetUp() const;
+        PulseEngine::Vector3 GetUp();
         /**
          * @brief Get the Right vector of the transform.
          * 
          * @return PulseEngine::Vector3 
          */
-        PulseEngine::Vector3 GetRight() const;
+        PulseEngine::Vector3 GetRight();
 
         void AddWorldRotation(const Vector3& deltaEulerDeg);
 
