@@ -256,7 +256,7 @@ bool BoxCollider::CheckPositionCollision(const PulseEngine::Vector3& pos)
     rotationMatrix = PulseEngine::MathUtils::Matrix::RotateY(rotationMatrix, PulseEngine::MathUtils::ToRadians(-rotation->y));
     rotationMatrix = PulseEngine::MathUtils::Matrix::RotateX(rotationMatrix, PulseEngine::MathUtils::ToRadians(-rotation->x));
 
-    PulseEngine::Vector3 local = PulseEngine::MathUtils::Matrix::Transpose(rotationMatrix) * (pos - (*position));
+    PulseEngine::Vector3 local = PulseEngine::MathUtils::Matrix::Transpose(rotationMatrix) * (pos - *position);
 
     return std::abs(local.x) <= size.x * 0.5f &&
            std::abs(local.y) <= size.y * 0.5f &&
@@ -319,11 +319,15 @@ void BoxCollider::ResolveCollision(Collider* other)
         normal = PulseEngine::Vector3(-normal.x, -normal.y, -normal.z);
 
     // --- Phase 2 : désenfouissement ---
-    const float percent = 0.2f; // correction douce
+
     const float slop = 0.001f;
     float invMassA = (physicBody == PhysicBody::MOVABLE) ? 1.0f / mass : 0.0f;
     float invMassB = (otherBox->physicBody == PhysicBody::MOVABLE) ? 1.0f / otherBox->mass : 0.0f;
-
+    float percent;
+    if (invMassA == 0.0f || invMassB == 0.0f)
+        percent = 1.0f;     // full correction for interaction with statique
+    else
+        percent = 0.5f;
     float correctionMag = std::max(penetration - slop, 0.0f) / (invMassA + invMassB) * percent;
     PulseEngine::Vector3 correction = correctionMag * normal;
 
