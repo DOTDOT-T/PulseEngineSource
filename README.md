@@ -39,6 +39,11 @@ It’s not just a tool; it’s an ongoing experiment in precision, modularity, a
 
 *Screenshot from 19 October 2025 -> in editor, entity editor viewport*
 
+<img width="1280" height="719" alt="image" src="https://github.com/user-attachments/assets/c7163b09-a7e1-49a8-8c37-e4e149380534" />
+<img width="1280" height="719" alt="image" src="https://github.com/user-attachments/assets/eea3e961-5c12-4118-b7a7-f8b27085dfdb" />
+
+*Screenshot from 5 november 2025 -> in editor viewport, little scene with tanks*
+
 ---
 ## Releases & Usage
 
