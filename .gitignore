@@ -18,3 +18,4 @@ DLLS/
 *.a
 *.obj
 *.o
+/.vscode

@@ -53,6 +53,8 @@ public:
      * @return True if there is a collision, false otherwise.
      */
     bool CheckCollision(Collider* other) override;
+    
+    bool CheckPositionCollision(const PulseEngine::Vector3& pos) override;
 
     /**
      * @brief Performs SAT (Separating Axis Theorem) collision detection with another box.
@@ -60,6 +62,7 @@ public:
      * @return True if no separation axis is found (i.e. collision), false otherwise.
      */
     bool SeparatedAxisDetection(BoxCollider* otherBox);
+
 
     /**
      * @brief Performs a faster, less accurate collision check.

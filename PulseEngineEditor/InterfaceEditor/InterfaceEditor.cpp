@@ -518,7 +518,7 @@ void InterfaceEditor::EntityAnalyzerWindow()
                 ImGui::PopStyleColor();
             }
 
-            script->OnEditorDisplay();
+            // script->OnEditorDisplay();
 
             // --- Variable listing ---
             int varCounter = 0;

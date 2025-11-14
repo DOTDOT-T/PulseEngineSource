@@ -210,10 +210,13 @@ void Entity::DrawEntity() const
     material->GetShader()->SetMat3("normalMatrix", normalMatrix);
 
     SimplyDrawMesh();
-    // for(IScript* script : scripts)
-    // {
-    //     script->OnRender();
-    // }
+    for(IScript* script : scripts)
+    {
+#ifdef ENGINE_EDITOR
+        script->OnEditorDisplay();
+#endif
+    }
+
     // if(collider) collider->OnRender();
 }
 

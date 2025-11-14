@@ -141,18 +141,7 @@ void SceneManager::RenderScene()
 
     std::vector<Entity*> visible;
 
-    Frustum frust;
-    frust.ExtractFromMatrix(PulseEngineInstance->view * PulseEngineInstance->projection);
-    spatialPartition->Query(frust, visible);
-
-
-    // PulseEngineGraphicsAPI->SpecificStartFrame(0, PulseEngine::Vector2(1920,1080));
-    
-    // PulseEngineInstance->SpecificRender(PulseEngineInstance->GetActiveCamera(), 0, visible, PulseEngine::Vector2(1920,1080));
-
-    // PulseEngineGraphicsAPI->EndFrame(true);
-
-
+    GetEntitiesInFrustum(visible);
 
     for(Entity* ent : visible)
     {
@@ -176,6 +165,13 @@ void SceneManager::RenderScene()
     }
 
     // RenderEntityHierarchy(&root);
+}
+
+void SceneManager::GetEntitiesInFrustum(std::vector<Entity *> &visible)
+{
+    Frustum frust;
+    frust.ExtractFromMatrix(PulseEngineInstance->view * PulseEngineInstance->projection);
+    spatialPartition->Query(frust, visible);
 }
 
 void SceneManager::RegenerateHierarchy(MapTransforms MapTransforms)

@@ -60,6 +60,7 @@
 #include <vector>
 
 #include "PulseEngine/ModuleLoader/IModule/IModule.h"
+#include "PulseEngine/core/Math/Color.h"
 
 #include "PulseEngine/core/Math/Vector.h"
 #include "PulseEngine/core/Math/Mat4.h"
@@ -128,6 +129,7 @@ public:
     virtual void Shutdown() override {}
 
     virtual void DrawGridQuad(PulseEngine::Mat4 viewCam,const PulseEngine::Mat4& specificProjection , IGraphicsAPI* graphicsAPI) = 0;
+    virtual void DrawLine(const PulseEngine::Vector3& start, const PulseEngine::Vector3& end, const PulseEngine::Color& color) = 0;
 
     
     virtual void ActivateWireframe() = 0;

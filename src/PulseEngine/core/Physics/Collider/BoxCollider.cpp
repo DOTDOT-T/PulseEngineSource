@@ -247,6 +247,22 @@ bool BoxCollider::CheckCollision(Collider* other)
     return SeparatedAxisDetection(otherBox);
 }
 
+bool BoxCollider::CheckPositionCollision(const PulseEngine::Vector3& pos)
+{
+    // Convert world point to local OBB space
+
+    PulseEngine::Mat4 rotationMatrix = PulseEngine::MathUtils::Matrix::Identity();
+    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateZ(rotationMatrix, PulseEngine::MathUtils::ToRadians(-rotation->z));
+    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateY(rotationMatrix, PulseEngine::MathUtils::ToRadians(-rotation->y));
+    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateX(rotationMatrix, PulseEngine::MathUtils::ToRadians(-rotation->x));
+
+    PulseEngine::Vector3 local = PulseEngine::MathUtils::Matrix::Transpose(rotationMatrix) * (pos - (*position));
+
+    return std::abs(local.x) <= size.x * 0.5f &&
+           std::abs(local.y) <= size.y * 0.5f &&
+           std::abs(local.z) <= size.z * 0.5f;
+}
+
 #pragma region For BOX collision detection
 
 bool BoxCollider::SeparatedAxisDetection(BoxCollider* otherBox)
@@ -407,15 +423,15 @@ PulseEngine::Vector3 BoxCollider::GetHalfSize() const
 
 PulseEngine::Vector3 BoxCollider::GetAxis(int index) const
 {
-    float radX = rotation->x * (M_PI / 180.0f);
-    float radY = rotation->y * (M_PI / 180.0f);
-    float radZ = rotation->z * (M_PI / 180.0f);
+    float radX = (-rotation->x) * (M_PI / 180.0f);
+    float radY = (-rotation->y) * (M_PI / 180.0f);
+    float radZ = (-rotation->z) * (M_PI / 180.0f);
 
-    PulseEngine::Mat3 rotX = PulseEngine::Mat3::RotationX(radX);
-    PulseEngine::Mat3 rotY = PulseEngine::Mat3::RotationY(radY);
-    PulseEngine::Mat3 rotZ = PulseEngine::Mat3::RotationZ(radZ);
-
-    PulseEngine::Mat3 rotationMatrix = rotX * rotY * rotZ;
+    PulseEngine::Mat4 rotationMatrix = PulseEngine::MathUtils::Matrix::Identity();
+    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateZ(rotationMatrix, PulseEngine::MathUtils::ToRadians(-rotation->z));
+    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateY(rotationMatrix, PulseEngine::MathUtils::ToRadians(-rotation->y));
+    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateX(rotationMatrix, PulseEngine::MathUtils::ToRadians(-rotation->x));
+    
 
     switch (index)
     {

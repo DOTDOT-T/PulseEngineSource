@@ -52,7 +52,8 @@ public:
     void UpdateScene();
     void RenderScene();
 
-    
+    void GetEntitiesInFrustum(std::vector<Entity *> &visible);
+
     void RegenerateHierarchy(MapTransforms MapTransforms);
 
 private:

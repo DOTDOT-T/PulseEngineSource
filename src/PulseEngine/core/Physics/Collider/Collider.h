@@ -49,6 +49,8 @@ class PULSE_ENGINE_DLL_API Collider : public IScript
         virtual bool CheckCollision(Collider* other) = 0;
         virtual void ResolveCollision(Collider* other) = 0;
 
+        virtual bool CheckPositionCollision(const PulseEngine::Vector3& pos) = 0;
+
         // Getters and Setters
         virtual PulseEngine::Vector3 GetPosition() const = 0;
         virtual void SetPosition(const PulseEngine::Vector3& position) = 0;

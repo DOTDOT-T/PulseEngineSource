@@ -513,6 +513,34 @@ void OpenGLAPI::DrawGridQuad(PulseEngine::Mat4 viewCam,const PulseEngine::Mat4& 
     // glDisable(GL_BLEND);
 }
 
+void OpenGLAPI::DrawLine(const PulseEngine::Vector3 &start, const PulseEngine::Vector3 &end, const PulseEngine::Color &color)
+{   
+    // GPU buffer for the two endpoints
+    static GLuint vao, vbo;
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+
+    const glm::vec3 vertices[2] = { glm::vec3(start.x, start.y, start.z), glm::vec3(end.x, end.y, end.z)};
+
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(
+        0,                    // attribute location
+        3,                    // vec3
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(glm::vec3),
+        (void*)0
+    );
+    glDrawArrays(GL_LINES, 0, 2);
+
+    glDisableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
 
 void OpenGLAPI::SetWindowSize(int width, int height) const
 {

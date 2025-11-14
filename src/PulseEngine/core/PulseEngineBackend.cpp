@@ -269,6 +269,9 @@ void PulseEngineBackend::SpecificRender(Camera *cam, int specificVBO, std::vecto
         shader->SetMat4("projection", specificProjection);
         shader->SetVec3("viewPos", cam->Position);
 
+        lastView = specificView;
+        lastProjection = specificProjection;
+
         LightManager::BindLightsToShader(shader, this, entity);
 
         if(!specificShader) {

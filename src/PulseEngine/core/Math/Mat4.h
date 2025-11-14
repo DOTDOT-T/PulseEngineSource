@@ -28,6 +28,25 @@ namespace PulseEngine
             }
             return result;
         }
+
+        inline Vector3 operator*(const Vector3& v) const
+        {
+            float x = data[0][0] * v.x + data[0][1] * v.y + data[0][2] * v.z + data[0][3];
+            float y = data[1][0] * v.x + data[1][1] * v.y + data[1][2] * v.z + data[1][3];
+            float z = data[2][0] * v.x + data[2][1] * v.y + data[2][2] * v.z + data[2][3];
+            float w = data[3][0] * v.x + data[3][1] * v.y + data[3][2] * v.z + data[3][3];
+        
+            if (w != 0.0f && w != 1.0f)
+            {
+                x /= w;
+                y /= w;
+                z /= w;
+            }
+        
+            return Vector3(x, y, z);
+        }
+
+
         // Default constructor initializes to identity matrix
         Mat4()
         {

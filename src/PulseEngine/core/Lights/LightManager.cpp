@@ -47,7 +47,6 @@ void LightManager::BindLightsToShader(Shader *shader, PulseEngineBackend* scene,
             PulseEngineGraphicsAPI->BindTexture(TEXTURE_2D, dLight->depthMapTex);
         
             shader->SetInt("dirLight.shadowMap", maxPointLights);
-            EDITOR_LOG("binding directional to shader")
         }
     
         break; // Only one directional light supported
