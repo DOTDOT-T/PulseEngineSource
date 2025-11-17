@@ -8,6 +8,7 @@
 
 class Entity;
 class Collider;
+class Shader;
 
 namespace PulseEngine::Physics
 {
@@ -16,6 +17,8 @@ namespace PulseEngine::Physics
         Entity* hitEntity;
         Collider* hitCollider;
         PulseEngine::Vector3 impactLocation;
+        PulseEngine::Vector3 start;
+        PulseEngine::Vector3 end;
 
         CastResult()
         {
@@ -29,6 +32,7 @@ namespace PulseEngine::Physics
     {
         PulseEngine::Vector3 start;
         PulseEngine::Vector3 end;
+        std::vector<Entity*> toIgnore;
         float step = 0.1f;
         float gravity = 0.0f;
     };
@@ -38,9 +42,16 @@ namespace PulseEngine::Physics
         PULSE_GEN_BODY(Casting)
         PULSE_REGISTER_CLASS_HEADER(Casting)
     public:
-        static PulseEngine::Physics::CastResult Cast(const PulseEngine::Physics::CastData& castData); 
+        Casting();
+        virtual PulseEngine::Physics::CastResult* Cast(const PulseEngine::Physics::CastData& castData); 
+        void RenderCast();
 
-    private:
+
+    private:    
+        CastResult result;
+        static Shader* lineShader;
+        std::vector<Vector3> debugPoints;
+
     };
 }
 

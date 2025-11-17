@@ -26,6 +26,7 @@ namespace PulseEngine
             void Move(const PulseEngine::Vector3& move) {entity->transform.position += move;}
 
             Transform* GetTransform() { return &entity->transform; }
+            Entity* GetEntity() {return entity; }
     
             /**
              * @brief Get a specific component from the entity.
