@@ -145,6 +145,9 @@ public:
     PulseEngine::Vector3 GetCenter() const;
 
     Shader* lineTraceShader;
+    bool constraintRotation[3] = {false, false ,false};
+    bool constraintLocation[3] = {false, false, false};
+
 private:
     PulseEngine::Vector3* position;    ///< Pointer to the position vector.
     PulseEngine::Vector3* rotation;    ///< Pointer to the rotation vector.

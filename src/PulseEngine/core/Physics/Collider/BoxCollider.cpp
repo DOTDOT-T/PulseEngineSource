@@ -273,30 +273,51 @@ bool BoxCollider::SeparatedAxisDetection(BoxCollider* otherBox)
     return coll;
 }
 
-bool BoxCollider::FastCheckCollision(BoxCollider *otherBox)
+bool BoxCollider::FastCheckCollision(BoxCollider* otherBox)
 {
-    PulseEngine::Vector3 posA = this->GetPosition() + decalPosition;
-    PulseEngine::Vector3 sizeA = this->GetSize();
+    PulseEngine::Vector3 posA = this->GetCenter() + decalPosition;
+    PulseEngine::Vector3 posB = otherBox->GetCenter() + otherBox->decalPosition;
 
-    PulseEngine::Vector3 posB = otherBox->GetPosition() + otherBox->decalPosition;
-    PulseEngine::Vector3 sizeB = otherBox->GetSize();
+    PulseEngine::Vector3 halfA = GetHalfSize();
+    PulseEngine::Vector3 halfB = otherBox->GetHalfSize();
 
-    sizeA.x /= 2.0f;
-    sizeA.y /= 2.0f;
-    sizeA.z /= 2.0f;
-    sizeB.x /= 2.0f;
-    sizeB.y /= 2.0f;
-    sizeB.z /= 2.0f;
+    // A's axes in world space
+    PulseEngine::Vector3 axesA[3] = { GetAxis(0), GetAxis(1), GetAxis(2) };
+    // B's axes in world space
+    PulseEngine::Vector3 axesB[3] = { otherBox->GetAxis(0), otherBox->GetAxis(1), otherBox->GetAxis(2) };
 
+    // Vector from A to B
+    PulseEngine::Vector3 t = posB - posA;
 
-    bool xOverlap = std::abs(posA.x - posB.x) <= (sizeA.x + sizeB.x);
-    bool yOverlap = std::abs(posA.y - posB.y) <= (sizeA.y + sizeB.y);
-    bool zOverlap = std::abs(posA.z - posB.z) <= (sizeA.z + sizeB.z);
+    // Check separation along A's axes
+    for (int i = 0; i < 3; ++i)
+    {
+        float ra = halfA[i];
+        float rb = halfB.x * std::abs(PulseEngine::Dot(axesA[i], axesB[0])) +
+                   halfB.y * std::abs(PulseEngine::Dot(axesA[i], axesB[1])) +
+                   halfB.z * std::abs(PulseEngine::Dot(axesA[i], axesB[2]));
 
-    bool collisionDetected = xOverlap && yOverlap && zOverlap;
+        if (std::abs(PulseEngine::Dot(t, axesA[i])) > ra + rb)
+            return false;
+    }
 
-    return collisionDetected;
+    // Check separation along B's axes
+    for (int i = 0; i < 3; ++i)
+    {
+        float ra = halfA.x * std::abs(PulseEngine::Dot(axesB[i], axesA[0])) +
+                   halfA.y * std::abs(PulseEngine::Dot(axesB[i], axesA[1])) +
+                   halfA.z * std::abs(PulseEngine::Dot(axesB[i], axesA[2]));
+
+        float rb = halfB[i];
+
+        if (std::abs(PulseEngine::Dot(t, axesB[i])) > ra + rb)
+            return false;
+    }
+
+    // If we reach here, no separating axis found -> collision
+    return true;
 }
+
 
 #pragma endregion
 
@@ -331,10 +352,21 @@ void BoxCollider::ResolveCollision(Collider* other)
     float correctionMag = std::max(penetration - slop, 0.0f) / (invMassA + invMassB) * percent;
     PulseEngine::Vector3 correction = correctionMag * normal;
 
-    if (physicBody == PhysicBody::MOVABLE)
-        SetPosition(GetPosition() - correction * invMassA);
-    if (otherBox->physicBody == PhysicBody::MOVABLE)
-        otherBox->SetPosition(otherBox->GetPosition() + correction * invMassB);
+    if (physicBody == PhysicBody::MOVABLE && otherBox->physicBody == PhysicBody::STATIC)
+    {
+        SetPosition(GetPosition() - normal * penetration);
+    }
+    else if (physicBody == PhysicBody::STATIC && otherBox->physicBody == PhysicBody::MOVABLE)
+    {
+        otherBox->SetPosition(otherBox->GetPosition() + normal * penetration);
+    }
+    else if (physicBody == PhysicBody::MOVABLE && otherBox->physicBody == PhysicBody::MOVABLE)
+    {
+        // split correction
+        SetPosition(GetPosition() - normal * (penetration * 0.5f));
+        otherBox->SetPosition(otherBox->GetPosition() + normal * (penetration * 0.5f));
+    }
+
 
     // --- Phase 3 : collecte des points de contact ---
     auto halfA = GetHalfSize();
@@ -398,6 +430,9 @@ void BoxCollider::ResolveCollision(Collider* other)
         {
             velocity -= impulse * invMassA;
             angularVelocity -= invInertiaA * PulseEngine::Cross(rA, impulse);
+            angularVelocity.x = this->constraintRotation[0] ? 0.0f : angularVelocity.x;
+            angularVelocity.y = this->constraintRotation[1] ? 0.0f : angularVelocity.y;
+            angularVelocity.z = this->constraintRotation[2] ? 0.0f : angularVelocity.z;
         }
 
         // --- Appliquer l’impulsion sur B si movable ---
@@ -405,6 +440,9 @@ void BoxCollider::ResolveCollision(Collider* other)
         {
             otherBox->velocity += impulse * invMassB;
             otherBox->angularVelocity += invInertiaB * PulseEngine::Cross(rB, impulse);
+            otherBox->angularVelocity.x = otherBox->constraintRotation[0]? 0.0f : otherBox->angularVelocity.x;
+            otherBox->angularVelocity.y = otherBox->constraintRotation[1]? 0.0f : otherBox->angularVelocity.y;
+            otherBox->angularVelocity.z = otherBox->constraintRotation[2]? 0.0f : otherBox->angularVelocity.z;
         }
     }
 
@@ -449,6 +487,12 @@ PulseEngine::Vector3 BoxCollider::GetAxis(int index) const
 
 bool BoxCollider::SAT_MinimumTranslation(const BoxCollider& B, PulseEngine::Vector3& outAxis, float& outDepth) const
 {
+    if ((rotation->x - B.rotation->x) < 1e-3f &&
+    (rotation->y - B.rotation->y) < 1e-3f &&
+    (rotation->z - B.rotation->z) < 1e-3f)
+    {
+        return const_cast<BoxCollider*>(&B)->FastCheckCollision(const_cast<BoxCollider*>(this));
+    }
     // axes locaux (unit)
     PulseEngine::Vector3 Aaxes[3] = { GetAxis(0), GetAxis(1), GetAxis(2) };
     PulseEngine::Vector3 Baxes[3] = { B.GetAxis(0), B.GetAxis(1), B.GetAxis(2) };
@@ -516,7 +560,7 @@ bool BoxCollider::SAT_MinimumTranslation(const BoxCollider& B, PulseEngine::Vect
             // axis in world space
             PulseEngine::Vector3 axis = PulseEngine::Cross(Aaxes[i], Baxes[j]);
             float axisLen2 = axis.x*axis.x + axis.y*axis.y + axis.z*axis.z;
-            if (axisLen2 < 1e-8f) continue; // nearly parallel -> skip
+            if (axisLen2 < 1e-12f) continue; // nearly parallel -> skip
 
             // Express axis in A-frame for projection of t
             PulseEngine::Vector3 axisAframe = PulseEngine::Vector3(
