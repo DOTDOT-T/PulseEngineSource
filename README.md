@@ -24,7 +24,7 @@ It’s not just a tool; it’s an ongoing experiment in precision, modularity, a
 - **Fully Modifiable Engine**: Every subsystem is accessible, allowing you to customize or replace any core component.
 - **C++ Scripting API**: Clean and powerful API for integrating custom C++ scripts directly into the engine.
 - **Custom Scripting Language**: Pulse Engine use a custom Scripting Language : [PulseScript](https://github.com/DOTDOT-T/PulseScriptLang)
-- **Custom STL**: for performance, we use Pulse STL based on the MCVS and EASTL implementation of STL : [PulseSTL]([https://github.com/DOTDOT-T/PulseScriptLang](https://github.com/DOTDOT-T/PulseSTL))
+- **Custom STL**: for performance, we use Pulse STL based on the MCVS and EASTL implementation of STL : [PulseSTL](https://github.com/DOTDOT-T/PulseSTL)
 - **Tooling & Extension API**: Create your own in-engine tools, editors, and modify the engine core seamlessly.
 
 
