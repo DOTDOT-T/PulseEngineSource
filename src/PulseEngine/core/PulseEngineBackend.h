@@ -39,6 +39,7 @@ class GuidCollection;
 class PulseExecutable;
 class IGraphicsAPI;
 class Account;
+class PulseScriptsManager;
 
 /**
  * @brief PulseEngineBackend is the main class of the Pulse Engine.
@@ -165,6 +166,7 @@ private:
 
     static PulseEngineBackend* instance;
 
+    PulseScriptsManager* runtimeScript = nullptr;
 };
 
 #endif

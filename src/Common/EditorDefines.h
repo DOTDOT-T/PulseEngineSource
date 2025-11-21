@@ -103,7 +103,7 @@
 #ifdef ENGINE_EDITOR
     #define ASSET_PATH "PulseEngineEditor/"  // Editor-specific asset path
 #else
-    #define ASSET_PATH "assets/"             // Runtime asset path
+    #define ASSET_PATH "PulseEngineEditor/"            // Runtime asset path
 #endif
 
 #define PulseEngineInstance PulseEngineBackend::GetInstance()

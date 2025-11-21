@@ -1,10 +1,11 @@
 #include "Texture.h"
 #include "PulseEngine/core/Graphics/IGraphicsApi.h"
+#include "common/EditorDefines.h"
 
 Texture::Texture(const std::string &filePath, IGraphicsAPI* graphics)
 {
     graphicsAPI = graphics;
-    graphicsAPI->GenerateTextureMap(&id, filePath);
+    graphicsAPI->GenerateTextureMap(&id, std::string(ASSET_PATH) + filePath);
     path = filePath;
 }
 

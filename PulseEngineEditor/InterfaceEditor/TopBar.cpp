@@ -389,37 +389,91 @@ void TopBar::AnalyzeEntry(const std::filesystem::directory_entry & entry, std::s
 }
 
 
-void TopBar::GenerateExecutableForWindow(PulseEngineBackend * engine)
-{
 
-    nlohmann::json_abi_v3_12_0::json engineConfig = FileManager::OpenEngineConfigFile();
+void TopBar::GenerateExecutableForWindow(PulseEngineBackend* engine)
+{
+    namespace fs = std::filesystem;
+
+    nlohmann::json engineConfig = FileManager::OpenEngineConfigFile();
     std::string gameName = engineConfig["GameData"]["Name"].get<std::string>();
     std::string gameVersion = engineConfig["GameData"]["version"].get<std::string>();
 
-    std::string defineGameName = "";
-    std::string defineGameVersion = "";
+    // === Scan des .a dans dist/libs ===
+    std::string libDir = "dist/libs";
+    std::string libsToLink = "";
 
+    if (fs::exists(libDir)) {
+        for (const auto& entry : fs::directory_iterator(libDir)) {
+            if (entry.is_regular_file() && entry.path().extension() == ".a") {
+                // On doit enlever "lib" + ".a" pour utiliser -lname
+                std::string filename = entry.path().filename().string();
+
+                if (filename.rfind("lib", 0) == 0) {
+                    std::string libName = filename.substr(3, filename.size() - 5); 
+                    libsToLink += "-l" + libName + " ";
+                }
+            }
+        }
+    } else {
+        std::cerr << "[ERROR] dist/libs not found.\n";
+    }
+
+    // === Construction de la ligne de commande ===
     std::string compileCommand =
-        "g++ -Idist/src -Idist/include dist/main.cpp "
-        "-Ldist/Build -lPulseEngine "
-        "-LC:/path/to/glfw/lib -lglfw3 -lgdi32 -lopengl32 "
-        "-DPULSE_GRAPHIC_OPENGL -DPULSE_WINDOWS " +
-        defineGameName + " " + defineGameVersion + " "
-                                                   "-o Build/Game.exe";
+        "g++ -std=c++20 -Idist/src -Idist/include dist/main.cpp "
+        "-Ldist/Build -Ldist/libs "
+        + libsToLink +
+        "-lglfw3 -lgdi32 -lopengl32 "
+        "-DPULSE_GRAPHIC_OPENGL -DPULSE_WINDOWS "
+        "-o Build/Game.exe";
+
     system(compileCommand.c_str());
 
+    // === Rename final ===
     std::string renameCmd = "rename \"Build\\game.exe\" \"" + gameName + ".exe\"";
     system(renameCmd.c_str());
 }
 
+#include <filesystem>
+#include <iostream>
+
 void TopBar::CopyDllForWindow()
 {
-    system("xcopy dist\\PulseEngine.dll \"Build\" /Y");
+    namespace fs = std::filesystem;
+
+    const fs::path distDir = "dist";
+    const fs::path buildDir = "Build";
+
+    if (!fs::exists(distDir)) {
+        EDITOR_ERROR("[ERROR] dist/ directory not found.\n")
+        return;
+    }
+
+    if (!fs::exists(buildDir)) {
+        fs::create_directories(buildDir);
+    }
+
+    for (const auto& entry : fs::directory_iterator(distDir)) {
+        if (entry.is_regular_file() && entry.path().extension() == ".dll") {
+            fs::path dst = buildDir / entry.path().filename();
+
+            try {
+                fs::copy_file(entry.path(), dst, fs::copy_options::overwrite_existing);
+                std::cout << "[COPY] " << entry.path().filename().string() << "\n";
+            } catch (const std::exception& e) {
+                std::cerr << "[ERROR] Failed to copy " 
+                          << entry.path().filename().string() 
+                          << ": " << e.what() << "\n";
+            }
+        }
+    }
 }
+
 
 void TopBar::CopyAssetForWindow()
 {
-    system("xcopy PulseEngineEditor \"Build/assets\" /E /I /Y");
+    system("xcopy PulseEngineEditor \"Build\\PulseEngineEditor\" /E /I /Y");
+    system("xcopy \"Modules\" \"Build\\Modules\" /E /I /Y");
 }
 
 void TopBar::GenerateWindowsDirectory()

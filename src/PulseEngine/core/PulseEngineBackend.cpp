@@ -27,6 +27,7 @@
 #include "PulseEngine/core/ExecutableManager/PulseExecutable.h"
 #include "PulseEngine/core/Input/InputSystem.h"
 #include "PulseEngineEditor/InterfaceEditor/Account/Account.h"
+#include "PulseEngine/core/PulseScript/PulseScriptsManager.h"
 
 #include "PulseEngine/core/Math/MathUtils.h"
 
@@ -39,6 +40,9 @@
 #include "PulseEngine/core/PulseObject/TypeRegister/TypeRegister.h"
 #include "PulseEngine/core/SceneManager/SceneManager.h"
 #include "Common/dllExport.h"
+#include "PulseEngine/core/PulseScript/utilities.h"
+
+#include "PulseEngine/core/PulseScript/NativeInit.h"
 
 using namespace PulseEngine::FileSystem;
 using namespace PulseLibs;
@@ -127,6 +131,11 @@ int PulseEngineBackend::Initialize()
         discordLauncher->SendExeMessage("[set_presence]In the editor");
     }
 
+    runtimeScript = new PulseScriptsManager();
+
+
+    InitNativeMethods();
+
     EDITOR_LOG("Finished the initialization of the engine.");
     return 0;
 }
@@ -191,6 +200,13 @@ void PulseEngineBackend::Update()
     
 
     coroutineManager->UpdateAll(deltaTime);
+
+    std::vector<Variable> args;
+    Variable deltaVar;
+    deltaVar.isGlobal = false;
+    deltaVar.name = "deltatime";
+    deltaVar.value = GetDeltaTime();
+    args.push_back(deltaVar);
 }
 
 void PulseEngineBackend::Render()

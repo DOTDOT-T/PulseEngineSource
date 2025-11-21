@@ -687,7 +687,7 @@ void InterfaceEditor::DrawHierarchyNode(HierarchyEntity* node, Entity*& selected
     if (isSelected)
         flags |= ImGuiTreeNodeFlags_Selected;
 
-    std::string label = entity->GetName() + "##" + std::to_string(reinterpret_cast<uintptr_t>(entity));
+    std::string label = entity->GetName();
 
     bool nodeOpen = ImGui::TreeNodeEx((void*)entity, flags, "%s", label.c_str());
 

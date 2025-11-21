@@ -11,6 +11,8 @@
 #include "PulseEngine/API/EntityAPI/EntityApi.h"
 #include "PulseEngine/core/FileManager/FileReader/FileReader.h"
 #include "PulseEngine/core/FileManager/Archive/Archive.h"
+#include "PulseEngine/core/PulseScript/PulseScriptsManager.h"
+#include "PulseEngine/core/PulseScript/utilities.h"
 
 #include <algorithm>
 
@@ -55,6 +57,7 @@ Entity::Entity(const std::string &name, const PulseEngine::Vector3 &position, Me
     transform.rotation = PulseEngine::Vector3(0.0f, 0.0f, 0.0f);
     transform.scale = PulseEngine::Vector3(1.0f, 1.0f, 1.0f);
     BaseConstructor();
+
 }
 
 Entity::Entity() : PulseObject()
@@ -105,6 +108,14 @@ void Entity::UpdateEntity(PulseEngine::Mat4 parentMatrix)
     {
         mesh->Update();
     }
+
+    std::vector<Variable> args;
+    Variable dt;
+    dt.isGlobal = false;
+    dt.name = "deltatime";
+    dt.value = PulseEngineInstance->GetDeltaTime();
+    args.push_back(dt);
+    runtimeScripts->ExecuteMethodOnEachScript("Update", args);
 
 }
 
@@ -210,14 +221,15 @@ void Entity::DrawEntity() const
     material->GetShader()->SetMat3("normalMatrix", normalMatrix);
 
     SimplyDrawMesh();
+    std::vector<Variable> args;
     for(IScript* script : scripts)
     {
 #ifdef ENGINE_EDITOR
         script->OnEditorDisplay();
+    runtimeScripts->ExecuteMethodOnEachScript("RenderEditor", args);
 #endif
     }
-
-    // if(collider) collider->OnRender();
+    runtimeScripts->ExecuteMethodOnEachScript("Render", args);
 }
 
 void Entity::UseShader() const
@@ -364,4 +376,9 @@ void Entity::Move(const PulseEngine::Vector3 &direction)
 void Entity::Rotate(const PulseEngine::Vector3 &rotation)
 {
     this->transform.rotation = this->transform.rotation + (rotation * PulseEngineInstance->GetDeltaTime());
+}
+
+void Entity::AddPulseScript(const char *scriptName)
+{
+    runtimeScripts->AddScriptToDatabase(scriptName);
 }

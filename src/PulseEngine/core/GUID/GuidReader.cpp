@@ -165,6 +165,14 @@ Entity* GuidReader::GetEntityFromJson(nlohmann::json& entityData, Entity* entity
             entity->AddScript(scriptLoaded);
         }
     }
+    if (entityData.contains("PulseScript"))
+    {
+        
+        for (const auto& script : entityData["PulseScript"])
+        {
+            entity->AddPulseScript(script.get<std::string>().c_str());
+        }
+    }
 
     EDITOR_LOG("Entity has " << entity->GetScripts().size() << " scripts.")
 
@@ -176,7 +184,7 @@ Entity* GuidReader::GetEntityFromJson(nlohmann::json& entityData, Entity* entity
         Material* mat = nullptr;
         for (auto& material : GuidReader::GetAllAvailableFiles("guidCollectionMaterials.puid"))
         {
-            if (material.first == entityData["Material"])
+            if (material.first == entityData["Material"].get<std::string>())
             {
                 mat = MaterialManager::loadMaterial(material.second);
                 break;

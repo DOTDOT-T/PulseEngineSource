@@ -214,11 +214,8 @@ void InterfaceEditor::FileExplorerWindow()
         accumulatedPath /= part;
 
         // Draw the directory part as a button
-        if (ImGui::SmallButton(part.string().c_str()))
-        {
-            // Navigate to the clicked path
-            currentDir = accumulatedPath;
-        }
+        ImGui::Text(part.string().c_str());
+
 
         // Draw a separator if not the last element
         if (index < std::distance(currentDir.begin(), currentDir.end()) - 1)

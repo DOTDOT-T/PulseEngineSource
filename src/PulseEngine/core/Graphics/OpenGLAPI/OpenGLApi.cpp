@@ -267,7 +267,7 @@ void OpenGLAPI::GenerateTextureMap(unsigned int *textureID, const std::string &f
 
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(false); // Flip vertical selon besoin
-    unsigned char* data = stbi_load((std::string(ASSET_PATH) + filePath).c_str(), &width, &height, &nrChannels, 0);
+    unsigned char* data = stbi_load((filePath).c_str(), &width, &height, &nrChannels, 0);
 
     if (data)
     {
@@ -281,7 +281,7 @@ void OpenGLAPI::GenerateTextureMap(unsigned int *textureID, const std::string &f
     }
     else
     {
-        EDITOR_ERROR("Failed to load texture: " + (std::string(ASSET_PATH) + filePath));
+        EDITOR_ERROR("Failed to load texture: " + (filePath));
     }
 
     stbi_image_free(data);

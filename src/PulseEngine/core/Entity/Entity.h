@@ -37,6 +37,8 @@ class Collider;
 class BoxCollider;
 class Archive;
 
+class PulseScriptsManager;
+
 /**
  * @class Entity
  * @brief Represents a scene object with transformation, rendering, and behavior.
@@ -203,6 +205,8 @@ public:
 
     PulseEngine::Transform transform;
 
+    void AddPulseScript(const char* scriptName);
+
 private:
     // ------------------------------------------------------------------------
     // Internal Data
@@ -224,6 +228,7 @@ private:
 
     /// Updates the entity's world transformation matrix.
     void UpdateModelMatrix(PulseEngine::Mat4 parentMatrix);
+    PulseScriptsManager* runtimeScripts = nullptr;
 };
 
 #endif // ENTITY_H
