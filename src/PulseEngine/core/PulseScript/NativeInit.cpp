@@ -82,4 +82,12 @@ void InitNativeMethods()
             return 0;
         }
     );
+    PulseInterpreter::RegisterFunction("Button",
+        [](const std::vector<Value> &args) -> Value
+        {
+            const std::string* title = std::get_if<std::string>(&args[0]);
+            ImGui::Button(title->c_str());
+            return 0;
+        }
+    );
 }
