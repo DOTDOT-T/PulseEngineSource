@@ -562,7 +562,8 @@ bool BoxCollider::SAT_MinimumTranslation(const BoxCollider& B, PulseEngine::Vect
             // axis in world space
             PulseEngine::Vector3 axis = PulseEngine::Cross(Aaxes[i], Baxes[j]);
             float axisLen2 = axis.x*axis.x + axis.y*axis.y + axis.z*axis.z;
-            if (axisLen2 < 1e-12f) continue; // nearly parallel -> skip
+            float threshold = 1e-6f * (halfA.GetMagnitude() + halfB.GetMagnitude());
+            if (axisLen2 < threshold*threshold) continue;
 
             // Express axis in A-frame for projection of t
             PulseEngine::Vector3 axisAframe = PulseEngine::Vector3(
@@ -578,7 +579,8 @@ bool BoxCollider::SAT_MinimumTranslation(const BoxCollider& B, PulseEngine::Vect
                 PulseEngine::Dot(axis, Baxes[2])
             );
 
-            float tProj = std::abs( axisAframe.x * t.x + axisAframe.y * t.y + axisAframe.z * t.z );
+            PulseEngine::Vector3 axisN = axis / sqrt(axisLen2);
+            float tProj = std::abs(PulseEngine::Dot(tWorld, axisN));
 
             float ra = halfA.x * std::abs(axisAframe.x) +
                        halfA.y * std::abs(axisAframe.y) +

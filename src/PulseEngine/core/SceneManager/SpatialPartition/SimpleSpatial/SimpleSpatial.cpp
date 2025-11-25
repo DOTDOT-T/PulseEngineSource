@@ -2,6 +2,8 @@
 #include "PulseEngine/core/Physics/Collider/Collider.h"
 #include "PulseEngine/core/Physics/Collider/BoxCollider.h"
 #include "PulseEngine/core/Physics/CollisionManager.h"
+#include "PulseEngine/core/PulseScript/PulseScriptsManager.h"
+#include "PulseEngine/core/PulseScript/utilities.h"
 
 
 void SimpleSpatialPartition::Serialize(Archive& ar)
@@ -34,8 +36,14 @@ void SimpleSpatialPartition::Remove(Entity *entity)
 void SimpleSpatialPartition::Update(Entity * entity)
 {
     entity->collider->othersCollider.clear();
-    // In a simple flat system, entity transforms are updated elsewhere.
-    // Could check if AABB changed and reinsert if needed (future).
+
+    std::vector<Variable> args;
+    Variable dt;
+    dt.isGlobal = false;
+    dt.name = "deltatime";
+    dt.value = PulseEngineInstance->GetDeltaTime();
+    args.push_back(dt);
+    entity->runtimeScripts->ExecuteMethodOnEachScript("Update", args);
 }
 
 void SimpleSpatialPartition::Query(const Frustum &frustum, std::vector<Entity *> &outEntities)

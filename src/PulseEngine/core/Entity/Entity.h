@@ -206,6 +206,8 @@ public:
     PulseEngine::Transform transform;
 
     void AddPulseScript(const char* scriptName);
+    
+    PulseScriptsManager* runtimeScripts = nullptr;
 
 private:
     // ------------------------------------------------------------------------
@@ -228,7 +230,6 @@ private:
 
     /// Updates the entity's world transformation matrix.
     void UpdateModelMatrix(PulseEngine::Mat4 parentMatrix);
-    PulseScriptsManager* runtimeScripts = nullptr;
 };
 
 #endif // ENTITY_H

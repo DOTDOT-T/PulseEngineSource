@@ -167,12 +167,14 @@ Entity* GuidReader::GetEntityFromJson(nlohmann::json& entityData, Entity* entity
     }
     if (entityData.contains("PulseScript"))
     {
-        
         for (const auto& script : entityData["PulseScript"])
         {
-            entity->AddPulseScript(script.get<std::string>().c_str());
+            if (!script.is_string()) continue; // sécurité
+            std::string scriptName = script.get<std::string>(); // stocke dans une variable persistante
+            entity->AddPulseScript(scriptName.c_str());
         }
     }
+
 
     EDITOR_LOG("Entity has " << entity->GetScripts().size() << " scripts.")
 

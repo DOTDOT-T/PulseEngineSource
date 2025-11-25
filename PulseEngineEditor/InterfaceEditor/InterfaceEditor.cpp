@@ -24,6 +24,8 @@
 #include "PulseEngine/core/SceneManager/SceneManager.h"
 #include "PulseEngine/API/EntityAPI/EntityApi.h"
 #include "PulseEngine/API/GameEntity.h"
+#include "PulseEngine/core/PulseScript/PulseScriptsManager.h"
+#include "PulseEngine/core/PulseScript/utilities.h"
 #include "camera.h"
 #include <glm/gtc/type_ptr.hpp>
 
@@ -276,7 +278,14 @@ void InterfaceEditor::Render()
 
     synapse->Render();
 
+    std::vector<Entity*> visible;
+    std::vector<Variable> args;
+    SceneManager::GetInstance()->GetEntitiesInFrustum(visible);
+
+
     RenderMainDockSpace();
+    
+    PulseScriptsManager::ExecuteMethodOnEachScript("RenderEditor", args);
 
     if(!hasProjectSelected)
     {

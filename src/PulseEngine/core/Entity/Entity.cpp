@@ -109,14 +109,6 @@ void Entity::UpdateEntity(PulseEngine::Mat4 parentMatrix)
         mesh->Update();
     }
 
-    std::vector<Variable> args;
-    Variable dt;
-    dt.isGlobal = false;
-    dt.name = "deltatime";
-    dt.value = PulseEngineInstance->GetDeltaTime();
-    args.push_back(dt);
-    runtimeScripts->ExecuteMethodOnEachScript("Update", args);
-
 }
 
 void Entity::DrawEntity() const
@@ -221,16 +213,13 @@ void Entity::DrawEntity() const
     material->GetShader()->SetMat3("normalMatrix", normalMatrix);
 
     SimplyDrawMesh();
-    std::vector<Variable> args;
     for(IScript* script : scripts)
     {
 #ifdef ENGINE_EDITOR
         script->OnEditorDisplay();
     std::cout << "render editor" << std::endl;
-    runtimeScripts->ExecuteMethodOnEachScript("RenderEditor", args);
 #endif
     }
-    runtimeScripts->ExecuteMethodOnEachScript("Render", args);
 }
 
 void Entity::UseShader() const

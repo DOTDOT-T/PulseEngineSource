@@ -10,6 +10,8 @@
 #include "PulseEngine/core/Physics/Collider/BoxCollider.h"
 #include "PulseEngine/core/Physics/CollisionManager.h"
 #include "PulseEngine/core/Lights/Lights.h"
+#include "PulseEngine/core/PulseScript/PulseScriptsManager.h"
+#include "PulseEngine/core/PulseScript/utilities.h"
 
 #include <algorithm>
 
@@ -143,6 +145,7 @@ void SceneManager::RenderScene()
 
     GetEntitiesInFrustum(visible);
 
+    std::vector<Variable> args;
     for(Entity* ent : visible)
     {
         if(dynamic_cast<LightData*>(ent)) continue; //a light cant be rendered to scene (for now)
@@ -162,6 +165,9 @@ void SceneManager::RenderScene()
                 drawable->collider->lineTraceShader->SetMat4("view", PulseEngineInstance->view);
                 drawable->collider->lineTraceShader->SetMat4("projection", PulseEngineInstance->projection);
                 drawable->collider->OnRender();
+
+        ent->runtimeScripts->ExecuteMethodOnEachScript("Render", args);
+        
     }
 
     // RenderEntityHierarchy(&root);
