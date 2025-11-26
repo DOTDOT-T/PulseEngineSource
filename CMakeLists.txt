@@ -1,90 +1,44 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.21)
 project(PulseEngineEditor)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-# =====================
-# Compiler definitions
-# =====================
-add_definitions(
-    -DBUILDING_DLL
-    -DENGINE_EDITOR
-    -DPULSE_GRAPHIC_OPENGL
-    -DPULSE_WINDOWS
-    -DIMGUI_IMPL_OPENGL_LOADER_GLAD
+include(FetchContent)
+
+# Download GLFW automatically
+FetchContent_Declare(
+    glfw
+    GIT_REPOSITORY https://github.com/glfw/glfw.git
+    GIT_TAG        3.3.10  # specify the version you want
+)
+FetchContent_MakeAvailable(glfw)
+
+# Define the library
+add_library(PE_Registery SHARED
+    src/PulseEngine/core/PulseObject/PulseObject.cpp
+    src/PulseEngine/core/GUID/GuidGenerator.cpp
 )
 
-# =====================
-# Include directories
-# =====================
-include_directories(
-    ${CMAKE_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/imgui
-    ${CMAKE_SOURCE_DIR}/imgui-node
-    ${CMAKE_SOURCE_DIR}/src
-    E:/Editor/Include
-    external/assimp/include
+target_compile_definitions(PE_Registery PRIVATE
+    BUILDING_DLL
+    PULSE_WINDOWS
+    PULSE_GRAPHIC_OPENGL
+    IMGUI_IMPL_OPENGL_LOADER_GLAD
+    ENGINE_EDITOR
 )
 
-# =====================
-# Source files
-# =====================
-file(GLOB_RECURSE ENGINE_SOURCES
-    src/*.cpp
-    src/PulseEngine/**/*.cpp
-    PulseEngineEditor/InterfaceEditor/**/*.cpp
-    imgui/*.cpp
-    imgui/backends/*.cpp
-    imgui-node/*.cpp
+# Set include directories
+target_include_directories(PE_Registery PUBLIC
+    include
+    src
 )
 
-# =====================
-# Build the shared library
-# =====================
-add_library(PulseEngineEditor SHARED ${ENGINE_SOURCES})
-include_directories(DLLS)
-# =====================
-# Link external libraries
-# =====================
-target_link_libraries(PulseEngineEditor
-    glfw3
-    opengl32
-    m
-    assimp
-    comdlg32
-)
+# Link GLFW
+target_link_libraries(PE_Registery PUBLIC glfw)
 
-# =====================
-# Link directories
-# =====================
-link_directories(
-    external/assimp/lib
-    external/assimp/lib/x64
-    D:/MSYS2/mingw64/lib
-)
-
-# =====================
-# Post-build steps
-# =====================
-# Copy DLL and .a to distribuables
-add_custom_command(TARGET PulseEngineEditor POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/distribuables
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:PulseEngineEditor>
-        ${CMAKE_SOURCE_DIR}/distribuables/
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_LINKER_FILE:PulseEngineEditor>
-        ${CMAKE_SOURCE_DIR}/distribuables/
-)
-
-# Copy source & include folders for distribution (optional)
-add_custom_command(TARGET PulseEngineEditor POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/PulseEngineBuild/dist/src
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/PulseEngineBuild/dist/include
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/PulseEngineBuild/dist/src
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/PulseEngineBuild/dist/include
-    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_SOURCE_DIR}/PulseEngineBuild/dist/src/*.cpp
-    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_SOURCE_DIR}/PulseEngineBuild/dist/include/*.cpp
+# Set the target name for the DLL explicitly
+set_target_properties(PE_Registery PROPERTIES
+    OUTPUT_NAME "PulseEngine.Registery"
 )

@@ -78,6 +78,11 @@ std::unique_ptr<ASTStatement> PulseParser::ParseStatement()
         return stmt;
     }
 
+    if(Peek().type == TokenType::If)
+    {
+        return ParseIf();
+    }
+
     if (Peek().type == TokenType::Identifier)
     {
         // Ne pas avancer le curseur ici
@@ -116,14 +121,23 @@ std::unique_ptr<ASTLetStatement> PulseParser::ParseLet()
 
 std::unique_ptr<ASTExpression> PulseParser::ParseExpression()
 {
-    auto left = ParseTerm();
+    auto left = ParseTerm(); // existing arithmetic parsing
 
-    while (Peek().type == TokenType::Plus || Peek().type == TokenType::Minus)
+    while (true)
     {
-        char op = (Peek().type == TokenType::Plus) ? '+' : '-';
-        Next();
+        TokenType t = Peek().type;
+        std::string op;
+        if (t == TokenType::Greater) op = ">";       // you'll need to define these in TokenType
+        else if (t == TokenType::Less) op = "<";
+        else if (t == TokenType::GreaterEqual) op = ">=";
+        else if (t == TokenType::LessEqual) op = "<=";
+        else if (t == TokenType::EqualEqual) op = "=";
+        else if (t == TokenType::NotEqual) op = "!=";
+        else break;
+
+        Next(); // consume the operator
         auto right = ParseTerm();
-        left = std::make_unique<ASTBinaryOp>(op, std::move(left), std::move(right));
+        left = std::make_unique<ASTBinaryComparison>(op, std::move(left), std::move(right));
     }
 
     return left;
@@ -225,6 +239,44 @@ std::unique_ptr<ASTExpression> PulseParser::ParsePrimary()
 
     throw std::runtime_error("Invalid expression start");
 }
+
+std::unique_ptr<ASTStatement> PulseParser::ParseIf()
+{
+    Consume(TokenType::If, "Expected 'if'");
+
+    auto condition = ParseExpression(); 
+
+    Consume(TokenType::LBrace, "Expected '{' after 'if' condition");
+
+    std::vector<std::unique_ptr<ASTStatement>> thenBranch;
+    while (Peek().type != TokenType::RBrace && Peek().type != TokenType::EndOfFile)
+    {
+        thenBranch.push_back(ParseStatement());
+    }
+    Consume(TokenType::RBrace, "Expected '}' after 'if' block");
+
+    std::vector<std::unique_ptr<ASTStatement>> elseBranch;
+    if (Match(TokenType::Else))
+    {
+        Consume(TokenType::LBrace, "Expected '{' after 'else'");
+        while (Peek().type != TokenType::RBrace && Peek().type != TokenType::EndOfFile)
+        {
+            elseBranch.push_back(ParseStatement());
+        }
+        Consume(TokenType::RBrace, "Expected '}' after 'else' block");
+    }
+
+    auto ifNode = std::make_unique<ASTIfStatement>();
+    ifNode->condition = std::move(condition);
+    ifNode->thenBranch = std::move(thenBranch);
+    ifNode->elseBranch = std::move(elseBranch);
+
+    auto stmt = std::make_unique<ASTStatement>();
+    stmt->content = std::move(ifNode);
+    return stmt;
+}
+
+
 
 // FUNCTION CALL :  name(expr, expr...)
 

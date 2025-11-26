@@ -78,6 +78,11 @@ void PulseInterpreter::Execute(const std::vector<std::unique_ptr<ASTStatement>> 
                 }
             }
         }
+        
+        if (auto ifStmt = dynamic_cast<ASTIfStatement*>(stmt->content.get()))
+        {
+            ExecuteIf(ifStmt);
+        }
     }
 }
 
@@ -302,6 +307,14 @@ std::unique_ptr<ASTExpression> PulseInterpreter::CloneExpression(const ASTExpres
             CloneExpression(bin->right.get())
         );
     }
+    if (auto comp = dynamic_cast<const ASTBinaryComparison*>(expr))
+    {
+        return std::make_unique<ASTBinaryComparison>(
+            comp->op,
+            CloneExpression(comp->left.get()),
+            CloneExpression(comp->right.get())
+        );
+    }
 
     throw std::runtime_error("Unknown expression type in CloneExpression");
 }
@@ -336,6 +349,19 @@ std::unique_ptr<ASTStatement> PulseInterpreter::CloneStatement(const ASTStatemen
             fCopy->body.push_back(CloneStatement(s.get()));
         copy->content = std::move(fCopy);
     }
+    else if (auto ifStmt = dynamic_cast<const ASTIfStatement*>(stmt->content.get()))
+    {
+        auto ifCopy = std::make_unique<ASTIfStatement>();
+        ifCopy->condition = CloneExpression(ifStmt->condition.get());
+
+        for (const auto &s : ifStmt->thenBranch)
+            ifCopy->thenBranch.push_back(CloneStatement(s.get()));
+
+        for (const auto &s : ifStmt->elseBranch)
+            ifCopy->elseBranch.push_back(CloneStatement(s.get()));
+
+        copy->content = std::move(ifCopy);
+    }
     else
     {
         throw std::runtime_error("Unknown statement type in CloneStatement");
@@ -343,3 +369,21 @@ std::unique_ptr<ASTStatement> PulseInterpreter::CloneStatement(const ASTStatemen
 
     return copy;
 }
+
+void PulseInterpreter::ExecuteIf(ASTIfStatement* ifStmt)
+{
+    Value cond = EvalExpression(ifStmt->condition.get());
+    bool result = false;
+
+    if (std::holds_alternative<int>(cond))
+        result = std::get<int>(cond) != 0;
+    else if (std::holds_alternative<float>(cond))
+        result = std::get<float>(cond) != 0.0f;
+
+    else
+        throw std::runtime_error("Invalid type in if condition");
+
+    const auto& branch = result ? ifStmt->thenBranch : ifStmt->elseBranch;
+        Execute(branch);
+}
+

@@ -1,6 +1,8 @@
 #include "NativeInit.h"
 #include "PulseEngine/core/PulseScript/PulseInterpreter.h"
 #include "common/EditorDefines.h"
+
+#ifdef ENGINE_EDITOR
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -9,6 +11,7 @@
 #include "imgui-node/imgui_node_editor.h"
 #include "imgui-node/imgui_node_editor_internal.h"
 namespace ed = ax::NodeEditor;
+#endif
 
 void InitNativeMethods()
 {    
@@ -60,6 +63,7 @@ void InitNativeMethods()
             return 0;
         }
     );
+#ifdef ENGINE_EDITOR
     PulseInterpreter::RegisterFunction("OpenTool",
         [](const std::vector<Value> &args) -> Value
         {
@@ -90,4 +94,5 @@ void InitNativeMethods()
             return 0;
         }
     );
+#endif
 }

@@ -56,12 +56,12 @@ public:
 
     void RegenerateHierarchy(MapTransforms MapTransforms);
 
+    void CleanHierarchyFrom(HierarchyEntity* top);
 private:
     SceneManager();
     SceneManager(const SceneManager& sm) = delete;
     ~SceneManager() = delete;
 
-    void CleanHierarchyFrom(HierarchyEntity* top);
 
     void UpdateEntityHierarchy(HierarchyEntity *top, PulseEngine::Mat4 parentMatrix);
     void RenderEntityHierarchy(HierarchyEntity *top);

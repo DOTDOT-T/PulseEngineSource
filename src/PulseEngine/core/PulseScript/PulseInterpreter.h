@@ -74,6 +74,8 @@ public:
 
     std::unique_ptr<ASTExpression> CloneExpression(const ASTExpression* expr);
     std::unique_ptr<ASTStatement> CloneStatement(const ASTStatement* stmt);
+
+    void ExecuteIf(ASTIfStatement* ifStmt);
 private:
     Value EvalExpression(const ASTExpression *expr);
 

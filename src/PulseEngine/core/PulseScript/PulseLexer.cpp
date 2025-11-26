@@ -79,6 +79,13 @@ Token PulseLexer::Next()
         return {TokenType::RBrace, "}"};
     }
 
+    if (source[pos] == '>' && source[pos+1] == '=') { pos += 2; return Token{TokenType::GreaterEqual, ">="}; }
+    else if (source[pos] == '>') { pos++; return Token{TokenType::Greater, ">"}; }
+    if (source[pos] == '<' && source[pos+1] == '=') { pos += 2; return Token{TokenType::GreaterEqual, "<="}; }
+    else if (source[pos] == '<') { pos++; return Token{TokenType::Greater, "<"}; }
+    if(source[pos] == '=') {pos++; return Token{TokenType::EqualEqual, "="}; }
+
+
     // --- arrow "->" ---
     if (c == '-' && pos + 1 < source.size() && source[pos + 1] == '>')
     {
@@ -127,30 +134,14 @@ Token PulseLexer::MakeIdentifierOrKeyword()
 
     std::string text = source.substr(start, pos - start);
 
-    if (text == "let")
-    {
-        return {TokenType::Let, text};
-    }
+    if (text == "let") return {TokenType::Let, text};
+    if (text == "function") return {TokenType::Function, text};
+    if (text == "ref") return {TokenType::Reference, text};
+    if (text == "copy") return {TokenType::Copy, text};    
+    if (text == "constref") return {TokenType::Const_Reference, text};    
+    if (text == "if") return { TokenType::If, text};
+    if (text == "else") return { TokenType::Else, text};
 
-    if (text == "function")
-    {
-        return {TokenType::Function, text};
-    }
-
-    if (text == "ref")
-    {
-        return {TokenType::Reference, text};
-    }
-
-    if (text == "copy")
-    {
-        return {TokenType::Copy, text};
-    }
-
-    if (text == "constref")
-    {
-        return {TokenType::Const_Reference, text};
-    }
 
     return {TokenType::Identifier, text};
 }

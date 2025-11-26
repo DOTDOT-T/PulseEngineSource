@@ -19,7 +19,15 @@ enum class TokenType {
     Comma,              // ","
     LBrace,             // "{"
     RBrace,             // "}"
-
+    If,
+    Else,
+    Greater,
+    GreaterEqual,
+    Less,
+    LessEqual,
+    EqualEqual,
+    NotEqual,
+    
     // arithmetic operator
     Plus,               // "+"
     Minus,              // "-"
@@ -42,6 +50,8 @@ enum class ParamPassMethod
 
     NOT_A_PARAMETER
 };
+
+
 
 
 using Value = std::variant<int, float, std::string>;

@@ -32,6 +32,7 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
         return;
     }
     backend->ClearScene();
+    SceneManager::GetInstance()->CleanHierarchyFrom(SceneManager::GetInstance()->GetRoot());
 
     // nlohmann::json sceneData;
     // scene >> sceneData;

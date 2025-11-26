@@ -209,11 +209,20 @@ SceneManager::SceneManager()
 
 void SceneManager::CleanHierarchyFrom(HierarchyEntity *top)
 {
-    // for(auto& child : top->children)
-    // {
-    //     CleanUpHierarchy(child);
-    //     delete child;
-    // }
+    for(auto& child : top->children)
+    {
+        CleanHierarchyFrom(child);
+
+        auto it = allEntities.find(&child->entity->transform);
+        if (it != allEntities.end()) {
+            allEntities.erase(it);
+        }
+
+        delete child;
+        child = nullptr;
+    }
+    top->children.clear();
+    if(top != &root) top = nullptr;
 }
 
 void SceneManager::UpdateEntityHierarchy(HierarchyEntity *top, PulseEngine::Mat4 parentMatrix)

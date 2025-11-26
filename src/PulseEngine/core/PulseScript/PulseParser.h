@@ -110,6 +110,38 @@ struct ASTBinaryOp : ASTExpression
     }
 };
 
+// New AST node
+struct ASTBinaryComparison : ASTExpression
+{
+    std::string op; // ">", "<", ">=", "<=", "==", "!="
+    std::unique_ptr<ASTExpression> left;
+    std::unique_ptr<ASTExpression> right;
+
+    ASTBinaryComparison(std::string op,
+                        std::unique_ptr<ASTExpression> left,
+                        std::unique_ptr<ASTExpression> right)
+        : op(op), left(std::move(left)), right(std::move(right)) {}
+
+    Value Evaluate(Scope& scope) const override
+    {
+        auto l = left->Evaluate(scope);
+        auto r = right->Evaluate(scope);
+
+        float lf = std::holds_alternative<int>(l) ? std::get<int>(l) : std::get<float>(l);
+        float rf = std::holds_alternative<int>(r) ? std::get<int>(r) : std::get<float>(r);
+
+        if (op == ">") return lf > rf ? 1 : 0;
+        if (op == "<") return lf < rf ? 1 : 0;
+        if (op == ">=") return lf >= rf ? 1 : 0;
+        if (op == "<=") return lf <= rf ? 1 : 0;
+        if (op == "==") return lf == rf ? 1 : 0;
+        if (op == "!=") return lf != rf ? 1 : 0;
+
+        throw std::runtime_error("Unknown comparison operator: " + op);
+    }
+};
+
+
 struct ASTLetStatement : ASTNode
 {
     std::string varName;
@@ -118,7 +150,7 @@ struct ASTLetStatement : ASTNode
 
 struct ASTStatement : ASTNode
 {
-    // Either Let or FunctionCall or FunctionDef
+    // Either Let or FunctionCall or FunctionDef or If/else
     std::unique_ptr<ASTNode> content;
 };
 struct ASTFunctionDef : ASTNode
@@ -127,6 +159,14 @@ struct ASTFunctionDef : ASTNode
     std::vector<Parameter> parameters;
     std::vector<std::unique_ptr<ASTStatement>> body;
 };
+
+struct ASTIfStatement : ASTNode
+{
+    std::unique_ptr<ASTExpression> condition;
+    std::vector<std::unique_ptr<ASTStatement>> thenBranch;
+    std::vector<std::unique_ptr<ASTStatement>> elseBranch;
+};
+
 
 // PARSER
 
@@ -150,6 +190,7 @@ private:
     std::unique_ptr<ASTFunctionCall> ParseFunctionCall(const std::string &name);
     std::unique_ptr<ASTFunctionDef> ParseFunctionDef();
     std::unique_ptr<ASTExpression> ParsePrimary();
+    std::unique_ptr<ASTStatement> ParseIf();
 
     std::unique_ptr<ASTExpression> ParseTerm();
     std::unique_ptr<ASTExpression> ParseFactor();
