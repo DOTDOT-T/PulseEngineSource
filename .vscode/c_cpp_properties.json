@@ -16,7 +16,8 @@
             ],
             "defines": [
                 "PULSE_WINDOWS",
-                "PULSE_GRAPHIC_OPENGL"
+                "PULSE_GRAPHIC_OPENGL",
+                "ENGINE_EDITOR"
             ]
         }
     ],

@@ -71,6 +71,7 @@ InterfaceEditor::InterfaceEditor()
     ImGui_ImplOpenGL3_Init("#version 460");
 
     std::vector<std::string> filenames;
+    modulesPulseScript = new PulseScriptsManager();
 
      for (const auto& entry : fs::directory_iterator("./Modules/Interface"))
      {
@@ -82,35 +83,42 @@ InterfaceEditor::InterfaceEditor()
 
      for(auto file : filenames)
      {
-         IModuleInterface* module = dynamic_cast<IModuleInterface*>(ModuleLoader::GetModuleFromPath(std::string("./Modules/Interface/") + file));
-         if(module)
-         {
-             modules.push_back(module);
-             windowStates[module->GetName()] = false;
-         }
+        if(file.substr(file.length() - 4) == ".dll")
+        {
+            IModuleInterface* module = dynamic_cast<IModuleInterface*>(ModuleLoader::GetModuleFromPath(std::string("./Modules/Interface/") + file));
+            if(module)
+            {
+                modules.push_back(module);
+                windowStates[module->GetName()] = false;
+                continue;
+            }
+        }
+        modulesPulseScript->AddScriptToDatabase(std::string("Modules/Interface/") + file);
+
      }
 
 
     fileClickedCallbacks.push_back(
-        [](const ClickedFileData& data) 
-        { 
-            std::string fullPath = data.name.string();
-            if (fullPath.size() >= 8 && fullPath.substr(fullPath.size() - 8) == ".pEntity")
+    [](const ClickedFileData& data) 
+    { 
+        std::string fullPath = data.name.string();
+        if (fullPath.size() >= 8 && fullPath.substr(fullPath.size() - 8) == ".pEntity")
+        {
+            if (ImGui::Selectable("Add to scene"))
             {
-                if (ImGui::Selectable("Add to scene"))
-                {
-                    std::string instantiatePath = fullPath;
-                    std::cout << fullPath << std::endl;
-                    // Replace backslashes with forward slashes
-                    size_t pos = instantiatePath.find("PulseEngineEditor\\");
-                    if (pos != std::string::npos) {
-                        instantiatePath.erase(pos, std::string("PulseEngineEditor\\").length());
-                    }
-                    PulseEngine::GameEntity::Instantiate(instantiatePath, PulseEngine::Vector3(0.0f, 0.0f, 0.0f), PulseEngine::Vector3(0.0f, 0.0f, 0.0f), PulseEngine::Vector3(1.0f, 1.0f, 1.0f));
+                std::string instantiatePath = fullPath;
+                std::cout << fullPath << std::endl;
+                // Replace backslashes with forward slashes
+                size_t pos = instantiatePath.find("PulseEngineEditor\\");
+                if (pos != std::string::npos) {
+                    instantiatePath.erase(pos, std::string("PulseEngineEditor\\").length());
                 }
+                PulseEngine::GameEntity::Instantiate(instantiatePath, PulseEngine::Vector3(0.0f, 0.0f, 0.0f), PulseEngine::Vector3(0.0f, 0.0f, 0.0f), PulseEngine::Vector3(1.0f, 1.0f, 1.0f));
             }
+        }
 
-        });
+    });
+
     
 
     windowStates["SceneData"] = true;
@@ -280,12 +288,21 @@ void InterfaceEditor::Render()
 
     std::vector<Entity*> visible;
     std::vector<Variable> args;
+    Variable dt;
+    dt.isGlobal = true;
+    dt.name = "deltatime";
+    dt.value = PulseEngineInstance->GetDeltaTime();
+    args.push_back(dt);
+
     SceneManager::GetInstance()->GetEntitiesInFrustum(visible);
 
 
     RenderMainDockSpace();
     
-    PulseScriptsManager::ExecuteMethodOnEachScript("RenderEditor", args);
+    modulesPulseScript->ExecuteMethodOnEachScript("Update", args);
+    args.clear();
+    modulesPulseScript->ExecuteMethodOnEachScript("RenderEditor", args);
+
 
     if(!hasProjectSelected)
     {

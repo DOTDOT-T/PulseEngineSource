@@ -20,6 +20,7 @@
 #include "PulseEngineEditor/InterfaceEditor/Synapse/NodeMenuRegistry.h"
 #include "PulseEngineEditor/InterfaceEditor/Synapse/Node.h"
 #include "PulseEngine/core/SceneManager/SceneManager.h"
+#include "PulseEngine/core/PulseScript/PulseScript.h"
 #include <unordered_map>
 #include <filesystem>
 
@@ -30,6 +31,7 @@ class IModuleInterface;
 class Texture;
 class Synapse;
 class NewFileManager;
+class PulseScriptsManager;
 
 struct LoadingPopupData
 {
@@ -49,6 +51,7 @@ private:
     std::vector<LoadingPopupData> loadingPopups;
     bool hasProjectSelected = true;
     std::vector<IModuleInterface*> modules;
+    PulseScriptsManager* modulesPulseScript = nullptr;
     Texture* folderIcon;
     Texture* fileIcon;
     NewFileManager* newFileManager;

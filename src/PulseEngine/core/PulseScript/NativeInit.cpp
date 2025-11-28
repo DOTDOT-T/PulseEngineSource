@@ -94,5 +94,21 @@ void InitNativeMethods()
             return 0;
         }
     );
+    PulseInterpreter::RegisterFunction("Text",
+        [](const std::vector<Value> &args) -> Value
+        {
+            std::ostringstream oss;
+
+            for (const auto& v : args)
+            {
+                std::visit([&oss](auto&& val) {
+                    oss << val << " ";
+                }, v);
+            }
+
+            ImGui::Text(oss.str().c_str());
+            return 0;
+        }
+    );
 #endif
 }

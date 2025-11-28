@@ -12,7 +12,7 @@
 
 PulseScript::PulseScript(const char *scriptPath)
 {
-    std::string code = ReadFileToString("main.PulseScript");    
+    std::string code = ReadFileToString(std::string(scriptPath));    
 
     // Lexer
     PulseLexer lexer(code);

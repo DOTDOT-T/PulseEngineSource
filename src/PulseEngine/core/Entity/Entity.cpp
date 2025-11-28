@@ -69,7 +69,9 @@ void Entity::BaseConstructor()
 {
     collider = new BoxCollider(&(this->transform.position), &(this->transform.rotation), PulseEngine::Vector3(1.0f, 1.0f, 1.0f));
     collider->owner = new PulseEngine::EntityApi(this);
+    runtimeScripts = new PulseScriptsManager();
     scripts.push_back(collider);
+
 
 }
 
@@ -370,5 +372,5 @@ void Entity::Rotate(const PulseEngine::Vector3 &rotation)
 
 void Entity::AddPulseScript(const char *scriptName)
 {
-    runtimeScripts->AddScriptToDatabase(scriptName);
+    runtimeScripts->AddScriptToDatabase(std::string(scriptName));
 }

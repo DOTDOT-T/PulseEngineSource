@@ -2,6 +2,7 @@
 #include "PulseEngine/core/Physics/Collider/Collider.h"
 #include "PulseEngine/core/Physics/Collider/BoxCollider.h"
 #include "PulseEngine/core/Physics/CollisionManager.h"
+#include "PulseEngine/core/PulseScript/PulseScript.h"
 #include "PulseEngine/core/PulseScript/PulseScriptsManager.h"
 #include "PulseEngine/core/PulseScript/utilities.h"
 

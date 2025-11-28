@@ -12,6 +12,7 @@
 #include "PulseEngine/core/Lights/Lights.h"
 #include "PulseEngine/core/PulseScript/PulseScriptsManager.h"
 #include "PulseEngine/core/PulseScript/utilities.h"
+#include "PulseEngine/core/PulseScript/PulseScript.h"
 
 #include <algorithm>
 
@@ -167,7 +168,6 @@ void SceneManager::RenderScene()
                 drawable->collider->OnRender();
 
         ent->runtimeScripts->ExecuteMethodOnEachScript("Render", args);
-        
     }
 
     // RenderEntityHierarchy(&root);

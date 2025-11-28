@@ -13,14 +13,14 @@ class PulseInterpreter;
 class PulseScriptsManager
 {
 public:
-    static void AddScriptToDatabase(const std::string& scriptPath);
-    static std::shared_ptr<PulseScript> GetScript(const std::string& scriptName);
-    static bool ExecuteScript(const std::string& scriptName);
+    void AddScriptToDatabase(const std::string& scriptPath);
+    PulseScript* GetScript(const std::string& scriptName);
+    bool ExecuteScript(const std::string& scriptName);
 
-    static bool ExecuteMethodOnEachScript(const char* methodName, std::vector<Variable> args);
+    bool ExecuteMethodOnEachScript(const char* methodName, std::vector<Variable> args);
 
 private:
-    static std::unordered_map<std::string, std::shared_ptr<PulseScript>> scripts; // name -> script
+    std::unordered_map<std::string, PulseScript*> scripts; // name -> script
 };
 
 #endif // __PULSESCRIPTSMANAGER_H__
