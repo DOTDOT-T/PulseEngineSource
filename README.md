@@ -64,3 +64,158 @@ Your feedback helps us refine and push the engine further with every iteration.
 The engine is developed by **Pulse Software**.  
 For inquiries, collaborations, or discussions, you can reach out here:  
 [https://www.linkedin.com/in/dorian-lexteriaque/](https://www.linkedin.com/in/dorian-lexteriaque/)
+
+
+```mermaid
+---
+config:
+  theme: dark
+---
+classDiagram
+    %% =========================
+    %% ENGINE CORE
+    %% =========================
+    class PulseObject {
+        <<engine core>>
+        +id: size_t
+        +Destroy()
+    }
+
+    class SceneManager {
+        +LoadScene()
+        +UnloadScene()
+        +Update()
+    }
+
+    class PulseEngineBackend {
+        +vector<Entity> entities
+        +updateAll()
+    }
+
+    class SpatialPartition {
+        <<abstract>>
+        +Insert(entity: Entity*)
+        +Remove(entity: Entity*)
+        +Update(entity: Entity*)
+        +Query(frustum: Frustum, outEntities: vector<Entity*>&)
+        +DebugDraw()
+    }
+
+    class SimpleSpatialPartition {
+        +vector<Entity*> entities
+    }
+
+    class HierarchyEntity {
+        +Entity* entity
+        +vector<HierarchyEntity*> children
+    }
+
+    %% =========================
+    %% WORLD REPRESENTATION
+    %% =========================
+    class Entity {
+        <<world object>>
+        +Transform transform
+        +Update()
+        +Render()
+    }
+
+    class Transform {
+        +position
+        +rotation
+        +scale
+    }
+
+    %% =========================
+    %% COMPONENT SYSTEM
+    %% =========================
+    class Component {
+        +Update()
+    }
+
+    class PhysicsComponent
+    class RenderComponent
+    class InputComponent
+
+    %% =========================
+    %% PLAYER FRAMEWORK
+    %% =========================
+    class PlayerMode {
+        +PlayerController controller
+        +PlayerCharacter character
+        +PlayerHud hud
+    }
+
+    class PlayerController
+    class PlayerCharacter
+    class PlayerHud
+
+    %% =========================
+    %% CHARACTER & PAWN
+    %% =========================
+    class Pawn {
+        +control()
+    }
+
+    class Character {
+        +PhysicsComponent physicHandler
+        +InputComponent inputHandler
+        +CapsuleCollider()
+    }
+
+    %% =========================
+    %% RENDERING
+    %% =========================
+    class RenderableMesh {
+        +Material
+        +virtual Draw()
+    }
+
+    class StaticMesh
+    class SkeletalMesh
+
+    %% =========================
+    %% MATH / COLLISION
+    %% =========================
+    class Frustum
+    class AABB
+    class Plane
+
+    %% =========================
+    %% INHERITANCE RELATIONSHIPS
+    %% =========================
+    Entity --|> PulseObject
+    PlayerMode --|> PulseObject
+    PlayerController --|> PulseObject
+    PlayerCharacter --|> PulseObject
+    PlayerHud --|> PulseObject
+    Component --|> PulseObject
+    SceneManager --|> PulseObject
+    SpatialPartition --|> PulseObject
+    SimpleSpatialPartition --|> SpatialPartition
+    Frustum --|> PulseObject
+    AABB --|> PulseObject
+    Plane --|> PulseObject
+    Transform --|> PulseObject
+
+    Pawn --|> Entity
+    Character --|> Pawn
+    RenderableMesh --|> Entity
+    StaticMesh --|> RenderableMesh
+    SkeletalMesh --|> RenderableMesh
+
+    %% =========================
+    %% ASSOCIATIONS
+    %% =========================
+    Entity *-- Component : has
+    PhysicsComponent --|> Component
+    RenderComponent --|> Component
+    InputComponent --|> Component
+
+    Transform *-- Transform : hierarchical
+    Entity *-- Transform : has
+    PulseEngineBackend *-- "vector<Entity>" Entity : owns
+    SceneManager *-- SpatialPartition : uses
+    SceneManager *-- HierarchyEntity : root
+    SceneManager *-- MapTransforms : owns
+```
