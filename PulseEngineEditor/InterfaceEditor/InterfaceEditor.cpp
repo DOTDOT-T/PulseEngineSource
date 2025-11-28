@@ -29,12 +29,17 @@
 #include "camera.h"
 #include <glm/gtc/type_ptr.hpp>
 
+#include "zep/filesystem.h"
+
 
 #include <filesystem>
 using namespace PulseEngine::FileSystem;
 
 namespace ed = ax::NodeEditor;
 namespace fs = std::filesystem;
+
+
+
 
 InterfaceEditor::InterfaceEditor()
 {    
@@ -118,8 +123,17 @@ InterfaceEditor::InterfaceEditor()
         }
 
     });
-
+    auto fs = std::make_unique<Zep::ZepFileSystemCPP>("Modules/Interface");
     
+    editor = std::make_unique<Zep::ZepEditor_ImGui>(
+        fs::path("Modules/Interface/main.PulseScript"),
+        Zep::NVec2f(800, 600),
+        0,
+        fs.get()
+    );
+
+    auto buff = editor->GetFileBuffer(fs::path("Modules/Interface/main.PulseScript"));
+    editor->EnsureWindow(*buff);
 
     windowStates["SceneData"] = true;
     windowStates["EntityAnalyzer"] = true;
@@ -303,6 +317,29 @@ void InterfaceEditor::Render()
     args.clear();
     modulesPulseScript->ExecuteMethodOnEachScript("RenderEditor", args);
 
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0,0));
+
+
+    
+    ImGui::Begin("Editor");
+    ImVec2 size = ImGui::GetContentRegionAvail();
+
+    ImVec2 pos = ImGui::GetWindowPos();
+
+    float topBarHeight = ImGui::GetFrameHeight();
+    editor->SetDisplayRegion(Zep::NVec2f(pos.x, pos.y + topBarHeight) ,Zep::NVec2f(pos.x + size.x, pos.y + size.y));
+    ImVec4 oldColor = ImGui::GetStyle().Colors[ImGuiCol_WindowBg];
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(1.f, 0.1f, 0.1f, 1.0f));
+
+    editor->Display();
+    editor->HandleInput();
+
+    ImGui::PopStyleColor();
+    ImGui::PopStyleVar(2);
+
+    ImGui::End();
 
     if(!hasProjectSelected)
     {

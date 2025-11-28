@@ -1,0 +1,56 @@
+#pragma once
+
+//#include "../src/mode_repl.cpp"
+
+#ifdef ZEP_SINGLE_HEADER_BUILD
+#include "src\imGUI\TextEditor/buffer.cpp"
+#include "src\imGUI\TextEditor/commands.cpp"
+#include "src\imGUI\TextEditor/display.cpp"
+#include "src\imGUI\TextEditor/editor.cpp"
+#include "src\imGUI\TextEditor/filesystem.cpp"
+#include "src\imGUI\TextEditor/glyph_iterator.cpp"
+#include "src\imGUI\TextEditor/indexer.cpp"
+#include "src\imGUI\TextEditor/keymap.cpp"
+#include "src\imGUI\TextEditor/line_widgets.cpp"
+#include "src\imGUI\TextEditor/mcommon/animation/timer.cpp"
+#include "src\imGUI\TextEditor/mcommon/file/path.cpp"
+#include "src\imGUI\TextEditor/mcommon/string/stringutils.cpp"
+#include "src\imGUI\TextEditor/mode.cpp"
+#include "src\imGUI\TextEditor/mode_search.cpp"
+#include "src\imGUI\TextEditor/mode_standard.cpp"
+#include "src\imGUI\TextEditor/mode_tree.cpp"
+#include "src\imGUI\TextEditor/mode_vim.cpp"
+#include "src\imGUI\TextEditor/range_markers.cpp"
+#include "src\imGUI\TextEditor/scroller.cpp"
+#include "src\imGUI\TextEditor/splits.cpp"
+#include "src\imGUI\TextEditor/syntax.cpp"
+#include "src\imGUI\TextEditor/syntax_markdown.cpp" 
+#include "src\imGUI\TextEditor/syntax_providers.cpp"
+#include "src\imGUI\TextEditor/syntax_rainbow_brackets.cpp"
+#include "src\imGUI\TextEditor/syntax_tree.cpp" 
+#include "src\imGUI\TextEditor/tab_window.cpp"
+#include "src\imGUI\TextEditor/theme.cpp"
+#include "src\imGUI\TextEditor/window.cpp"
+#include "zep/imgui/display_imgui.h"
+#include "zep/imgui/editor_imgui.h"
+#else
+#include "zep/editor.h"
+#include "zep/syntax.h"
+#include "zep/buffer.h"
+#include "zep/tab_window.h"
+#include "zep/mode_vim.h"
+#include "zep/mode_standard.h"
+#include "zep/window.h"
+#include "zep/mode.h"
+#include "zep/mode_vim.h"
+#include "zep/mode_standard.h"
+#ifdef ZEP_QT
+#include "zep/qt/display_qt.h"
+#include "zep/qt/editor_qt.h"
+#else
+#include "zep/imgui/display_imgui.h"
+#include "zep/imgui/editor_imgui.h"
+#include "zep/imgui/console_imgui.h"
+#endif
+#endif
+

@@ -219,7 +219,6 @@ void Entity::DrawEntity() const
     {
 #ifdef ENGINE_EDITOR
         script->OnEditorDisplay();
-    std::cout << "render editor" << std::endl;
 #endif
     }
 }

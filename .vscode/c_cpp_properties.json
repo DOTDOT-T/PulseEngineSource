@@ -17,7 +17,8 @@
             "defines": [
                 "PULSE_WINDOWS",
                 "PULSE_GRAPHIC_OPENGL",
-                "ENGINE_EDITOR"
+                "ENGINE_EDITOR",
+                "ZEP_FEATURE_CPP_FILE_SYSTEM"
             ]
         }
     ],

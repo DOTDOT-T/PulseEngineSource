@@ -24,6 +24,12 @@
 #include <unordered_map>
 #include <filesystem>
 
+#include "zep.h"
+#include "zep/imgui/editor_imgui.h"
+#include "zep/imgui/display_imgui.h"
+#include "zep/imgui/console_imgui.h"
+
+
 class PulseEngineBackend;
 class TopBar;
 class Entity;
@@ -138,6 +144,7 @@ public:
         return selectedEntity;
     }
 
+    std::unique_ptr<Zep::ZepEditor_ImGui> editor;
     fs::path currentDir = "PulseEngineEditor";
     fs::path selected;
     ~InterfaceEditor() {}
