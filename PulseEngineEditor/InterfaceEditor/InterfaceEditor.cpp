@@ -334,7 +334,49 @@ void InterfaceEditor::Render()
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(1.f, 0.1f, 0.1f, 1.0f));
 
     editor->Display();
-    editor->HandleInput();
+    
+    auto& io = ImGui::GetIO();
+
+    // Souris
+    if (io.MouseDelta.x != 0 || io.MouseDelta.y != 0)
+        editor->OnMouseMove({ io.MousePos.x, io.MousePos.y });
+
+    if (io.MouseClicked[0]) editor->OnMouseDown({ io.MousePos.x, io.MousePos.y }, Zep::ZepMouseButton::Left);
+    if (io.MouseReleased[0]) editor->OnMouseUp({ io.MousePos.x, io.MousePos.y }, Zep::ZepMouseButton::Left);
+
+    if (io.MouseWheel != 0)
+        editor->OnMouseWheel({ io.MousePos.x, io.MousePos.y }, io.MouseWheel);
+
+    // Clavier
+    uint32_t mods = 0;
+    if (io.KeyCtrl)  mods |= Zep::ModifierKey::Key::Ctrl;
+    if (io.KeyShift) mods |= Zep::ModifierKey::Key::Shift;
+    if (io.KeyAlt)   mods |= Zep::ModifierKey::Key::Alt;
+
+    Zep::ZepBuffer* buf = editor->GetActiveBuffer();
+    if (!buf) return;
+
+    Zep::ZepMode* mode = buf->GetMode();
+
+    // Caractères
+    for (int i = 0; i < io.InputQueueCharacters.Size; i++)
+    {
+        unsigned c = io.InputQueueCharacters[i];
+        if (c != '\r')
+            mode->AddKeyPress(c, mods);
+    }
+
+    if (ImGui::IsKeyPressed(ImGuiKey_Delete))
+        mode->AddKeyPress(Zep::ExtKeys::Key::DEL, mods);
+    if (ImGui::IsKeyPressed(ImGuiKey_Enter))    
+        mode->AddKeyPress(Zep::ExtKeys::RETURN, mods);
+    if (ImGui::IsKeyPressed(ImGuiKey_Backspace))    
+        mode->AddKeyPress(Zep::ExtKeys::BACKSPACE, mods);
+    if (io.KeyCtrl && ImGui::IsKeyPressed(ImGuiKey_A))
+    {
+        mode->AddKeyPress('a', Zep::ModifierKey::Ctrl);
+    }
+    
 
     ImGui::PopStyleColor();
     ImGui::PopStyleVar(2);
@@ -379,7 +421,7 @@ void InterfaceEditor::Render()
     // ImGui::RenderPlatformWindowsDefault();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     // Render additional viewports (if multi-viewport enabled)
-    ImGuiIO& io = ImGui::GetIO();
+    // ImGuiIO& io = ImGui::GetIO();
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {
         GLFWwindow* backup_current_context = glfwGetCurrentContext();

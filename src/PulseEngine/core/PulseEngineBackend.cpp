@@ -28,6 +28,7 @@
 #include "PulseEngine/core/Input/InputSystem.h"
 #include "PulseEngineEditor/InterfaceEditor/Account/Account.h"
 #include "PulseEngine/core/PulseScript/PulseScriptsManager.h"
+#include "PulseEngine/core/JobSystem/JobSystem.h"
 
 #include "PulseEngine/core/Math/MathUtils.h"
 
@@ -97,6 +98,7 @@ int PulseEngineBackend::Initialize()
 
     coroutineManager = new CoroutineManager;
     inputSystem = new PulseLibs::InputSystem;
+    js = new JobSystem;
 
     shadowShader = new Shader(std::string(ASSET_PATH) + "shaders/directionalDepth/dirDepth.vert", std::string(ASSET_PATH) + "shaders/directionalDepth/dirDepth.frag", graphicsAPI);
     pointLightShadowShader = new Shader(std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.vert", std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.frag", std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.glsl", graphicsAPI);

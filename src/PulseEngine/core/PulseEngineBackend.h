@@ -40,6 +40,7 @@ class PulseExecutable;
 class IGraphicsAPI;
 class Account;
 class PulseScriptsManager;
+class JobSystem;
 
 /**
  * @brief PulseEngineBackend is the main class of the Pulse Engine.
@@ -122,6 +123,7 @@ public:
 
     std::unordered_map<std::string, GuidCollection*> guidCollections;
     PulseLibs::InputSystem* inputSystem;
+    JobSystem* js = nullptr;
 
     PulseEngine::Mat4 view;
     PulseEngine::Mat4 projection;

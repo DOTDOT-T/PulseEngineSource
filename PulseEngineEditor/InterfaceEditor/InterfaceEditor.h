@@ -23,6 +23,8 @@
 #include "PulseEngine/core/PulseScript/PulseScript.h"
 #include <unordered_map>
 #include <filesystem>
+#include <thread>
+#include <mutex>
 
 #include "zep.h"
 #include "zep/imgui/editor_imgui.h"
@@ -147,6 +149,8 @@ public:
     std::unique_ptr<Zep::ZepEditor_ImGui> editor;
     fs::path currentDir = "PulseEngineEditor";
     fs::path selected;
+    std::mutex m_texturesMutex;
+
     ~InterfaceEditor() {}
 };
 
