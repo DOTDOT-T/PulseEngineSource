@@ -1,3 +1,13 @@
+/**
+ * @file GpuDesc.h
+ * @author Dorian LEXTERIAQUE (dlexteriaque@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2025-11-28
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 #pragma once
 #include <vector>
 #include "Handles.h"
@@ -121,4 +131,11 @@ struct PipelineDesc
 
     GpuTextureDesc::Format colorFormat = GpuTextureDesc::Format::RGBA8;
     GpuTextureDesc::Format depthFormat = GpuTextureDesc::Format::Depth32F;
+};
+
+struct VertexArrayDesc
+{
+    VertexInputLayout layout;
+    BufferHandle vertexBuffer;
+    BufferHandle indexBuffer;
 };

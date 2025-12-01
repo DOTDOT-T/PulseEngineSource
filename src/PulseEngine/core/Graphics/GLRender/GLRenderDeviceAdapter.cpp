@@ -3,6 +3,7 @@
 #include "GLCommandList.h"
 #include <iostream>
 #include <cassert>
+#include "GLRenderDeviceAdapter.h"
 
 // -- GLCommandList implementation --
 GLCommandList::GLCommandList() 
@@ -282,7 +283,7 @@ void GLRenderDeviceAdapter::Submit(CommandQueueHandle queue, CommandListHandle l
             case GLCommandList::Cmd::DrawIndexed: {
                 const uint32_t* p = reinterpret_cast<const uint32_t*>(c.data.data());
                 uint32_t indexCount = p[0];
-                glBindVertexArray(p[5]);
+                glBindVertexArray(m_vaos[p[5]]);
                 glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
                 break;
             }
@@ -327,7 +328,7 @@ void GLRenderDeviceAdapter::WaitForFence(FenceHandle fence, uint64_t value) { /*
 float GLRenderDeviceAdapter::GetTimeSeconds() const { return static_cast<float>(glfwGetTime() - m_startTime); }
 
 // -- helpers --
-GLuint GLRenderDeviceAdapter::CreateGLBuffer(const GpuBufferDesc& desc, const void* data)
+GLuint GLRenderDeviceAdapter::CreateGLBuffer(const GpuBufferDesc &desc, const void *data)
 {
     GLuint id; glGenBuffers(1, &id);
     GLenum target = GL_ARRAY_BUFFER;
@@ -420,5 +421,58 @@ void main() {
     glDeleteShader(vs); glDeleteShader(fs);
     return prog;
 }
+
+uint32_t GLRenderDeviceAdapter::GetBufferId(BufferHandle h) const
+{
+    auto it = m_buffers.find(h);
+    if (it != m_buffers.end()) return it->second.glId;
+    return 0;
+}
+
+VertexArrayHandle GLRenderDeviceAdapter::CreateVertexArray(const VertexArrayDesc& desc)
+{
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    auto vbObj = GetBufferId(desc.vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vbObj);
+    int nmbr = 0;
+    for (auto& attr : desc.layout.attributes)
+    {
+        glEnableVertexAttribArray(nmbr); // use offset as location for simplicity
+        GLint size = 1;
+        switch(attr.type) {
+            case VertexAttribute::Type::Float: size = 1; break;
+            case VertexAttribute::Type::Float2: size = 2; break;
+            case VertexAttribute::Type::Float3: size = 3; break;
+            case VertexAttribute::Type::Float4: size = 4; break;
+            case VertexAttribute::Type::Mat4: size = 16; break;
+        }
+        glVertexAttribPointer(nmbr, size, GL_FLOAT, GL_FALSE, desc.layout.stride, (void*)attr.offset);
+        nmbr++;
+    }
+
+    if(desc.indexBuffer) {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GetBufferId(desc.indexBuffer));
+    }
+
+    glBindVertexArray(0);
+
+    VertexArrayHandle h = m_nextVAOHandle++;
+    m_vaos[h] = vao;
+    return h;
+}
+
+void GLRenderDeviceAdapter::DestroyVertexArray(VertexArrayHandle h)
+{
+}
+
+void GLRenderDeviceAdapter::BindVertexArray(VertexArrayHandle h)
+{
+    auto it = m_vaos.find(h);
+    if(it != m_vaos.end()) glBindVertexArray(it->second);
+}
+
 
 std::string GLRenderDeviceAdapter::ReadShaderSource(uint32_t shaderHandle) { return std::string(); }

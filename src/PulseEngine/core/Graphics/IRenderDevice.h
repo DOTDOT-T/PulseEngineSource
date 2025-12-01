@@ -21,6 +21,10 @@ public:
     // ---- Buffers ----
     virtual BufferHandle CreateBuffer(const GpuBufferDesc& desc, const void* initialData = nullptr) = 0;
     virtual void DestroyBuffer(BufferHandle h) = 0;
+    // ---- Vertex array ----
+    virtual VertexArrayHandle CreateVertexArray(const VertexArrayDesc& desc) = 0;
+    virtual void DestroyVertexArray(VertexArrayHandle h) = 0;
+    virtual void BindVertexArray(VertexArrayHandle h) = 0;
 
     // ---- Textures ----
     virtual TextureHandle CreateTexture(const GpuTextureDesc& desc) = 0;
@@ -39,6 +43,7 @@ public:
     virtual CommandListHandle CreateCommandList() = 0;
     virtual ICommandList* GetCommandList(CommandListHandle) = 0;
     virtual CommandQueueHandle GetGraphicsQueue() = 0;
+    virtual uint32_t GetBufferId(BufferHandle h) const = 0; 
 
     virtual void Submit(CommandQueueHandle queue, CommandListHandle list, FenceHandle fenceToSignal = 0) = 0;
 

@@ -10,4 +10,5 @@ using DescriptorSetHandle = uint32_t;
 using DescriptorLayoutHandle = uint32_t;
 using CommandListHandle   = uint32_t;
 using CommandQueueHandle  = uint32_t;
+using VertexArrayHandle = uint32_t;
 using FenceHandle         = uint64_t; // GPU timeline fence

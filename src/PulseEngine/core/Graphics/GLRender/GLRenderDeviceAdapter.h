@@ -56,12 +56,11 @@ public:
 
     float GetTimeSeconds() const override;
     
-    GLuint GetBufferGLId(BufferHandle h) const {
-        auto it = m_buffers.find(h);
-        if (it != m_buffers.end()) return it->second.glId;
-        return 0;
-    }
+    uint32_t GetBufferId(BufferHandle h) const override; 
 
+    VertexArrayHandle CreateVertexArray(const VertexArrayDesc& desc) override;
+    void DestroyVertexArray(VertexArrayHandle h) override;
+    void BindVertexArray(VertexArrayHandle h) override;
 private:
     // GLFW window
     GLFWwindow* m_window = nullptr;
@@ -75,6 +74,7 @@ private:
     uint32_t m_nextDescriptorLayoutHandle = 1;
     uint32_t m_nextDescriptorSetHandle = 1;
     uint32_t m_nextCommandListHandle = 1;
+    uint32_t m_nextVAOHandle = 1;
 
     struct BufferEntry { GLuint glId; GpuBufferDesc desc; };
     struct TextureEntry { GLuint glId; GpuTextureDesc desc; };
@@ -87,6 +87,7 @@ private:
     std::unordered_map<PipelineHandle, PipelineEntry> m_pipelines;
     std::unordered_map<DescriptorLayoutHandle, DescriptorLayoutEntry> m_layouts;
     std::unordered_map<DescriptorSetHandle, DescriptorSetEntry> m_sets;
+    std::unordered_map<VertexArrayHandle, GLuint> m_vaos;
 
     std::unordered_map<CommandListHandle, std::unique_ptr<GLCommandList>> m_commandLists;
 
