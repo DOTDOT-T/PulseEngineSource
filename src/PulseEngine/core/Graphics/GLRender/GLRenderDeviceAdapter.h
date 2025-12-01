@@ -61,6 +61,12 @@ public:
     VertexArrayHandle CreateVertexArray(const VertexArrayDesc& desc) override;
     void DestroyVertexArray(VertexArrayHandle h) override;
     void BindVertexArray(VertexArrayHandle h) override;
+
+    void SetUniform(PipelineHandle pipeline, const char* name, const void* data, size_t size) override;
+    void SetUniformMatrix4fv(PipelineHandle pipeline, const char* name, const float* mat) override;
+    void UpdateBuffer(BufferHandle buffer, const void* data, size_t size, size_t offset = 0) override;
+
+
 private:
     // GLFW window
     GLFWwindow* m_window = nullptr;

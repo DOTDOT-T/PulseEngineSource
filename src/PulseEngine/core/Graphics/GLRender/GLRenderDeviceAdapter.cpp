@@ -111,7 +111,6 @@ bool GLRenderDeviceAdapter::Initialize(const char* appName, int width, int heigh
         glfwTerminate();
         return false;
     }
-
     glfwMakeContextCurrent(m_window);
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Failed to load GLAD\n";
@@ -148,6 +147,10 @@ void GLRenderDeviceAdapter::BeginFrame()
 { 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);            // Enable depth testing
+    glDepthFunc(GL_LESS);               // Standard depth test
+    glCullFace(GL_BACK);                // Cull back faces
+
 }
 void GLRenderDeviceAdapter::EndFrame() { /* flush if needed */ }
 
@@ -281,6 +284,7 @@ void GLRenderDeviceAdapter::Submit(CommandQueueHandle queue, CommandListHandle l
                 break;
             }
             case GLCommandList::Cmd::DrawIndexed: {
+                glCullFace(GL_FRONT);
                 const uint32_t* p = reinterpret_cast<const uint32_t*>(c.data.data());
                 uint32_t indexCount = p[0];
                 glBindVertexArray(m_vaos[p[5]]);
@@ -375,26 +379,32 @@ GLuint GLRenderDeviceAdapter::CompileAndLinkShaders(const PipelineDesc& desc)
 {
     const char* vsSrc = R"(
 #version 450 core
+
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec3 aColor;
+
+uniform mat4 uMVP;
 
 out vec3 vColor;
 
 void main() {
-    gl_Position = vec4(aPos, 1.0);
+    gl_Position = uMVP * vec4(aPos, 1.0);
     vColor = aColor;
 }
+
 
     )";
 
     const char* fsSrc = R"(
 #version 450 core
+
 in vec3 vColor;
 out vec4 FragColor;
 
 void main() {
     FragColor = vec4(vColor, 1.0);
 }
+
 
     )";
 
@@ -473,6 +483,47 @@ void GLRenderDeviceAdapter::BindVertexArray(VertexArrayHandle h)
     auto it = m_vaos.find(h);
     if(it != m_vaos.end()) glBindVertexArray(it->second);
 }
+
+void GLRenderDeviceAdapter::SetUniform(PipelineHandle pipeline, const char* name, const void* data, size_t size)
+{
+    auto it = m_pipelines.find(pipeline);
+    if (it == m_pipelines.end()) return;
+
+    glUseProgram(it->second.program);
+    GLint loc = glGetUniformLocation(it->second.program, name);
+    if (loc == -1) return;
+
+    // Handle basic sizes (1 float, 2 floats, 3 floats, 4 floats, int)
+    if (size == sizeof(float)) glUniform1fv(loc, 1, (float*)data);
+    else if (size == sizeof(float) * 2) glUniform2fv(loc, 1, (float*)data);
+    else if (size == sizeof(float) * 3) glUniform3fv(loc, 1, (float*)data);
+    else if (size == sizeof(float) * 4) glUniform4fv(loc, 1, (float*)data);
+    else if (size == sizeof(int)) glUniform1iv(loc, 1, (int*)data);
+    // Matrices need separate function
+}
+
+void GLRenderDeviceAdapter::SetUniformMatrix4fv(PipelineHandle pipeline, const char* name, const float* mat)
+{
+    auto it = m_pipelines.find(pipeline);
+    if (it == m_pipelines.end()) return;
+
+    glUseProgram(it->second.program);
+    GLint loc = glGetUniformLocation(it->second.program, name);
+    if (loc == -1) return;
+
+    glUniformMatrix4fv(loc, 1, GL_FALSE, mat);
+}
+
+void GLRenderDeviceAdapter::UpdateBuffer(BufferHandle buffer, const void* data, size_t size, size_t offset)
+{
+    auto it = m_buffers.find(buffer);
+    if (it == m_buffers.end()) return;
+
+    glBindBuffer(GL_ARRAY_BUFFER, it->second.glId);
+    glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 
 
 std::string GLRenderDeviceAdapter::ReadShaderSource(uint32_t shaderHandle) { return std::string(); }

@@ -47,6 +47,12 @@ public:
 
     virtual void Submit(CommandQueueHandle queue, CommandListHandle list, FenceHandle fenceToSignal = 0) = 0;
 
+    // ---- Shader resource updates ----
+    virtual void SetUniform(PipelineHandle pipeline, const char* name, const void* data, size_t size) = 0;
+    virtual void SetUniformMatrix4fv(PipelineHandle pipeline, const char* name, const float* mat) = 0;
+    virtual void UpdateBuffer(BufferHandle buffer, const void* data, size_t size, size_t offset = 0) = 0;
+
+
     // ---- Sync ----
     virtual void WaitForFence(FenceHandle fence, uint64_t value) = 0;
 
