@@ -3,7 +3,7 @@
 
 GuidCollection::GuidCollection(const std::string &collectionPath)
 {
-    std::ifstream file(std::string(ASSET_PATH) + collectionPath);
+    std::ifstream file(std::string(ASSET_PATH) + "EngineConfig/" + collectionPath);
     if (!file.is_open())
     {
         EDITOR_ERROR("Could not open GUID collection file: " + collectionPath);

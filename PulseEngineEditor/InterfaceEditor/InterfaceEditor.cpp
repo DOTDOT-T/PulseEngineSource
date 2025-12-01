@@ -53,7 +53,7 @@ InterfaceEditor::InterfaceEditor()
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.IniFilename = "PulseEditorGUI.ini";
     
-    ImFont* dmSansFont = io.Fonts->AddFontFromFileTTF((std::string(ASSET_PATH) + "fonts/EngineFont.ttf").c_str(), 18.0f);
+    ImFont* dmSansFont = io.Fonts->AddFontFromFileTTF((std::string(ASSET_PATH) + "EngineConfig/fonts/EngineFont.ttf").c_str(), 18.0f);
     io.FontDefault = dmSansFont;    
     ImGui::StyleColorsDark(); 
 
@@ -63,14 +63,14 @@ InterfaceEditor::InterfaceEditor()
     synapse->Init();
 
 
-    icons["folder"] = new Texture(("InterfaceEditor/icon/folder.png"), PulseEngineGraphicsAPI);
-    icons["file"] = new Texture(("InterfaceEditor/icon/file.png"), PulseEngineGraphicsAPI);
-    icons["entityFile"] = new Texture(("InterfaceEditor/icon/entityFile.png"), PulseEngineGraphicsAPI);
-    icons["modelFile"] = new Texture(("InterfaceEditor/icon/modelFile.png"), PulseEngineGraphicsAPI);
-    icons["scene"] = new Texture(("InterfaceEditor/icon/scene.png"), PulseEngineGraphicsAPI);
-    icons["cpp"] = new Texture(("InterfaceEditor/icon/cpp.png"), PulseEngineGraphicsAPI);
-    icons["h"] = new Texture(("InterfaceEditor/icon/h.png"), PulseEngineGraphicsAPI);
-    icons["synapse"] = new Texture(("InterfaceEditor/icon/synapse.png"), PulseEngineGraphicsAPI);
+    icons["folder"] = new Texture(("EngineConfig/InterfaceEditor/icon/folder.png"), PulseEngineGraphicsAPI);
+    icons["file"] = new Texture(("EngineConfig/InterfaceEditor/icon/file.png"), PulseEngineGraphicsAPI);
+    icons["entityFile"] = new Texture(("EngineConfig/InterfaceEditor/icon/entityFile.png"), PulseEngineGraphicsAPI);
+    icons["modelFile"] = new Texture(("EngineConfig/InterfaceEditor/icon/modelFile.png"), PulseEngineGraphicsAPI);
+    icons["scene"] = new Texture(("EngineConfig/InterfaceEditor/icon/scene.png"), PulseEngineGraphicsAPI);
+    icons["cpp"] = new Texture(("EngineConfig/InterfaceEditor/icon/cpp.png"), PulseEngineGraphicsAPI);
+    icons["h"] = new Texture(("EngineConfig/InterfaceEditor/icon/h.png"), PulseEngineGraphicsAPI);
+    icons["synapse"] = new Texture(("EngineConfig/InterfaceEditor/icon/synapse.png"), PulseEngineGraphicsAPI);
 
     ImGui_ImplGlfw_InitForOpenGL(PulseEngineInstance->GetWindowContext()->GetGLFWWindow(), true);
     ImGui_ImplOpenGL3_Init("#version 460");

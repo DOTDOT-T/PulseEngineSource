@@ -32,7 +32,8 @@ NewFileManager::NewFileManager()
         CategoryFiles("Scripts", {{"New Component", ".cpp/.h"}}),        
         CategoryFiles("Assets", {{"Scene (.map)", ".pmap"}, {"Material", ".mat"}}),
         CategoryFiles("Entities", {{"Pulse Entity", ".pEntity"}}),
-        CategoryFiles("Synapse", {{"Synapse File", ".synapse"}})
+        CategoryFiles("Synapse", {{"Synapse File", ".synapse"}}),
+        CategoryFiles("Directory", {{"Simple directory", "DIR"}})
     };
 }
 
@@ -87,7 +88,13 @@ void NewFileManager::RenderPopup(const std::filesystem::path &currentDir, std::f
             size_t guid = 0;
 
             // Special case: Component (.cpp + .h)
-            if (extension == ".cpp/.h")
+            if (extension == "DIR")
+            {
+                std::string cmd = "mkdir ";
+                cmd += (currentDir / fileNameStr).string();
+                system(cmd.c_str());
+            }
+            else if (extension == ".cpp/.h")
             {
                 GenerateCppAndHeaderFiles(currentDir, fileNameStr, selectedFile);
             }

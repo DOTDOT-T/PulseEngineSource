@@ -171,6 +171,27 @@ void InterfaceEditor::ShowFileGrid(const fs::path& currentDir, fs::path& selecte
             ImDrawList* drawList = ImGui::GetWindowDrawList();
             drawList->AddRectFilled(cursorPos, ImVec2(cursorPos.x + iconSize.x, cursorPos.y + iconSize.y),
                                     IM_COL32(255, 255, 255, 20), 6.0f);
+            
+            if (ImGui::IsKeyPressed(ImGuiKey_Delete))
+            {
+                std::error_code ec;
+                if (fs::exists(entry.path()))
+                {
+                    if (fs::is_directory(entry.path()))
+                    {
+                        fs::remove_all(entry.path(), ec); // recursively deletes directory
+                    }
+                    else
+                    {
+                        fs::remove(entry.path(), ec); // deletes single file
+                    }
+                
+                    if (ec)
+                    {
+                        std::cerr << "Failed to delete " << entry.path() << ": " << ec.message() << std::endl;
+                    }
+                }
+            }
         }
 
         // ✅ Nom du fichier centré et tronqué

@@ -98,9 +98,9 @@ int PulseEngineBackend::Initialize()
     coroutineManager = new CoroutineManager;
     inputSystem = new PulseLibs::InputSystem;
 
-    shadowShader = new Shader(std::string(ASSET_PATH) + "shaders/directionalDepth/dirDepth.vert", std::string(ASSET_PATH) + "shaders/directionalDepth/dirDepth.frag", graphicsAPI);
-    pointLightShadowShader = new Shader(std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.vert", std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.frag", std::string(ASSET_PATH) + "shaders/pointDepth/pointDepth.glsl", graphicsAPI);
-    debugShader = new Shader(std::string(ASSET_PATH) +"shaders/debug.vert", std::string(ASSET_PATH) + "shaders/debug.frag", graphicsAPI);
+    shadowShader = new Shader(std::string(ASSET_PATH) + "EngineConfig/shaders/directionalDepth/dirDepth.vert", std::string(ASSET_PATH) + "EngineConfig/shaders/directionalDepth/dirDepth.frag", graphicsAPI);
+    pointLightShadowShader = new Shader(std::string(ASSET_PATH) + "EngineConfig/shaders/pointDepth/pointDepth.vert", std::string(ASSET_PATH) + "EngineConfig/shaders/pointDepth/pointDepth.frag", std::string(ASSET_PATH) + "EngineConfig/shaders/pointDepth/pointDepth.glsl", graphicsAPI);
+    debugShader = new Shader(std::string(ASSET_PATH) +"EngineConfig/shaders/debug.vert", std::string(ASSET_PATH) + "EngineConfig/shaders/debug.frag", graphicsAPI);
     // === insert base item to the collection ===
     GuidReader::InsertIntoCollection("Entities/simpleActor.pEntity");    
     GuidReader::InsertIntoCollection("Entities/primitiveCube.pEntity"); 
