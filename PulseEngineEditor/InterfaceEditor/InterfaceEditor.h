@@ -38,6 +38,7 @@ class Texture;
 class Synapse;
 class NewFileManager;
 class PulseScriptsManager;
+class WidgetEditor;
 
 struct LoadingPopupData
 {
@@ -67,6 +68,8 @@ private:
     Synapse* synapse = nullptr;
 
     std::vector<std::pair<Entity*, PulseEngine::Transform*>> reparent;
+
+    WidgetEditor* wdgtEditor = nullptr;
 
 public:
     std::unordered_map<std::string, bool> windowStates;

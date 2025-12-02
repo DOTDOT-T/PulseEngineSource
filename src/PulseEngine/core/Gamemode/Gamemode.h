@@ -7,7 +7,7 @@
 
 class HudController;
 
-class Gamemode : public PulseObject
+class PULSE_ENGINE_DLL_API Gamemode : public PulseObject
 {
 PULSE_GEN_BODY(Gamemode)
 PULSE_REGISTER_CLASS_HEADER(Gamemode)

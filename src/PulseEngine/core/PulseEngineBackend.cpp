@@ -74,7 +74,6 @@ int PulseEngineBackend::Initialize()
 
     windowContext = new WindowContext();
     activeCamera = new Camera();
-    gamemode = new Gamemode();
 
     // load the graphic API based on the platform
     //some platform can have multiple graphic API possible.
@@ -137,6 +136,7 @@ int PulseEngineBackend::Initialize()
     runtimeScript = new PulseScriptsManager();
 
 
+    gamemode = new Gamemode();
     InitNativeMethods();
 
     EDITOR_LOG("Finished the initialization of the engine.");
@@ -314,6 +314,8 @@ void PulseEngineBackend::SpecificRender(Camera *cam, int specificVBO, std::vecto
 #ifdef ENGINE_EDITOR
         DrawGridQuad(specificView, specificProjection);
 #endif
+
+    gamemode->Render();
 
     graphicsAPI->EndFrame();
 }

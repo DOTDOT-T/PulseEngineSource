@@ -1,4 +1,5 @@
 #include "Widget.h"
+#include "PulseEngine/core/Gamemode/HudController/WidgetComponent/WidgetComponent.h"
 
 PULSE_REGISTER_CLASS_CPP(Widget)
 
@@ -17,8 +18,21 @@ const char* Widget::ToString()
 
 void Widget::Update()
 {
+    for(auto& comp : component)
+    {
+        comp->Update();
+    }
 }
 
 void Widget::Render()
+{    
+    for(auto& comp : component)
+    {
+        comp->Render();
+    }
+}
+
+void Widget::AddComponent(WidgetComponent *comp)
 {
+    component.push_back(comp);
 }

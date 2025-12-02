@@ -8,7 +8,7 @@
 
 class Widget;
 
-class HudController : public PulseObject
+class PULSE_ENGINE_DLL_API HudController : public PulseObject
 {
 PULSE_GEN_BODY(HudController)
 PULSE_REGISTER_CLASS_HEADER(HudController)

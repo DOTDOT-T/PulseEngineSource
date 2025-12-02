@@ -19,7 +19,8 @@ const char* Gamemode::ToString()
 
 Gamemode::Gamemode()
 {
-    hud = new HudController();
+    hud = new HudController;
+    hud->Init();
 }
 
 void Gamemode::Update()
