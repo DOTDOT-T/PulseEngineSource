@@ -29,6 +29,7 @@
 #include "PulseEngineEditor/InterfaceEditor/Account/Account.h"
 #include "PulseEngine/core/PulseScript/PulseScriptsManager.h"
 #include "PulseEngine/core/Graphics/TextRenderer.h"
+#include "PulseEngine/core/Gamemode/Gamemode.h"
 
 #include "PulseEngine/core/Math/MathUtils.h"
 
@@ -73,6 +74,7 @@ int PulseEngineBackend::Initialize()
 
     windowContext = new WindowContext();
     activeCamera = new Camera();
+    gamemode = new Gamemode();
 
     // load the graphic API based on the platform
     //some platform can have multiple graphic API possible.
@@ -184,19 +186,6 @@ void PulseEngineBackend::Update()
         light->RecalculateLightSpaceMatrix();
     }
 
-    // for (size_t i = 0; i < entities.size(); ++i)
-    // {
-    //     Entity* entityA = entities[i];
-    //     entityA->UpdateEntity(deltaTime);
-    //     Collider* col = dynamic_cast<Collider*>(entityA->collider);
-    //     if(col) col->othersCollider.clear();
-    //     for (size_t j = i + 1; j < entities.size(); ++j)
-    //     {
-    //         Entity* entityB = entities[j];
-    //         CollisionManager::ManageCollision(dynamic_cast<Collider*>(entityA->collider), dynamic_cast<Collider*>(entityB->collider));                
-    //     }
-    // }
-
     SceneManager::GetInstance()->UpdateScene();
     
 
@@ -208,6 +197,8 @@ void PulseEngineBackend::Update()
     deltaVar.name = "deltatime";
     deltaVar.value = GetDeltaTime();
     args.push_back(deltaVar);
+
+    gamemode->Update();
 }
 
 void PulseEngineBackend::Render()
@@ -216,6 +207,7 @@ void PulseEngineBackend::Render()
     graphicsAPI->StartFrame();
 
     SceneManager::GetInstance()->RenderScene();
+    gamemode->Render();
 
     // for (Entity* entity : entities)
     // {

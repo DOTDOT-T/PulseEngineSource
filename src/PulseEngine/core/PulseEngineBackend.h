@@ -40,6 +40,7 @@ class PulseExecutable;
 class IGraphicsAPI;
 class Account;
 class PulseScriptsManager;
+class Gamemode;
 
 /**
  * @brief PulseEngineBackend is the main class of the Pulse Engine.
@@ -147,8 +148,7 @@ private:
 
     static Camera* activeCamera;
 
-
-
+    Gamemode* gamemode = nullptr;
     nlohmann::json_abi_v3_12_0::json engineConfig;
 
     PulseExecutable* discordLauncher = nullptr; 
