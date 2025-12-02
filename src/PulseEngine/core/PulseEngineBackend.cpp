@@ -28,6 +28,7 @@
 #include "PulseEngine/core/Input/InputSystem.h"
 #include "PulseEngineEditor/InterfaceEditor/Account/Account.h"
 #include "PulseEngine/core/PulseScript/PulseScriptsManager.h"
+#include "PulseEngine/core/Graphics/TextRenderer.h"
 
 #include "PulseEngine/core/Math/MathUtils.h"
 
@@ -274,6 +275,16 @@ void PulseEngineBackend::SpecificRender(Camera *cam, int specificVBO, std::vecto
     );
     PulseEngineGraphicsAPI->SpecificStartFrame(specificVBO, viewportSize);
     
+    static ITextRenderer* copyrightText = nullptr;
+    if(!copyrightText)
+    {
+        copyrightText = PulseEngineInstance->graphicsAPI->CreateNewText();
+        copyrightText->Init();
+    }
+    copyrightText->SetScreenSize(viewportSize.x, viewportSize.y);
+
+    copyrightText->RenderText("Pulse Engine-" + version, 0, 25, 25.0f, PulseEngine::Vector3(0.0f, 0.0f, 0.0f));
+    copyrightText->Render();
 
     for (Entity* entity : entitiesToRender)
     {

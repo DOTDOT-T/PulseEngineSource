@@ -71,6 +71,7 @@
 
 class PulseEngineBackend;
 class Vertex;
+class ITextRenderer;
 
 /**
  * @enum TextureType
@@ -256,6 +257,11 @@ public:
 
 
     virtual float GetTime() const = 0; 
+
+    // ============================================================================
+    // TEXT MANAGER
+    // ============================================================================
+    virtual ITextRenderer* CreateNewText() = 0;
 
 
     // ===== Shared Context Variables =====

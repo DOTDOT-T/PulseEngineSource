@@ -13,6 +13,8 @@
 #include "PulseEngine/core/PulseScript/PulseScriptsManager.h"
 #include "PulseEngine/core/PulseScript/utilities.h"
 #include "PulseEngine/core/PulseScript/PulseScript.h"
+#include "PulseEngine/core/Graphics/TextRenderer.h"
+#include "PulseEngine/core/Graphics/IGraphicsApi.h"
 
 #include <algorithm>
 

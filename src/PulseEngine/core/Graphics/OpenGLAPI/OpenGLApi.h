@@ -21,6 +21,8 @@
 #include <glm/gtc/matrix_transform.hpp> // GLM transformation helpers
 #include <GL/gl.h>                      // OpenGL headers
 
+class GLTextRenderer;
+
 class OpenGLAPI : public IGraphicsAPI
 {
 public:
@@ -91,6 +93,9 @@ public:
     void RenderLineMesh(unsigned int* VAO, unsigned int* VBO, const std::vector<PulseEngine::Vector3>& vertices, const std::vector<unsigned int>& indices) override;
     void ActivateWireframe() override;
     void DesactivateWireframe() override;
+
+    
+    ITextRenderer* CreateNewText() override;
 
     GLFWwindow* window = nullptr;
     GLuint fbo, fboTexture, rbo;

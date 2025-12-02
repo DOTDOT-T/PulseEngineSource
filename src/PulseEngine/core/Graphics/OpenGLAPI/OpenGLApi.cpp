@@ -1,3 +1,4 @@
+#include "PulseEngine/core/Graphics/OpenGLAPI/TextRendererGl.h"
 #include "PulseEngine/core/Graphics/OpenGLAPI/OpenGLApi.h"
 #include "PulseEngine/core/Graphics/IGraphicsApi.h"
 #include "PulseEngine/core/Meshes/Vertex.h"
@@ -14,6 +15,7 @@
 
 #include "Common/EditorDefines.h"
 #include "OpenGLApi.h"
+
 
 bool OpenGLAPI::InitializeApi(const char* title, int* width, int* height)
 {
@@ -650,6 +652,13 @@ void OpenGLAPI::ActivateWireframe()
 void OpenGLAPI::DesactivateWireframe()
 {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+ITextRenderer *OpenGLAPI::CreateNewText()
+{
+    GLTextRenderer* tr = new GLTextRenderer();
+    tr->Init();
+    return tr;
 }
 
 unsigned int OpenGLAPI::CreateShader(const std::string& vertexPath, const std::string& fragmentPath)
