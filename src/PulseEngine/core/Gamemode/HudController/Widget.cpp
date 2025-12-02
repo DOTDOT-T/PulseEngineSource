@@ -43,5 +43,11 @@ void Widget::SetComponent(std::vector<WidgetComponent *> comp)
     {
         delete c;
     }
+    component.clear();
     component = comp;
+}
+
+std::vector<WidgetComponent *> *Widget::GetWidgets()
+{
+    return &component;
 }

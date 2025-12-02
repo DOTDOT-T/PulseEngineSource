@@ -8,6 +8,10 @@ PULSE_REGISTER_CLASS_CPP(WidgetEditor)
 
 void WidgetEditor::Update()
 {
+    if(!widgets)
+    {
+        widgets = PulseEngineInstance->GetGamemode()->GetHudController()->At(0)->GetWidgets();
+    }
 }
 
 const char* WidgetEditor::ToString() { return "Widget Editor"; }
@@ -62,13 +66,13 @@ void WidgetEditor::RenderPalette()
     ImGui::Separator();
 
     if (ImGui::Selectable("Button"))
-        widgets.push_back(new WidgetComponent("Button", PulseEngine::Vector2(100,100), PulseEngine::Vector2(120,40)));
+        widgets->push_back(new WidgetComponent("Button", PulseEngine::Vector2(100,100), PulseEngine::Vector2(120,40)));
 
     if (ImGui::Selectable("Text"))
-        widgets.push_back(new TextComponent("Text", PulseEngine::Vector2(200,200), PulseEngine::Vector2(100,20)));
+        widgets->push_back(new TextComponent("Text", PulseEngine::Vector2(200,200), PulseEngine::Vector2(100,20)));
 
     if (ImGui::Selectable("Image"))
-        widgets.push_back(new WidgetComponent("Image", PulseEngine::Vector2(150,150), PulseEngine::Vector2(80,80)));
+        widgets->push_back(new WidgetComponent("Image", PulseEngine::Vector2(150,150), PulseEngine::Vector2(80,80)));
 
     ImGui::End();
 }
@@ -82,8 +86,9 @@ void WidgetEditor::RenderDetails()
 
     if(ImGui::Button("Save"))
     {
-        Widget* w = PulseEngineInstance->GetGamemode()->GetHudController()->At(0);
-        w->SetComponent(widgets);
+        // Widget* w = PulseEngineInstance->GetGamemode()->GetHudController()->At(0);
+        // selectedWidget = nullptr;
+        // w->SetComponent(widgets);
     }
     if (selectedWidget)
     {
@@ -122,7 +127,7 @@ void WidgetEditor::RenderHierarchy()
     ImGui::Text("Widget Tree");
     ImGui::Separator();
 
-    for (auto& w : widgets)
+    for (auto& w : *widgets)
     {
         bool sel = (w == selectedWidget);
         if (ImGui::Selectable(w->name.c_str(), sel))
@@ -189,7 +194,7 @@ void WidgetEditor::Canvas_DrawWidgets(const ImVec2& canvasPos, const ImVec2& can
 {
     ImDrawList* dl = ImGui::GetWindowDrawList();
 
-    for (auto& w : widgets)
+    for (auto& w : *widgets)
     {
         ImVec2 local = ComputeWidgetCanvasPos(w, canvasSize);
         ImVec2 p0 = CanvasToScreen(local, canvasPos);
@@ -212,7 +217,7 @@ void WidgetEditor::Canvas_HandleSelection(const ImVec2& canvasPos, const ImVec2&
 
     selectedWidget = nullptr;
 
-    for (auto& w : widgets)
+    for (auto& w : *widgets)
     {
         ImVec2 local = ComputeWidgetCanvasPos(w, canvasSize);
 

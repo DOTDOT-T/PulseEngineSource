@@ -20,6 +20,7 @@ public:
 
     void SetComponent(std::vector<WidgetComponent*> comp);
 
+    std::vector<WidgetComponent*>* GetWidgets();
 private:
     std::vector<WidgetComponent*> component;
 };

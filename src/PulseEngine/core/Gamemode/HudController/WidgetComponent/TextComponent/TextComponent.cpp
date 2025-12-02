@@ -53,9 +53,22 @@ void TextComponent::Update()
 
 void TextComponent::Render()
 {
-    float screenX = *PulseEngineInstance->graphicsAPI->width  * anchor.x + location.x;
-    float screenY = *PulseEngineInstance->graphicsAPI->height * anchor.y + location.y;
+    float screenWidth  = *PulseEngineInstance->graphicsAPI->width;
+    float screenHeight = *PulseEngineInstance->graphicsAPI->height;
 
-    tr->RenderText(text, 0, 25, fontSize, PulseEngine::Vector3(color.r, color.g, color.b));
+    // anchor in screen space
+    float anchorX = anchor.x * screenWidth;
+    float anchorY = anchor.y * screenHeight;
+
+    // pivot offset in widget units
+    float pivotX = pivot.x * size.x;
+    float pivotY = pivot.y * size.y;
+
+    // final screen position
+    float screenX = location.x + anchorX - pivotX;
+    float screenY = location.y + anchorY - pivotY;
+
+    tr->RenderText(text, screenX, screenY, fontSize, PulseEngine::Vector3(color.r, color.g, color.b));
     tr->Render();
 }
+

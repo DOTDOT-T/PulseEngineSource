@@ -43,7 +43,7 @@ private:
     ImVec2 CanvasToScreen(const ImVec2& canvas, const ImVec2& canvasOrigin);
 
 private:
-    std::vector<WidgetComponent*> widgets;
+    std::vector<WidgetComponent*>* widgets = nullptr;
     WidgetComponent* selectedWidget = nullptr;
 
 
