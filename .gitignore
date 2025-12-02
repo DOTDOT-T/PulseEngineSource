@@ -19,3 +19,4 @@ DLLS/
 *.obj
 *.o
 /.vscode
+.vscode/launch.json

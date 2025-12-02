@@ -40,6 +40,8 @@ void InterfaceEditor::ShowFileGrid(const fs::path& currentDir, fs::path& selecte
         columnCount = 1;
     }
 
+    ImGui::SameLine();
+
     NewFileCreation(currentDir, selectedFile);
 
     // if (currentDir.has_parent_path())
@@ -256,8 +258,6 @@ void InterfaceEditor::FileExplorerWindow()
             selected.clear();
         }
     }
-
-    ImGui::Separator();
 
     ShowFileGrid(currentDir, selected);
 
