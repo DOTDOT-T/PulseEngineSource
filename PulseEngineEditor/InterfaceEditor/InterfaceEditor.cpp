@@ -26,6 +26,7 @@
 #include "PulseEngine/API/GameEntity.h"
 #include "PulseEngine/core/PulseScript/PulseScriptsManager.h"
 #include "PulseEngine/core/PulseScript/utilities.h"
+#include "PulseEngineEditor/InterfaceEditor/WidgetEditor/WidgetEditor.h"
 #include "camera.h"
 #include <glm/gtc/type_ptr.hpp>
 
@@ -59,6 +60,7 @@ InterfaceEditor::InterfaceEditor()
 
     synapse = new Synapse("");
     newFileManager = new NewFileManager();
+    wdgtEditor = new WidgetEditor;
 
     synapse->Init();
 
@@ -139,6 +141,7 @@ InterfaceEditor::InterfaceEditor()
     windowStates["EntityAnalyzer"] = true;
     windowStates["assetManager"] = true;
     windowStates["viewport"] = true;
+    windowStates["widgetEditor"] = false;
 
     ImGuiStyle& style = ImGui::GetStyle();
     style.WindowRounding = 6.0f;
@@ -356,6 +359,7 @@ void InterfaceEditor::Render()
         if(windowStates["SceneData"]) GenerateSceneDataWindow();
         if(windowStates["EntityAnalyzer"]) EntityAnalyzerWindow();
         if(windowStates["EngineConfig"]) EngineConfigWindow();
+        if(windowStates["widgetEditor"]) wdgtEditor->Render();
 
         if(windowStates["assetManager"])
         {

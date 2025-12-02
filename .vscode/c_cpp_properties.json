@@ -9,10 +9,13 @@
             ],
             "compilerPath": "C:/msys64/mingw64/bin/gcc.exe",
             "cStandard": "${default}",
-            "cppStandard": "${default}",
+            "cppStandard": "c++20",
             "intelliSenseMode": "windows-gcc-x64",
             "compilerArgs": [
-                ""
+                "PULSE_WINDOWS",
+                "PULSE_GRAPHIC_OPENGL",
+                "ENGINE_EDITOR",
+                "ZEP_FEATURE_CPP_FILE_SYSTEM"
             ],
             "defines": [
                 "PULSE_WINDOWS",

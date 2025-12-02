@@ -154,7 +154,8 @@
     "stack": "cpp",
     "stop_token": "cpp",
     "thread": "cpp",
-    "resumable": "cpp"
+    "resumable": "cpp",
+    "typeindex": "cpp"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }

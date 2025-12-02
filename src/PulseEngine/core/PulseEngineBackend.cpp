@@ -29,6 +29,7 @@
 #include "PulseEngineEditor/InterfaceEditor/Account/Account.h"
 #include "PulseEngine/core/PulseScript/PulseScriptsManager.h"
 #include "PulseEngine/core/Graphics/TextRenderer.h"
+#include "PulseEngine/core/Gamemode/Gamemode.h"
 
 #include "PulseEngine/core/Math/MathUtils.h"
 
@@ -135,6 +136,7 @@ int PulseEngineBackend::Initialize()
     runtimeScript = new PulseScriptsManager();
 
 
+    gamemode = new Gamemode();
     InitNativeMethods();
 
     EDITOR_LOG("Finished the initialization of the engine.");
@@ -184,19 +186,6 @@ void PulseEngineBackend::Update()
         light->RecalculateLightSpaceMatrix();
     }
 
-    // for (size_t i = 0; i < entities.size(); ++i)
-    // {
-    //     Entity* entityA = entities[i];
-    //     entityA->UpdateEntity(deltaTime);
-    //     Collider* col = dynamic_cast<Collider*>(entityA->collider);
-    //     if(col) col->othersCollider.clear();
-    //     for (size_t j = i + 1; j < entities.size(); ++j)
-    //     {
-    //         Entity* entityB = entities[j];
-    //         CollisionManager::ManageCollision(dynamic_cast<Collider*>(entityA->collider), dynamic_cast<Collider*>(entityB->collider));                
-    //     }
-    // }
-
     SceneManager::GetInstance()->UpdateScene();
     
 
@@ -208,6 +197,8 @@ void PulseEngineBackend::Update()
     deltaVar.name = "deltatime";
     deltaVar.value = GetDeltaTime();
     args.push_back(deltaVar);
+
+    gamemode->Update();
 }
 
 void PulseEngineBackend::Render()
@@ -216,6 +207,7 @@ void PulseEngineBackend::Render()
     graphicsAPI->StartFrame();
 
     SceneManager::GetInstance()->RenderScene();
+    gamemode->Render();
 
     // for (Entity* entity : entities)
     // {
@@ -323,6 +315,8 @@ void PulseEngineBackend::SpecificRender(Camera *cam, int specificVBO, std::vecto
         DrawGridQuad(specificView, specificProjection);
 #endif
 
+    gamemode->Render();
+
     graphicsAPI->EndFrame();
 }
 
@@ -429,3 +423,7 @@ PulseEngine::Vector3 PulseEngineBackend::GetCameraRotation()
     return PulseEngine::Vector3(GetActiveCamera()->Pitch, GetActiveCamera()->Yaw, 0.0f);
 }
 
+Gamemode *PulseEngineBackend::GetGamemode()
+{
+    return gamemode;
+}
