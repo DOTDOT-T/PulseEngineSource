@@ -17,6 +17,8 @@ public:
     void Update();
     void Render();
 
+    HudController* GetHudController();
+
 private:
     HudController* hud = nullptr;
 };

@@ -20,10 +20,6 @@ const char* HudController::ToString()
 
 void HudController::Init()
 {
-    Widget* wgt = new Widget();
-    wgt->AddComponent(new TextComponent("SIMPLE TEXT", PulseEngine::Vector2(10.0f,10.0f)));
-    widgets.push_back(wgt);
-    std::cout << "init new text in widget" << std::endl;
 }
 
 void HudController::Update()
@@ -41,3 +37,5 @@ void HudController::Render()
         wid->Render();
     }
 }
+
+

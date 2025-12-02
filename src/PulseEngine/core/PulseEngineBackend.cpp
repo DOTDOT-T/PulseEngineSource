@@ -423,3 +423,7 @@ PulseEngine::Vector3 PulseEngineBackend::GetCameraRotation()
     return PulseEngine::Vector3(GetActiveCamera()->Pitch, GetActiveCamera()->Yaw, 0.0f);
 }
 
+Gamemode *PulseEngineBackend::GetGamemode()
+{
+    return gamemode;
+}

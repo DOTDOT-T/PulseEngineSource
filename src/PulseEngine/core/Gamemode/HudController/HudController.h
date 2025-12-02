@@ -5,8 +5,8 @@
 #include "Common/dllExport.h"
 #include "PulseEngine/core/PulseObject/PulseObject.h"
 #include "PulseEngine/core/PulseObject/TypeRegister/TypeRegister.h"
-
-class Widget;
+#include "PulseEngine/core/Gamemode/HudController/Widget.h"
+#include <vector>
 
 class PULSE_ENGINE_DLL_API HudController : public PulseObject
 {
@@ -16,6 +16,13 @@ public:
     void Init();
     void Update();
     void Render();
+
+    Widget* At(int index)
+    {
+        if(index >= widgets.size())
+            widgets.push_back(new Widget());
+        return widgets[index];
+    }
 
 private:
     std::vector<Widget*> widgets;

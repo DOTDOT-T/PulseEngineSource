@@ -32,3 +32,8 @@ void Gamemode::Render()
 {
     hud->Render();
 }
+
+HudController *Gamemode::GetHudController()
+{
+    return hud;
+}

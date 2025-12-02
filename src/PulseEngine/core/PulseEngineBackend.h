@@ -108,6 +108,7 @@ public:
     PulseEngine::Vector3 GetCameraRotation();
 
     Account* GetAccountLoggedIn() {return account; }
+    Gamemode* GetGamemode();
 
 
     static IGraphicsAPI* graphicsAPI;

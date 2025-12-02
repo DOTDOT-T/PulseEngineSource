@@ -18,6 +18,8 @@ public:
 
     void AddComponent(WidgetComponent* comp);
 
+    void SetComponent(std::vector<WidgetComponent*> comp);
+
 private:
     std::vector<WidgetComponent*> component;
 };

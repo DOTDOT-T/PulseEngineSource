@@ -36,3 +36,12 @@ void Widget::AddComponent(WidgetComponent *comp)
 {
     component.push_back(comp);
 }
+
+void Widget::SetComponent(std::vector<WidgetComponent *> comp)
+{
+    for(auto& c : component)
+    {
+        delete c;
+    }
+    component = comp;
+}
