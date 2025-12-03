@@ -47,11 +47,12 @@ int main(int argc, char** argv)
         workingDir = std::filesystem::current_path().string();
     }
 
+    EDITOR_INFO("Engine dir : " << std::filesystem::current_path())
     // Définit le répertoire courant
     std::filesystem::current_path(workingDir);
     FileManager::workingDirectory = workingDir;
 
-    std::cout << "The actual working directory is: " << std::filesystem::current_path() << std::endl;
+    EDITOR_INFO("Project dir : " << std::filesystem::current_path())
 
     PulseEngineBackend* engine = PulseEngineBackend::GetInstance();
     

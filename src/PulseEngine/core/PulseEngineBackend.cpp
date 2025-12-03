@@ -66,11 +66,11 @@ PulseEngineBackend::PulseEngineBackend()
 int PulseEngineBackend::Initialize()
 {
     PROFILE_TIMER_FUNCTION;
-    EDITOR_LOG("Started the initialization of the engine.");
-    EDITOR_LOG("Engine version: " + version);
-    EDITOR_LOG("Development month: " + devMonth);
-    EDITOR_LOG("Project name : " + gameName);
-    EDITOR_LOG("Pulse Software © 2025");
+    EDITOR_INFO("Started the initialization of the engine.");
+    EDITOR_INFO("Engine version: " + version);
+    EDITOR_INFO("Development month: " + devMonth);
+    EDITOR_INFO("Project name : " + gameName);
+    EDITOR_INFO("Pulse Software © 2025");
 
     windowContext = new WindowContext();
     activeCamera = new Camera();
@@ -140,7 +140,7 @@ int PulseEngineBackend::Initialize()
     gamemode = new Gamemode();
     InitNativeMethods();
 
-    EDITOR_LOG("Finished the initialization of the engine.");
+    EDITOR_INFO("Finished the initialization of the engine.");
     return 0;
 }
 

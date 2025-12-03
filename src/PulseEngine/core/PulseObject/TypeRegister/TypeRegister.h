@@ -33,7 +33,7 @@ public:
         std::lock_guard<std::mutex> lock(GetMutex());
         auto& map = GetMap();
         map[typeName] = factory;
-        EDITOR_LOG("Register object : " << typeName)
+        EDITOR_INFO("Register object : " << typeName)
     }
 
     template<typename T>

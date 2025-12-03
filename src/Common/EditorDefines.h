@@ -55,6 +55,10 @@
     #define EDITOR_LOG(msg) \
         std::cout << "[" << GetCurrentDateTime() << "] [LOG] [" << __FUNCTION__ << "]: " << msg << std::endl;
 
+    /// Logs a message to standard output with a timestamp, editor tag, and function name.
+    #define EDITOR_INFO(msg) \
+        std::cout << "[" << GetCurrentDateTime() << "] [INFO] [" << __FUNCTION__ << "]: " << msg << std::endl;
+
     #define EDITOR_WARN(msg) \
         std::cout << "[" << GetCurrentDateTime() << "] [WARN] [" << __FUNCTION__ << "]: " << msg << std::endl;
 
@@ -78,6 +82,10 @@
     #define EDITOR_LOG(msg) \
         std::cout << "[" << GetCurrentDateTime() << "] [LOG] [" << __FUNCTION__ << "]: " << msg << std::endl;
     
+    /// Logs a message to standard output with a timestamp, editor tag, and function name.
+    #define EDITOR_INFO(msg) \
+        std::cout << "[" << GetCurrentDateTime() << "] [INFO] [" << __FUNCTION__ << "]: " << msg << std::endl;
+
     #define EDITOR_WARN(msg) \
         std::cout << "[" << GetCurrentDateTime() << "] [WARN] [" << __FUNCTION__ << "]: " << msg << std::endl;
 

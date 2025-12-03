@@ -18,7 +18,7 @@ InputSystem::InputSystem() : mouseX(0.0), mouseY(0.0) {
 
     // read bindings from config file
     FileReader reader("EngineConfig/inputConfig.pconfig");    
-    if(!reader.IsOpen()) EDITOR_LOG("No inputs config file found");     
+    if(!reader.IsOpen()) EDITOR_WARN("No inputs config file found");     
     
     nlohmann::json js = reader.ToJson();
     for(auto& el : js["keyBindings"].items()) 

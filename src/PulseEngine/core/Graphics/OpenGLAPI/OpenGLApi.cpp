@@ -77,8 +77,8 @@ bool OpenGLAPI::InitializeApi(const char* title, int* width, int* height)
         EDITOR_ERROR("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    EDITOR_LOG("OpenGL API initialized successfully.")
-    EDITOR_LOG("OpenGL Version: " << glGetString(GL_VERSION))
+    EDITOR_INFO("OpenGL API initialized successfully.")
+    EDITOR_INFO("OpenGL Version: " << glGetString(GL_VERSION))
     return true;
 }
 
