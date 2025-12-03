@@ -15,6 +15,7 @@
 #include "PulseEngine/core/FileManager/Archive/DiskArchive.h"
 #include "PulseEngine/core/PulseObject/TypeRegister/TypeRegister.h"
 #include "PulseEngine/core/SceneManager/SceneManager.h"
+#include "PulseEngine/core/Gamemode/Gamemode.h"
 
 #include <iostream>
 #include <assimp/Importer.hpp>      // Assimp::Importer
@@ -94,6 +95,9 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
      }
 
     PulseEngineInstance->SetWindowName(PulseEngineInstance->actualMapName);
+
+    DiskArchive dar("enginegm.gamemode", Archive::Mode::Loading);
+    PulseEngineInstance->GetGamemode()->Serialize(gmdar);
 
     // backend->SetWindowName(sceneData["sceneName"]);
     // for (const auto& entityData : sceneData["entities"])

@@ -3,6 +3,7 @@
 #include "PulseEngine/core/Gamemode/HudController/HudController.h"
 #include "PulseEngine/core/Gamemode/HudController/Widget.h"
 #include "PulseEngine/core/Gamemode/HudController/WidgetComponent/TextComponent/TextComponent.h"
+#include "PulseEngine/core/FileManager/Archive/DiskArchive.h"
 
 PULSE_REGISTER_CLASS_CPP(WidgetEditor)
 
@@ -85,10 +86,9 @@ void WidgetEditor::RenderDetails()
     ImGui::Begin("Details");
 
     if(ImGui::Button("Save"))
-    {
-        // Widget* w = PulseEngineInstance->GetGamemode()->GetHudController()->At(0);
-        // selectedWidget = nullptr;
-        // w->SetComponent(widgets);
+    {        
+        DiskArchive dar("enginegm.gamemode", Archive::Mode::Saving);
+        
     }
     if (selectedWidget)
     {
