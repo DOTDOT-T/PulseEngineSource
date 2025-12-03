@@ -28,7 +28,7 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
     std::ifstream scene(std::string(ASSET_PATH) + mapName);
     if (!scene.is_open())
     {
-        EDITOR_LOG("Couldn't open map " << std::string(ASSET_PATH) + mapName)
+        EDITOR_WARN("Couldn't open map " << std::string(ASSET_PATH) + mapName)
         return;
     }
     backend->ClearScene();
@@ -84,6 +84,16 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
         backend->lights.push_back(light);
         SceneManager::GetInstance()->InsertEntity(light);
     }
+
+    PulseEngineInstance->actualMapPath = mapName;
+     size_t lastSlash = mapName.find_last_of("/\\");
+     if (lastSlash != std::string::npos && lastSlash + 1 < mapName.size()) {
+         PulseEngineInstance->actualMapName = mapName.substr(lastSlash + 1);
+     } else {
+         PulseEngineInstance->actualMapName = mapName;
+     }
+
+    PulseEngineInstance->SetWindowName(PulseEngineInstance->actualMapName);
 
     // backend->SetWindowName(sceneData["sceneName"]);
     // for (const auto& entityData : sceneData["entities"])
@@ -157,16 +167,8 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
     //     }
     // }
     // EDITOR_LOG("Scene " << mapName << " loaded successfully.")
-    // PulseEngineInstance->actualMapPath = mapName;
     // // Set actualMapName to the substring after the last "/"
-    // size_t lastSlash = mapName.find_last_of("/\\");
-    // if (lastSlash != std::string::npos && lastSlash + 1 < mapName.size()) {
-    //     PulseEngineInstance->actualMapName = mapName.substr(lastSlash + 1);
-    // } else {
-    //     PulseEngineInstance->actualMapName = mapName;
-    // }
 
-    PulseEngineInstance->SetWindowName(PulseEngineInstance->actualMapName);
 }
 
 void SceneLoader::LoadEntityScript(const nlohmann::json_abi_v3_12_0::json &script, Entity *entity, IScript* existingScript)

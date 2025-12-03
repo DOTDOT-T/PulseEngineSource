@@ -1,5 +1,0 @@
-@echo off
-echo === Creating .exe for Window ===
-g++ src/main.cpp src/glad.c src/PulseEngine/core/GUID/GuidGenerator.cpp src/shader.cpp src/camera.cpp src/PulseEngine/core/PulseEngineBackend.cpp src/PulseEngine/core/Inputs/Mouse.cpp src/PulseEngine/core/Entity/Entity.cpp src/PulseEngine/core/Meshes/mesh.cpp src/PulseEngine/core/WindowContext/WindowContext.cpp src/PulseEngine/core/Material/Material.cpp src/PulseEngine/core/Material/MaterialManager.cpp src/PulseEngine/core/Meshes/primitive/Primitive.cpp src/PulseEngine/core/GUID/GuidReader.cpp src/PulseEngine/core/SceneLoader/SceneLoader.cpp src/PulseEngine/core/FileManager/FileManager.cpp src/PulseEngine/core/Lights/DirectionalLight/DirectionalLight.cpp -I. -Iinclude -Iimgui -I./src -IE:/Editor/Include -LD:/MSYS2/mingw64/lib -lglfw3 -lopengl32 -lm -DPULSE_GRAPHIC_OPENGL -DPULSE_WINDOWS -o Build/Game.exe
-if %errorlevel% neq 0 exit /b %errorlevel%
-echo Build complete.

@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+option(ENABLE_ENGINE_EDITOR "Enable Engine Editor features" ON)
+
 include(FetchContent)
 
 # --- External -------------------------------------
@@ -32,49 +34,6 @@ set(PE_ALL_SOURCES
     # --- PL_InputsSystem ---
     src/PulseEngine/core/Input/InputSystem.cpp
 
-    # --- PE_interfaceDependence ---
-    include/imgui/ImGuizmo.cpp
-    include/imgui-node/imgui_node_editor.cpp
-    include/imgui-node/imgui_node_editor_api.cpp
-    include/imgui-node/imgui_canvas.cpp
-    include/imgui-node/crude_json.cpp
-    include/imgui/imgui_demo.cpp
-    include/imgui/imgui_draw.cpp
-    include/imgui/imgui_tables.cpp
-    include/imgui/imgui_widgets.cpp
-    include/imgui/imgui.cpp
-    include/imgui/backends/imgui_impl_glfw.cpp
-    include/imgui/backends/imgui_impl_opengl3.cpp
-
-    src/imGUI/TextEditor/buffer.cpp
-    src/imGUI/TextEditor/commands.cpp
-    src/imGUI/TextEditor/display.cpp
-    src/imGUI/TextEditor/editor.cpp
-    src/imGUI/TextEditor/filesystem.cpp
-    src/imGUI/TextEditor/glyph_iterator.cpp
-    src/imGUI/TextEditor/indexer.cpp
-    src/imGUI/TextEditor/keymap.cpp
-    src/imGUI/TextEditor/line_widgets.cpp
-    src/imGUI/TextEditor/mcommon/animation/timer.cpp
-    src/imGUI/TextEditor/mcommon/file/path.cpp
-    src/imGUI/TextEditor/mcommon/string/stringutils.cpp
-    src/imGUI/TextEditor/mode.cpp
-    src/imGUI/TextEditor/mode_search.cpp
-    src/imGUI/TextEditor/mode_standard.cpp
-    src/imGUI/TextEditor/mode_tree.cpp
-    src/imGUI/TextEditor/mode_vim.cpp
-    src/imGUI/TextEditor/range_markers.cpp
-    src/imGUI/TextEditor/scroller.cpp
-    src/imGUI/TextEditor/splits.cpp
-    src/imGUI/TextEditor/syntax.cpp
-    src/imGUI/TextEditor/syntax_markdown.cpp
-    src/imGUI/TextEditor/syntax_providers.cpp
-    src/imGUI/TextEditor/syntax_rainbow_brackets.cpp
-    src/imGUI/TextEditor/syntax_tree.cpp
-    src/imGUI/TextEditor/tab_window.cpp
-    src/imGUI/TextEditor/theme.cpp
-    src/imGUI/TextEditor/window.cpp
-
     # --- PE_Renderer ---
     src/shader.cpp
 
@@ -95,22 +54,15 @@ set(PE_ALL_SOURCES
     src/PulseEngine/CustomScripts/ScriptsLoader.cpp
     src/PulseEngine/core/Physics/Collider/BoxCollider.cpp
     src/PulseEngine/core/Meshes/SkeletalMesh.cpp
-    PulseEngineEditor/InterfaceEditor/InterfaceEditor.cpp
-    PulseEngineEditor/InterfaceEditor/TopBar.cpp
-    PulseEngineEditor/InterfaceEditor/InterfaceAPI/PulseInterfaceAPI.cpp
     src/PulseEngine/core/Lights/PointLight/PointLight.cpp
     src/PulseEngine/core/Material/Texture.cpp
     src/PulseEngine/core/Lights/LightManager.cpp
     src/PulseEngine/core/Physics/CollisionManager.cpp
     src/PulseEngine/core/coroutine/CoroutineManager.cpp
-    PulseEngineEditor/InterfaceEditor/BuildGameCoroutine.cpp
     src/PulseEngine/ModuleLoader/ModuleLoader.cpp
     src/PulseEngine/API/EngineApi.cpp
     src/PulseEngine/API/GameEntity.cpp
     src/PulseEngine/core/Math/Transform/Transform.cpp
-    PulseEngineEditor/InterfaceEditor/InterfaceEditorFileExplorer.cpp
-    PulseEngineEditor/InterfaceEditor/Synapse/Synapse.cpp
-    PulseEngineEditor/InterfaceEditor/NewFileCreator/NewFileManager.cpp
     src/PulseEngine/core/GUID/GuidCollection.cpp
     src/PulseEngine/core/ExecutableManager/ExecutableLauncher.cpp
     src/PulseEngine/core/ExecutableManager/PulseExecutable.cpp
@@ -140,13 +92,68 @@ set(PE_ALL_SOURCES
     src/PulseEngine/core/Gamemode/HudController/HudController.cpp
     src/PulseEngine/core/Gamemode/HudController/WidgetComponent/WidgetComponent.cpp
     src/PulseEngine/core/Gamemode/HudController/WidgetComponent/TextComponent/TextComponent.cpp
-    PulseEngineEditor/InterfaceEditor/WidgetEditor/WidgetEditor.cpp
     src/PulseEngine/core/Graphics/OpenGLAPI/OpenGLApi.cpp
     src/PulseEngine/core/Graphics/OpenGLAPI/TextRendererGl.cpp
     src/PulseEngine/core/Graphics/stb_truetype_impl.cpp
     src/glad.c
-    PulseEngineEditor/InterfaceEditor/ViewportRenderer.cpp
 )
+
+# --- ImGui + TextEditor conditionnel ---
+if(ENABLE_ENGINE_EDITOR)
+    list(APPEND PE_ALL_SOURCES
+        include/imgui/ImGuizmo.cpp
+        include/imgui-node/imgui_node_editor.cpp
+        include/imgui-node/imgui_node_editor_api.cpp
+        include/imgui-node/imgui_canvas.cpp
+        include/imgui-node/crude_json.cpp
+        include/imgui/imgui_demo.cpp
+        include/imgui/imgui_draw.cpp
+        include/imgui/imgui_tables.cpp
+        include/imgui/imgui_widgets.cpp
+        include/imgui/imgui.cpp
+        include/imgui/backends/imgui_impl_glfw.cpp
+        include/imgui/backends/imgui_impl_opengl3.cpp
+
+        src/imGUI/TextEditor/buffer.cpp
+        src/imGUI/TextEditor/commands.cpp
+        src/imGUI/TextEditor/display.cpp
+        src/imGUI/TextEditor/editor.cpp
+        src/imGUI/TextEditor/filesystem.cpp
+        src/imGUI/TextEditor/glyph_iterator.cpp
+        src/imGUI/TextEditor/indexer.cpp
+        src/imGUI/TextEditor/keymap.cpp
+        src/imGUI/TextEditor/line_widgets.cpp
+        src/imGUI/TextEditor/mcommon/animation/timer.cpp
+        src/imGUI/TextEditor/mcommon/file/path.cpp
+        src/imGUI/TextEditor/mcommon/string/stringutils.cpp
+        src/imGUI/TextEditor/mode.cpp
+        src/imGUI/TextEditor/mode_search.cpp
+        src/imGUI/TextEditor/mode_standard.cpp
+        src/imGUI/TextEditor/mode_tree.cpp
+        src/imGUI/TextEditor/mode_vim.cpp
+        src/imGUI/TextEditor/range_markers.cpp
+        src/imGUI/TextEditor/scroller.cpp
+        src/imGUI/TextEditor/splits.cpp
+        src/imGUI/TextEditor/syntax.cpp
+        src/imGUI/TextEditor/syntax_markdown.cpp
+        src/imGUI/TextEditor/syntax_providers.cpp
+        src/imGUI/TextEditor/syntax_rainbow_brackets.cpp
+        src/imGUI/TextEditor/syntax_tree.cpp
+        src/imGUI/TextEditor/tab_window.cpp
+        src/imGUI/TextEditor/theme.cpp
+        src/imGUI/TextEditor/window.cpp
+
+        PulseEngineEditor/InterfaceEditor/InterfaceEditor.cpp
+        PulseEngineEditor/InterfaceEditor/TopBar.cpp
+        PulseEngineEditor/InterfaceEditor/InterfaceAPI/PulseInterfaceAPI.cpp
+        PulseEngineEditor/InterfaceEditor/BuildGameCoroutine.cpp
+        PulseEngineEditor/InterfaceEditor/InterfaceEditorFileExplorer.cpp
+        PulseEngineEditor/InterfaceEditor/Synapse/Synapse.cpp
+        PulseEngineEditor/InterfaceEditor/NewFileCreator/NewFileManager.cpp
+        PulseEngineEditor/InterfaceEditor/ViewportRenderer.cpp
+        PulseEngineEditor/InterfaceEditor/WidgetEditor/WidgetEditor.cpp
+    )
+endif()
 
 # ===========================================================
 #  INCLUDE DIRECTORIES FUSIONNÉS
@@ -178,8 +185,11 @@ target_compile_definitions(PulseEngineAll PRIVATE
     PULSE_GRAPHIC_OPENGL
     IMGUI_IMPL_OPENGL_LOADER_GLAD
     ZEP_FEATURE_CPP_FILE_SYSTEM
-    ENGINE_EDITOR
 )
+
+if(ENABLE_ENGINE_EDITOR)
+    target_compile_definitions(PulseEngineAll PRIVATE ENGINE_EDITOR)
+endif()
 
 target_link_libraries(PulseEngineAll PRIVATE
     ${CMAKE_SOURCE_DIR}/external/assimp/build/lib/Debug/assimp-vc143-mtd.lib
@@ -190,44 +200,55 @@ set_target_properties(PulseEngineAll PROPERTIES
     OUTPUT_NAME "PulseEngine.AllInOne"
 )
 
-add_executable(PulseGame
+set(PULSEGAME_SOURCES
     src/main.cpp
-        src/imGUI/TextEditor/buffer.cpp
-    src/imGUI/TextEditor/commands.cpp
-    src/imGUI/TextEditor/display.cpp
-    src/imGUI/TextEditor/editor.cpp
-    src/imGUI/TextEditor/filesystem.cpp
-    src/imGUI/TextEditor/glyph_iterator.cpp
-    src/imGUI/TextEditor/indexer.cpp
-    src/imGUI/TextEditor/keymap.cpp
-    src/imGUI/TextEditor/line_widgets.cpp
-    src/imGUI/TextEditor/mcommon/animation/timer.cpp
-    src/imGUI/TextEditor/mcommon/file/path.cpp
-    src/imGUI/TextEditor/mcommon/string/stringutils.cpp
-    src/imGUI/TextEditor/mode.cpp
-    src/imGUI/TextEditor/mode_search.cpp
-    src/imGUI/TextEditor/mode_standard.cpp
-    src/imGUI/TextEditor/mode_tree.cpp
-    src/imGUI/TextEditor/mode_vim.cpp
-    src/imGUI/TextEditor/range_markers.cpp
-    src/imGUI/TextEditor/scroller.cpp
-    src/imGUI/TextEditor/splits.cpp
-    src/imGUI/TextEditor/syntax.cpp
-    src/imGUI/TextEditor/syntax_markdown.cpp
-    src/imGUI/TextEditor/syntax_providers.cpp
-    src/imGUI/TextEditor/syntax_rainbow_brackets.cpp
-    src/imGUI/TextEditor/syntax_tree.cpp
-    src/imGUI/TextEditor/tab_window.cpp
-    src/imGUI/TextEditor/theme.cpp
-    src/imGUI/TextEditor/window.cpp
 )
+
+if(ENABLE_ENGINE_EDITOR)
+    list(APPEND PULSEGAME_SOURCES
+        src/imGUI/TextEditor/buffer.cpp
+        src/imGUI/TextEditor/commands.cpp
+        src/imGUI/TextEditor/display.cpp
+        src/imGUI/TextEditor/editor.cpp
+        src/imGUI/TextEditor/filesystem.cpp
+        src/imGUI/TextEditor/glyph_iterator.cpp
+        src/imGUI/TextEditor/indexer.cpp
+        src/imGUI/TextEditor/keymap.cpp
+        src/imGUI/TextEditor/line_widgets.cpp
+        src/imGUI/TextEditor/mcommon/animation/timer.cpp
+        src/imGUI/TextEditor/mcommon/file/path.cpp
+        src/imGUI/TextEditor/mcommon/string/stringutils.cpp
+        src/imGUI/TextEditor/mode.cpp
+        src/imGUI/TextEditor/mode_search.cpp
+        src/imGUI/TextEditor/mode_standard.cpp
+        src/imGUI/TextEditor/mode_tree.cpp
+        src/imGUI/TextEditor/mode_vim.cpp
+        src/imGUI/TextEditor/range_markers.cpp
+        src/imGUI/TextEditor/scroller.cpp
+        src/imGUI/TextEditor/splits.cpp
+        src/imGUI/TextEditor/syntax.cpp
+        src/imGUI/TextEditor/syntax_markdown.cpp
+        src/imGUI/TextEditor/syntax_providers.cpp
+        src/imGUI/TextEditor/syntax_rainbow_brackets.cpp
+        src/imGUI/TextEditor/syntax_tree.cpp
+        src/imGUI/TextEditor/tab_window.cpp
+        src/imGUI/TextEditor/theme.cpp
+        src/imGUI/TextEditor/window.cpp
+    )
+endif()
+
+add_executable(PulseGame ${PULSEGAME_SOURCES})
+
 target_compile_definitions(PulseGame PRIVATE
     PULSE_WINDOWS
     PULSE_GRAPHIC_OPENGL
     IMGUI_IMPL_OPENGL_LOADER_GLAD
     ZEP_FEATURE_CPP_FILE_SYSTEM
-    ENGINE_EDITOR
 )
+
+if(ENABLE_ENGINE_EDITOR)
+    target_compile_definitions(PulseGame PRIVATE ENGINE_EDITOR)
+endif()
 
 
 target_link_libraries(PulseGame PRIVATE PulseEngineAll)
@@ -266,9 +287,13 @@ target_compile_definitions(Renderer PRIVATE
     BUILDING_DLL
     PULSE_WINDOWS
     PULSE_GRAPHIC_OPENGL
-    ENGINE_EDITOR
+    IMGUI_IMPL_OPENGL_LOADER_GLAD
+    ZEP_FEATURE_CPP_FILE_SYSTEM
 )
 
+if(ENABLE_ENGINE_EDITOR)
+    target_compile_definitions(Renderer PRIVATE ENGINE_EDITOR)
+endif()
 target_link_libraries(Renderer PRIVATE
     glfw
     opengl32
