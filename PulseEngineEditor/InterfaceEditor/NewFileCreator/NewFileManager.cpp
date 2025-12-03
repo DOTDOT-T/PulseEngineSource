@@ -39,12 +39,28 @@ NewFileManager::NewFileManager()
 
 void NewFileManager::OpenPopup()
 {
+    
     ImGui::OpenPopup("Add New File");
 }
 
 void NewFileManager::RenderPopup(const std::filesystem::path &currentDir, std::filesystem::path &selectedFile)
 {
-    if (ImGui::BeginPopupModal("Add New File", nullptr))
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+    ImVec2 fullSize = viewport->WorkSize;
+    ImVec2 fullPos  = viewport->WorkPos;
+
+    ImVec2 winSize = fullSize * 0.5f;
+    ImVec2 winPos  = ImVec2(
+        fullPos.x + (fullSize.x - winSize.x) * 0.5f,
+        fullPos.y + (fullSize.y - winSize.y) * 0.5f
+    );
+
+    ImGui::SetNextWindowPos(winPos);
+    ImGui::SetNextWindowSize(winSize);
+    ImGui::SetNextWindowViewport(viewport->ID);
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar;
+    if (ImGui::BeginPopupModal("Add New File", nullptr, flags))
     {
         ImGui::Text("Add New File");
         ImGui::Separator();

@@ -152,6 +152,8 @@ if(ENABLE_ENGINE_EDITOR)
         PulseEngineEditor/InterfaceEditor/NewFileCreator/NewFileManager.cpp
         PulseEngineEditor/InterfaceEditor/ViewportRenderer.cpp
         PulseEngineEditor/InterfaceEditor/WidgetEditor/WidgetEditor.cpp
+        PulseEngineEditor/InterfaceEditor/Console.cpp
+
     )
 endif()
 
@@ -185,6 +187,7 @@ target_compile_definitions(PulseEngineAll PRIVATE
     PULSE_GRAPHIC_OPENGL
     IMGUI_IMPL_OPENGL_LOADER_GLAD
     ZEP_FEATURE_CPP_FILE_SYSTEM
+
 )
 
 if(ENABLE_ENGINE_EDITOR)
@@ -244,6 +247,7 @@ target_compile_definitions(PulseGame PRIVATE
     PULSE_GRAPHIC_OPENGL
     IMGUI_IMPL_OPENGL_LOADER_GLAD
     ZEP_FEATURE_CPP_FILE_SYSTEM
+
 )
 
 if(ENABLE_ENGINE_EDITOR)
@@ -267,45 +271,45 @@ target_include_directories(PulseGame PRIVATE
 #  Renderer DLL
 # ===========================================================
 
-set(RENDERER_SOURCES
-    src/PulseEngine/core/Graphics/OpenGLAPI/OpenGLApi.cpp
-    src/PulseEngine/core/Graphics/OpenGLAPI/TextRendererGl.cpp
-    src/PulseEngine/core/Graphics/stb_truetype_impl.cpp
-    src/glad.c
-)
+# set(RENDERER_SOURCES
+#     src/PulseEngine/core/Graphics/OpenGLAPI/OpenGLApi.cpp
+#     src/PulseEngine/core/Graphics/OpenGLAPI/TextRendererGl.cpp
+#     src/PulseEngine/core/Graphics/stb_truetype_impl.cpp
+#     src/glad.c
+# )
 
-add_library(Renderer SHARED ${RENDERER_SOURCES})
+# add_library(Renderer SHARED ${RENDERER_SOURCES})
 
-target_include_directories(Renderer PUBLIC
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/src
-    ${CMAKE_SOURCE_DIR}/external/assimp/include
-    ${CMAKE_SOURCE_DIR}/external/assimp/build/include
-)
+# target_include_directories(Renderer PUBLIC
+#     ${CMAKE_SOURCE_DIR}/include
+#     ${CMAKE_SOURCE_DIR}/src
+#     ${CMAKE_SOURCE_DIR}/external/assimp/include
+#     ${CMAKE_SOURCE_DIR}/external/assimp/build/include
+# )
 
-target_compile_definitions(Renderer PRIVATE
-    BUILDING_DLL
-    PULSE_WINDOWS
-    PULSE_GRAPHIC_OPENGL
-    IMGUI_IMPL_OPENGL_LOADER_GLAD
-    ZEP_FEATURE_CPP_FILE_SYSTEM
-)
+# target_compile_definitions(Renderer PRIVATE
+#     BUILDING_DLL
+#     PULSE_WINDOWS
+#     PULSE_GRAPHIC_OPENGL
+#     IMGUI_IMPL_OPENGL_LOADER_GLAD
+#     ZEP_FEATURE_CPP_FILE_SYSTEM
+# )
 
-if(ENABLE_ENGINE_EDITOR)
-    target_compile_definitions(Renderer PRIVATE ENGINE_EDITOR)
-endif()
-target_link_libraries(Renderer PRIVATE
-    glfw
-    opengl32
-    ${CMAKE_SOURCE_DIR}/external/assimp/build/lib/Debug/assimp-vc143-mtd.lib
-    comdlg32
-    ws2_32
-    winmm
-    mswsock
-)
+# if(ENABLE_ENGINE_EDITOR)
+#     target_compile_definitions(Renderer PRIVATE ENGINE_EDITOR)
+# endif()
+# target_link_libraries(Renderer PRIVATE
+#     glfw
+#     opengl32
+#     ${CMAKE_SOURCE_DIR}/external/assimp/build/lib/Debug/assimp-vc143-mtd.lib
+#     comdlg32
+#     ws2_32
+#     winmm
+#     mswsock
+# )
 
-set_target_properties(Renderer PROPERTIES
-    OUTPUT_NAME "Renderer"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/EngineBuilder/Build/Modules"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/EngineBuilder/Build/Modules"
-)
+# set_target_properties(Renderer PROPERTIES
+#     OUTPUT_NAME "Renderer"
+#     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/EngineBuilder/Build/Modules"
+#     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/EngineBuilder/Build/Modules"
+# )

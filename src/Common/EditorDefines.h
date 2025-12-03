@@ -21,6 +21,8 @@
 #include <chrono>
 #include <iomanip>
 #include <ctime>
+
+
     /**
      * @brief Returns the current date and time as a formatted string.
      *
@@ -44,6 +46,7 @@
 #ifdef ENGINE_EDITOR
 
 
+#include "PulseEngineEditor/InterfaceEditor/Console.h"
 
     /// Includes `code` only when compiling in editor mode.
     #define EDITOR_ONLY(code) code
@@ -51,20 +54,46 @@
     /// Strips `code` from editor builds; used to isolate game/runtime-only code.
     #define IN_GAME_ONLY(code)
 
-    /// Logs a message to standard output with a timestamp, editor tag, and function name.
-    #define EDITOR_LOG(msg) \
-        std::cout << "[" << GetCurrentDateTime() << "] [LOG] [" << __FUNCTION__ << "]: " << msg << std::endl;
 
-    /// Logs a message to standard output with a timestamp, editor tag, and function name.
-    #define EDITOR_INFO(msg) \
-        std::cout << "[" << GetCurrentDateTime() << "] [INFO] [" << __FUNCTION__ << "]: " << msg << std::endl;
+    #define EDITOR_LOG(msg)                                                         \
+        do {                                                                        \
+            std::ostringstream oss;                                                 \
+            oss << "[" << GetCurrentDateTime() << "] [LOG] ["                       \
+                << __FUNCTION__ << "]: " << msg << std::endl;                       \
+            Console::Push(oss.str());                                               \
+            std::cout << oss.str() << std::endl;                                    \
+        } while(0);
 
-    #define EDITOR_WARN(msg) \
-        std::cout << "[" << GetCurrentDateTime() << "] [WARN] [" << __FUNCTION__ << "]: " << msg << std::endl;
 
-    /// Logs an error message to standard error with a timestamp, editor tag, and function name.
-    #define EDITOR_ERROR(msg) \
-        std::cerr << "[" << GetCurrentDateTime() << "] [ERROR] [" << __FUNCTION__ << "]: " << msg << std::endl;
+
+    #define EDITOR_INFO(msg)                                                        \
+        do {                                                                        \
+            std::ostringstream oss;                                                 \
+            oss << "[" << GetCurrentDateTime() << "] [INFO] ["                      \
+                << __FUNCTION__ << "]: " << msg << std::endl;                       \
+            Console::Push(oss.str());                                 \
+            std::cout << oss.str() << std::endl;                                    \
+        } while(0);
+
+#define EDITOR_WARN(msg)                                                            \
+    do {                                                                            \
+        std::ostringstream oss;                                                     \
+        oss << "[" << GetCurrentDateTime() << "] [WARN] ["                          \
+            << __FUNCTION__ << "]: " << msg << std::endl;                           \
+        Console::Push(oss.str());                                     \
+            std::cout << oss.str() << std::endl;                                    \
+    } while(0);
+
+
+#define EDITOR_ERROR(msg)                                                           \
+    do {                                                                            \
+        std::ostringstream oss;                                                     \
+        oss << "[" << GetCurrentDateTime() << "] [ERROR] ["                         \
+            << __FUNCTION__ << "]: " << msg << std::endl;                           \
+        Console::Push(oss.str());                                     \
+            std::cout << oss.str() << std::endl;                                    \
+    } while(0);
+
 
 #else
 

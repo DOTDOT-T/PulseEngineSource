@@ -13,7 +13,7 @@
 
 Entity *PulseEngine::GameEntity::Instantiate(const std::string &path, PulseEngine::Vector3 position, PulseEngine::Vector3 rotation, PulseEngine::Vector3 scale)
 {
-    Entity* entity = new Entity("TempEntity", PulseEngine::Vector3(0.0f), nullptr, MaterialManager::loadMaterial("Materials/cube.mat"));
+    Entity* entity = new Entity("TempEntity", PulseEngine::Vector3(0.0f), nullptr, MaterialManager::loadMaterial("EngineConfig/Materials/StandardLit.mat"));
 
     nlohmann::json_abi_v3_12_0::json jsonData;
     std::ifstream pathContent(std::string(ASSET_PATH) + path);

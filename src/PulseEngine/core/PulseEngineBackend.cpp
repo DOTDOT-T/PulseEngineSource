@@ -109,7 +109,7 @@ int PulseEngineBackend::Initialize()
     GuidReader::InsertIntoCollection("Entities/primitiveCube.pEntity"); 
 
     // === initialize each collection found in the asset folder ===
-    std::vector<std::filesystem::path> guidFiles = FileManager::GetFilesInDirectoryWithExtension(std::string(ASSET_PATH) + "Guid", ".puid");
+    std::vector<std::filesystem::path> guidFiles = FileManager::GetFilesInDirectoryWithExtension(std::string(ASSET_PATH) + "EngineConfig/Guid", ".puid");
     for (const auto& file : guidFiles) 
     {
         EDITOR_LOG("Guid/" + file.filename().string());

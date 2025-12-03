@@ -40,6 +40,7 @@ class NewFileManager;
 class PulseScriptsManager;
 class WidgetEditor;
 class Viewport;
+class Console;
 
 struct LoadingPopupData
 {
@@ -73,6 +74,7 @@ private:
     WidgetEditor* wdgtEditor = nullptr;
 
     Viewport* vp = nullptr;
+    Console* csl = nullptr;
 
 public:
     std::unordered_map<std::string, bool> windowStates;

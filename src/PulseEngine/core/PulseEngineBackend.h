@@ -23,7 +23,7 @@
 #include "PulseEngine/core/Math/Vector.h"
 #include "PulseEngine/core/Math/Mat4.h"
 
-#define GUID_COLLECTION_PATH std::string(ASSET_PATH) + "Guid/"
+#define GUID_COLLECTION_PATH std::string(ASSET_PATH) + "EngineConfig/Guid/"
 #define DEFAULT_SHADOW_MAP_RES 2048
 
 class WindowContext;

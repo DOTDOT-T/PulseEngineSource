@@ -38,7 +38,7 @@ std::size_t GuidCollection::InsertFile(const std::string &filePath)
     }
     files[guidStr] = filePath;
 
-    std::ifstream file(std::string(ASSET_PATH) + collectionName);
+    std::ifstream file(std::string(ASSET_PATH) + "EngineConfig/" + collectionName);
     if (!file.is_open())
     {
         EDITOR_ERROR("Could not open GUID collection file for reading: " + collectionName);
@@ -50,7 +50,7 @@ std::size_t GuidCollection::InsertFile(const std::string &filePath)
 
     jsonData[guidStr] = filePath;
 
-    std::ofstream outFile(std::string(ASSET_PATH) + collectionName);
+    std::ofstream outFile(std::string(ASSET_PATH) + "EngineConfig/" + collectionName);
     if (!outFile.is_open())
     {
         EDITOR_ERROR("Could not open GUID collection file for writing: " + collectionName);
