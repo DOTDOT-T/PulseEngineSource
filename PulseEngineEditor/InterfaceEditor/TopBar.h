@@ -42,5 +42,5 @@ public:
     void GenerateWindowsDirectory();
 };
 
-
+std::string NormalizePath(const std::string& input);
 #endif

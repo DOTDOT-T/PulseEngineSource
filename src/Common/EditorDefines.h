@@ -93,6 +93,14 @@
         Console::Push(oss.str());                                     \
             std::cout << oss.str() << std::endl;                                    \
     } while(0);
+#define EDITOR_SUCCESS(msg)                                                           \
+    do {                                                                            \
+        std::ostringstream oss;                                                     \
+        oss << "[" << GetCurrentDateTime() << "] [SUCCESS] ["                         \
+            << __FUNCTION__ << "]: " << msg << std::endl;                           \
+        Console::Push(oss.str());                                     \
+            std::cout << oss.str() << std::endl;                                    \
+    } while(0);
 
 
 #else

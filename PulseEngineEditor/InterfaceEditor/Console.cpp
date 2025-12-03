@@ -11,6 +11,7 @@ ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
     {
         ImVec4 color =  line.find("[ERROR]") != std::string::npos ? ImVec4(1.0,0.0,0.0,1.0) : 
                         line.find("[INFO]") != std::string::npos ? ImVec4(0.0, 0.5, 1.0, 1.0) : 
+                        line.find("[SUCCESS]") != std::string::npos ? ImVec4(0.0, 1.0, 0.5, 1.0) : 
                         line.find("[WARN]") != std::string::npos ? ImVec4(1.0,1.0,0.0,1.0) : ImVec4(1.0,1.0,1.0, 1.0);
         ImGui::PushStyleColor(ImGuiCol_Text, color);
         ImGui::TextUnformatted(line.c_str());

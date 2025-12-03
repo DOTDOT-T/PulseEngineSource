@@ -556,7 +556,6 @@ void InterfaceEditor::EntityAnalyzerWindow()
             }
         }
         int counter = 0;
-        EDITOR_LOG("Number of scripts on entity " << selectedEntity->GetScripts().size());
 
     ImGui::SeparatorText("Attached Scripts");
 

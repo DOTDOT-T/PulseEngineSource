@@ -18,9 +18,11 @@
 #include "PulseEngineEditor/InterfaceEditor/NewFileCreator/NewFileManager.h"
 #include "PulseEngine/core/GUID/GuidReader.h"
 #include "PulseEngine/core/SceneLoader/SceneLoader.h"
+#include "PulseEngine/core/GUID/GuidCollection.h"
 #include <glm/gtc/type_ptr.hpp>
 
 #include "imgui/imgui.h"
+#include "PulseEngineEditor/InterfaceEditor/TopBar.h"
 
 #include <filesystem>
 
@@ -134,7 +136,13 @@ void InterfaceEditor::ShowFileGrid(const fs::path& currentDir, fs::path& selecte
             }
         }
 
-        
+        std::string fullPath = entry.path().string();
+        const std::string editorPrefix = "PulseEngineEditor\\";
+        if (fullPath.rfind(editorPrefix, 0) == 0)
+        {
+            fullPath = fullPath.substr(editorPrefix.length());
+        }
+        fullPath = NormalizePath(fullPath);
         if (ImGui::BeginPopup("File Actions"))
         {
             for (auto& callback : fileClickedCallbacks)
@@ -146,12 +154,6 @@ void InterfaceEditor::ShowFileGrid(const fs::path& currentDir, fs::path& selecte
             }
             //special function that are already known because its game engine basis
             {
-            std::string fullPath = entry.path().string();
-            const std::string editorPrefix = "PulseEngineEditor\\";
-            if (fullPath.rfind(editorPrefix, 0) == 0)
-            {
-                fullPath = fullPath.substr(editorPrefix.length());
-            }
             {
                 if(ImGui::Selectable("Load Scene"))
                 {
@@ -162,6 +164,36 @@ void InterfaceEditor::ShowFileGrid(const fs::path& currentDir, fs::path& selecte
             }
             if (ImGui::Selectable("Delete"))
             {
+                std::string guid;
+                GuidCollection* locatedAt = nullptr;
+                EDITOR_INFO("Deleting " << fullPath << " from the engine ressources.")
+                std::cout << fullPath << std::endl;
+
+
+                for(auto& [key, val] :PulseEngineInstance->guidCollections)
+                {
+                    guid = val->GetGuidFromFilePath(fullPath);
+                    if(!guid.empty())
+                    {
+                        std::cout << "found the guid to delete -> " << guid << std::endl;
+                        locatedAt = val;
+                        break;
+                    }
+                }
+
+                if(guid.empty() && !locatedAt)
+                {
+                    EDITOR_WARN("File " << fullPath << " wasn't in the engine ressources.")
+                    EDITOR_INFO(
+                        std::endl << "Be aware that if the file was in fact in the engine it can cause issues." 
+                        << std::endl << "If so, you have guid leak in the engine ressource.")
+                }
+                else
+                {
+                    EDITOR_SUCCESS("File " << fullPath << " have been deleted from engine ressources.")
+                    EDITOR_INFO(std::endl << "Be aware that object that refer to the guid[" << guid << "] will now have a nullptr received from engine ressource manager.")
+                    locatedAt->RemoveGuidFromCollection(guid);
+                }
                 fs::remove(entry.path());
             }
             ImGui::EndPopup();

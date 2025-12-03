@@ -101,6 +101,8 @@ public:
     std::string GetFilePathFromGuid(const std::string& guid) const;
 
     std::string GetGuidFromFilePath(const std::string& filePath) const;
+
+    bool RemoveGuidFromCollection(const std::string& guid);
 };
 
 #endif // GUIDCOLLECTION_H

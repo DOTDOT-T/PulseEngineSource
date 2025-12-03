@@ -173,7 +173,7 @@ void TopBar::UpdateBar(PulseEngineBackend* engine, InterfaceEditor* editor)
 
             if(ImGui::MenuItem("Import"))
             {
-                char filePath[MAX_PATH] = "";
+                char filePath[MAX_PATH] = {'\0'};
 
                 OPENFILENAME ofn = {};
                 ofn.lStructSize = sizeof(ofn);
@@ -182,7 +182,7 @@ void TopBar::UpdateBar(PulseEngineBackend* engine, InterfaceEditor* editor)
                 ofn.nMaxFile = sizeof(filePath);
                 ofn.lpstrFilter = "3D Models\0*.obj;*.fbx;*.glb\0Images\0*.png;*.jpeg\0All\0*.*\0";
                 ofn.nFilterIndex = 1;
-                ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+                ofn.Flags = OFN_EXPLORER  | OFN_FILEMUSTEXIST;
 
                 if (GetOpenFileName(&ofn))
                 {
@@ -282,7 +282,7 @@ void TopBar::ImportMesh(InterfaceEditor *editor, std::string &name, std::string 
     std::filesystem::current_path(FileManager::workingDirectory);
     PulseEngineInstance->guidCollections["guidCollectionMeshes.puid"]->InsertFile(guidPath);
     std::string copyCommand = "xcopy \"" + std::string(filePath) + "\" \"" + meshPath + "\" /Y";
-    system(copyCommand.c_str());
+    CopyFileA(std::string(filePath).c_str(), meshPath.c_str(), FALSE); 
 
     DeletePrefix(meshPath, prefix, meshPath);
     std::ofstream guidFile(fileStr);
@@ -310,7 +310,39 @@ void TopBar::DeletePrefix(std::string &fileStr, std::string &prefix, std::string
     {
         guidPath.erase(0, 1);
     }
+    guidPath = NormalizePath(guidPath);
+
 }
+
+std::string NormalizePath(const std::string& input)
+{
+    std::string out;
+    out.reserve(input.size());
+
+    bool lastWasSlash = false;
+
+    for (char c : input)
+    {
+        char normalized = (c == '\\') ? '/' : c;
+
+        if (normalized == '/')
+        {
+            if (lastWasSlash)
+                continue;           // skip double slash
+
+            lastWasSlash = true;
+        }
+        else
+        {
+            lastWasSlash = false;
+        }
+
+        out.push_back(normalized);
+    }
+
+    return out;
+}
+
 
 void TopBar::BuildGameToWindow(PulseEngineBackend *engine, InterfaceEditor* editor)
 {
