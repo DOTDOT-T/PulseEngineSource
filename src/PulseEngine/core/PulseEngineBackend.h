@@ -139,8 +139,8 @@ private:
     std::string gameVersion = "0.0.1";
 
     std::string engine = "Pulse Engine";
-    std::string version = "V0.2.2";
-    std::string devMonth = "November 2025";
+    std::string version = "V0.3.0";
+    std::string devMonth = "December 2025";
     std::string company = "Pulse Software";
 
     static float deltaTime;

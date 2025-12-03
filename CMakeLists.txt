@@ -145,6 +145,7 @@ set(PE_ALL_SOURCES
     src/PulseEngine/core/Graphics/OpenGLAPI/TextRendererGl.cpp
     src/PulseEngine/core/Graphics/stb_truetype_impl.cpp
     src/glad.c
+    PulseEngineEditor/InterfaceEditor/ViewportRenderer.cpp
 )
 
 # ===========================================================
