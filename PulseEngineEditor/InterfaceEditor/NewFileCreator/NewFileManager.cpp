@@ -205,6 +205,7 @@ void NewFileManager::GenerateCppAndHeaderFiles(const std::filesystem::path & cur
                         ofs << "        void OnStart() override;\n";
                         ofs << "        void OnUpdate() override;\n";
                         ofs << "        void OnRender() override;\n";
+                        ofs << "        void OnEditorDisplay() override;\n";
                         ofs << "        const char* GetName() const override;\n";
                         ofs << "};\n\n";
 
@@ -232,6 +233,10 @@ void NewFileManager::GenerateCppAndHeaderFiles(const std::filesystem::path & cur
                         ofs << "void " << fileNameStr << "::OnRender()\n";
                         ofs << "{\n";
                         ofs << "    // Your render code here\n";
+                        ofs << "}\n\n";
+                        ofs << "void " << fileNameStr << "::OnEditorDisplay()()\n";
+                        ofs << "{\n";
+                        ofs << "    // Your render code for editor here\n";
                         ofs << "}\n\n";
                         ofs << "const char* " << fileNameStr << "::GetName() const\n";
                         ofs << "{\n";

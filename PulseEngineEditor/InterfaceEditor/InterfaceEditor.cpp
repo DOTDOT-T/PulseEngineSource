@@ -28,6 +28,7 @@
 #include "PulseEngine/core/PulseScript/utilities.h"
 #include "PulseEngineEditor/InterfaceEditor/WidgetEditor/WidgetEditor.h"
 #include "camera.h"
+#include "PulseEngineEditor/InterfaceEditor/ViewportRenderer.h"
 #include <glm/gtc/type_ptr.hpp>
 
 #include "zep/filesystem.h"
@@ -62,6 +63,7 @@ InterfaceEditor::InterfaceEditor()
     synapse = new Synapse("");
     newFileManager = new NewFileManager();
     wdgtEditor = new WidgetEditor;
+    vp = new Viewport();
 
     synapse->Init();
 
@@ -362,6 +364,7 @@ void InterfaceEditor::Render()
         if(windowStates["EntityAnalyzer"]) EntityAnalyzerWindow();
         if(windowStates["EngineConfig"]) EngineConfigWindow();
         if(windowStates["widgetEditor"]) wdgtEditor->Render();
+        if(windowStates["viewport"]) vp->Render();
 
         if(windowStates["assetManager"])
         {

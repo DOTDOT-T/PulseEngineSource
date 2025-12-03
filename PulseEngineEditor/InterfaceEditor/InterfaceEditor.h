@@ -39,6 +39,7 @@ class Synapse;
 class NewFileManager;
 class PulseScriptsManager;
 class WidgetEditor;
+class Viewport;
 
 struct LoadingPopupData
 {
@@ -70,6 +71,8 @@ private:
     std::vector<std::pair<Entity*, PulseEngine::Transform*>> reparent;
 
     WidgetEditor* wdgtEditor = nullptr;
+
+    Viewport* vp = nullptr;
 
 public:
     std::unordered_map<std::string, bool> windowStates;
