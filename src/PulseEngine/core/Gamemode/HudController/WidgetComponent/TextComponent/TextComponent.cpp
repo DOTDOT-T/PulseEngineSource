@@ -1,6 +1,7 @@
 #include "TextComponent.h"
 #include "PulseEngine/core/Graphics/IGraphicsApi.h"
 #include "PulseEngine/core/Graphics/TextRenderer.h"
+#include "PulseEngine/core/FileManager/Archive/Archive.h"
 
 #ifdef ENGINE_EDITOR
 #define IMGUI_DEFINE_MATH_OPERATORS
@@ -9,6 +10,27 @@
 #endif
 
 PULSE_REGISTER_CLASS_CPP(TextComponent)
+
+void TextComponent::Serialize(Archive& ar)
+{
+    WidgetComponent::Serialize(ar);
+
+    ar.Serialize("textValue", text);
+    ar.Serialize("fontSize", fontSize);
+    ar.Serialize("fontColor.r", color.r);
+    ar.Serialize("fontColor.g", color.g);
+    ar.Serialize("fontColor.b", color.b);
+    ar.Serialize("fontColor.a", color.a);
+
+}
+void TextComponent::Deserialize(Archive& ar)
+{
+
+}
+const char* TextComponent::ToString()
+{
+    return "TextComponent";
+}
 
 TextComponent::TextComponent() : WidgetComponent("Textcomponent", PulseEngine::Vector2(0.0f,0.0f))
 {

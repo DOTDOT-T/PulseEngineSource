@@ -1,11 +1,27 @@
 #include "Widget.h"
 #include "PulseEngine/core/Gamemode/HudController/WidgetComponent/WidgetComponent.h"
+#include "PulseEngine/core/FileManager/Archive/Archive.h"
 
 PULSE_REGISTER_CLASS_CPP(Widget)
 
 void Widget::Serialize(Archive& ar)
 {
+    int size = component.size();
+    ar.Serialize("size", size);
+    for(unsigned int i = 0; i < size; ++i)
+    {
+        if(ar.IsSaving())
+        {
+            component[i]->Serialize(ar);
+        }
+        else
+        {
+            WidgetComponent* cmp = new WidgetComponent();
 
+            cmp->Serialize(ar);
+            component.push_back(cmp);
+        }
+    }
 }
 void Widget::Deserialize(Archive& ar)
 {

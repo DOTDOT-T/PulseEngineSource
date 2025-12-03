@@ -6,7 +6,7 @@ PULSE_REGISTER_CLASS_CPP(Gamemode)
 
 void Gamemode::Serialize(Archive& ar) 
 {
-
+    hud->Serialize(ar);
 }
 void Gamemode::Deserialize(Archive& ar) 
 {

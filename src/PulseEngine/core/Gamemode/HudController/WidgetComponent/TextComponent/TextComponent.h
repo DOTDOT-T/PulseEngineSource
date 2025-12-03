@@ -7,6 +7,7 @@ class ITextRenderer;
 
 class PULSE_ENGINE_DLL_API TextComponent : public WidgetComponent
 {
+PULSE_GEN_BODY(TextComponent)
 PULSE_REGISTER_CLASS_HEADER(TextComponent)
 public:
     TextComponent();
