@@ -18,5 +18,5 @@ void LightData::Deserialize(Archive& ar)
 
 const char* LightData::ToString()
 {
-
+    return "LightData";
 }

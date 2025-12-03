@@ -52,8 +52,16 @@
 // Windows
 // -----------------------------
 #ifdef PULSE_WINDOWS
-    #include "winsock2.h"
-    #include <Windows.h>      // Core Windows API
+    #ifndef WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN
+    #endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+    #include <windows.h>
+
     #include <direct.h>       // _mkdir, _getcwd
 #endif
 

@@ -77,13 +77,13 @@ int PulseEngineBackend::Initialize()
 
     // load the graphic API based on the platform
     //some platform can have multiple graphic API possible.
-    graphicsAPI = dynamic_cast<IGraphicsAPI*>(ModuleLoader::GetModuleFromPath("Modules/Renderer.dll"));
+    // graphicsAPI = dynamic_cast<IGraphicsAPI*>(ModuleLoader::GetModuleFromPath("Modules/Renderer.dll"));
     /**
      * @note For renderer, we wont use dynamic DLL to load the graphic API, we will use inside the game engine dll one. So we need to create a game engine dll for each platform.
      * 
      */
     // #ifdef PULSE_GRAPHIC_OPENGL
-    // graphicsAPI = new OpenGLAPI();
+    graphicsAPI = new OpenGLAPI();
     // #endif
 
     if(graphicsAPI == nullptr)
@@ -96,6 +96,7 @@ int PulseEngineBackend::Initialize()
     #ifdef PULSE_GRAPHIC_OPENGL
     windowContext->SetGLFWWindow(static_cast<GLFWwindow*>(graphicsAPI->GetNativeHandle()));
     #endif
+
 
     coroutineManager = new CoroutineManager;
     inputSystem = new PulseLibs::InputSystem;

@@ -44,7 +44,16 @@
 #include "PulseEngine/core/FileManager/FileManager.h"
 #include "PulseEngine/core/FileManager/FileReader/FileReader.h"
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <windows.h>
+
 #include "Common/dllExport.h"
 
 /// Left mouse button index

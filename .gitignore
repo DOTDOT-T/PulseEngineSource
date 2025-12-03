@@ -20,3 +20,4 @@ DLLS/
 *.o
 /.vscode
 .vscode/launch.json
+external/assimp/build

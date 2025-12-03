@@ -83,11 +83,11 @@ int main(int argc, char** argv)
     }
 
     
-    EDITOR_ONLY(
+#ifdef ENGINE_EDITOR
         InterfaceEditor* editor = new InterfaceEditor();
         engine->editor = editor;
         editor->InitAfterEngine();
-    )
+#endif
     
 
     // === Boucle de rendu ===
@@ -99,22 +99,18 @@ int main(int argc, char** argv)
         engine->RenderShadow();        
         engine->Render();
         
-        EDITOR_ONLY(
+
+#ifdef ENGINE_EDITOR
             editor->Render();
-        )
+#endif
 
         engine->graphicsAPI->SwapBuffers();
         engine->graphicsAPI->PollEvents();
     }
     engine->Shutdown();
 
-    EDITOR_ONLY(
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
-        ImGui::DestroyContext();
-    )  
-    delete engine;
-    #ifdef ENGINE_EDITOR
+
+#ifdef ENGINE_EDITOR
         delete editor;
     #endif
 

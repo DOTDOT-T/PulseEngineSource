@@ -33,6 +33,7 @@
 #include "zep/filesystem.h"
 
 
+
 #include <filesystem>
 using namespace PulseEngine::FileSystem;
 
@@ -297,6 +298,7 @@ void InterfaceEditor::RenderFullscreenWelcomePanel()
 
 void InterfaceEditor::Render()
 {       
+
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
@@ -983,3 +985,10 @@ PulseEngine::Transform *InterfaceEditor::GetSelectedGizmo()
 //         }
 //     }
 // }
+
+InterfaceEditor::~InterfaceEditor()
+{
+    // ImGui_ImplOpenGL3_Shutdown();
+    // ImGui_ImplGlfw_Shutdown();
+    // ImGui::DestroyContext();
+}

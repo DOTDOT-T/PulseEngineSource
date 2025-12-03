@@ -75,6 +75,7 @@ public:
     std::unordered_map<std::string, bool> windowStates;
 
     InterfaceEditor();
+    ~InterfaceEditor();
 
     void InitAfterEngine();
 
@@ -150,7 +151,6 @@ public:
     std::unique_ptr<Zep::ZepEditor_ImGui> editor;
     fs::path currentDir = "PulseEngineEditor";
     fs::path selected;
-    ~InterfaceEditor() {}
 };
 
 
