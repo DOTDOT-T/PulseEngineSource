@@ -67,6 +67,8 @@ private:
     float gridSize = 16.0f;
     bool showGrid = true;
     bool snapToGrid = true;
+
+    
 };
 
 #endif

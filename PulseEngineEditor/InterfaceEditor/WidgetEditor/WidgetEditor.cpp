@@ -68,11 +68,11 @@ void WidgetEditor::RenderDockspace()
         ImGuiWindowFlags_NoMove;
 
     ImGuiViewport *vp = ImGui::GetMainViewport();
-    ImGui::SetNextWindowPos(vp->WorkPos);
-    ImGui::SetNextWindowSize(vp->WorkSize);
+    // ImGui::SetNextWindowPos(vp->WorkPos);
+    // ImGui::SetNextWindowSize(vp->WorkSize);
     ImGui::SetNextWindowViewport(vp->ID);
 
-    ImGui::Begin("WidgetEditor", nullptr, flags);
+    ImGui::Begin("WidgetEditor", nullptr);
     ImGuiID dock_id = ImGui::GetID("WidgetEditorDockspace");
     ImGui::DockSpace(dock_id);
     ImGui::End();
