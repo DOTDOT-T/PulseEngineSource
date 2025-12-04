@@ -31,7 +31,7 @@ PulseEngine::Physics::Casting::Casting()
 {
     if(!lineShader)
     {
-        lineShader = new Shader(std::string(ASSET_PATH) + "shaders/lineTrace.vert", std::string(ASSET_PATH) + "shaders/lineTrace.frag", PulseEngineGraphicsAPI);
+        lineShader = new Shader(std::string(ASSET_PATH) + "EngineConfig/shaders/lineTrace.vert", std::string(ASSET_PATH) + "EngineConfig/shaders/lineTrace.frag", PulseEngineGraphicsAPI);
     }
 }
 

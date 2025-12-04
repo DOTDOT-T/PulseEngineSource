@@ -240,13 +240,14 @@ RenderableMesh* GuidReader::GetMeshFromGuid(std::size_t guid)
     Assimp::Importer* importer = new Assimp::Importer();
 
     nlohmann::json guidCollection;
-    std::ifstream guidColFile(std::string(ASSET_PATH) +"Guid/guidCollectionMeshes.puid");
+    std::ifstream guidColFile(std::string(ASSET_PATH) +"EngineConfig/Guid/guidCollectionMeshes.puid");
     if(!guidColFile.is_open())
     {
-        EDITOR_ERROR("Guid collection file for meshes couldn't be open : " + std::string(ASSET_PATH) +"Guid/guidCollectionMeshes.puid")
+        EDITOR_ERROR("Guid collection file for meshes couldn't be open : " + std::string(ASSET_PATH) +"EngineConfig/Guid/guidCollectionMeshes.puid")
          return nullptr;
     }
     guidColFile >> guidCollection;
+    
     if(guidCollection.contains(std::to_string(guid)))
     {
         path = guidCollection[std::to_string(guid)].get<std::string>();
@@ -280,7 +281,7 @@ RenderableMesh* GuidReader::GetMeshFromGuid(std::size_t guid)
     }
     else
     {
-        EDITOR_ERROR("Guid " + std::to_string(guid) + " not found in guid collection file for meshes : " + std::string(ASSET_PATH) +"Guid/guidCollectionMeshes.puid")
+        EDITOR_ERROR("Guid " + std::to_string(guid) + " not found in guid collection file for meshes : " + std::string(ASSET_PATH) +"EngineConfig/Guid/guidCollectionMeshes.puid")
         return nullptr;
     }
     //onced shared system implemented, we will use importer->ReadFileFromMemory() instead

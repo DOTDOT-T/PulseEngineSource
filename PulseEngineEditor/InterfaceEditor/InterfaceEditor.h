@@ -41,6 +41,7 @@ class PulseScriptsManager;
 class WidgetEditor;
 class Viewport;
 class Console;
+class EntityEditor;
 
 struct LoadingPopupData
 {
@@ -72,9 +73,11 @@ private:
     std::vector<std::pair<Entity*, PulseEngine::Transform*>> reparent;
 
     WidgetEditor* wdgtEditor = nullptr;
+    EntityEditor* entEditor = nullptr;
 
     Viewport* vp = nullptr;
     Console* csl = nullptr;
+
 
 public:
     std::unordered_map<std::string, bool> windowStates;

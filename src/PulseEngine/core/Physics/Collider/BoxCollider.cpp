@@ -101,8 +101,8 @@ BoxCollider::BoxCollider(PulseEngine::Vector3* position, PulseEngine::Vector3* r
 
     // Chargement du shader de ligne
     lineTraceShader = new Shader(
-        std::string(ASSET_PATH) + "shaders/lineTrace.vert",
-        std::string(ASSET_PATH) + "shaders/lineTrace.frag",
+        std::string(ASSET_PATH) + "EngineConfig/shaders/lineTrace.vert",
+        std::string(ASSET_PATH) + "EngineConfig/shaders/lineTrace.frag",
         gAPI
     );
 

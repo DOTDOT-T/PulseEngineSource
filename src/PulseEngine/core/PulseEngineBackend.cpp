@@ -97,7 +97,7 @@ int PulseEngineBackend::Initialize()
     
     #ifdef PULSE_GRAPHIC_OPENGL
     windowContext->SetGLFWWindow(static_cast<GLFWwindow*>(graphicsAPI->GetNativeHandle()));
-    #endif
+    #endifL
 
 
     coroutineManager = new CoroutineManager;
@@ -106,9 +106,6 @@ int PulseEngineBackend::Initialize()
     shadowShader = new Shader(std::string(ASSET_PATH) + "EngineConfig/shaders/directionalDepth/dirDepth.vert", std::string(ASSET_PATH) + "EngineConfig/shaders/directionalDepth/dirDepth.frag", graphicsAPI);
     pointLightShadowShader = new Shader(std::string(ASSET_PATH) + "EngineConfig/shaders/pointDepth/pointDepth.vert", std::string(ASSET_PATH) + "EngineConfig/shaders/pointDepth/pointDepth.frag", std::string(ASSET_PATH) + "EngineConfig/shaders/pointDepth/pointDepth.glsl", graphicsAPI);
     debugShader = new Shader(std::string(ASSET_PATH) +"EngineConfig/shaders/debug.vert", std::string(ASSET_PATH) + "EngineConfig/shaders/debug.frag", graphicsAPI);
-    // === insert base item to the collection ===
-    GuidReader::InsertIntoCollection("Entities/simpleActor.pEntity");    
-    GuidReader::InsertIntoCollection("Entities/primitiveCube.pEntity"); 
 
     // === initialize each collection found in the asset folder ===
     std::vector<std::filesystem::path> guidFiles = FileManager::GetFilesInDirectoryWithExtension(std::string(ASSET_PATH) + "EngineConfig/Guid", ".puid");

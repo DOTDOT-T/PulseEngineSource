@@ -3,6 +3,9 @@
 
 Account::Account(const std::string& mail, const std::string& password)
 {
+    email = "null";
+    name = "null";
+    return;
     Request host("localhost", "3000");
     nlohmann::json body;
     body["mail"] = mail;

@@ -30,6 +30,7 @@
 #include "camera.h"
 #include "PulseEngineEditor/InterfaceEditor/ViewportRenderer.h"
 #include "PulseEngineEditor/InterfaceEditor/Console.h"
+#include "PulseEngineEditor/InterfaceEditor/Tools/EntityEditor/EntityEditor.h"
 #include <glm/gtc/type_ptr.hpp>
 
 #include "zep/filesystem.h"
@@ -66,6 +67,7 @@ InterfaceEditor::InterfaceEditor()
     wdgtEditor = new WidgetEditor;
     vp = new Viewport();
     csl = new Console();
+
 
     synapse->Init();
 
@@ -108,7 +110,8 @@ InterfaceEditor::InterfaceEditor()
         modulesPulseScript->AddScriptToDatabase(std::string("Modules/Interface/") + file);
 
      }
-
+     modules.push_back(new EntityEditor());
+     windowStates[modules.back()->GetName()] = false;
 
     fileClickedCallbacks.push_back(
     [](const ClickedFileData& data) 
