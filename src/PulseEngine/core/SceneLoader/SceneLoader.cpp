@@ -96,8 +96,7 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
 
     PulseEngineInstance->SetWindowName(PulseEngineInstance->actualMapName);
 
-    DiskArchive dar("enginegm.gamemode", Archive::Mode::Loading);
-    PulseEngineInstance->GetGamemode()->Serialize(gmdar);
+
 
     // backend->SetWindowName(sceneData["sceneName"]);
     // for (const auto& entityData : sceneData["entities"])

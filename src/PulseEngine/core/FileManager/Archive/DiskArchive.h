@@ -118,6 +118,8 @@ public:
         }
     }
 
+    bool IsArchiveOpen() {return fileReader.IsOpen();}
+
 private:
     FileReader fileReader;
     std::vector<char> buffer;

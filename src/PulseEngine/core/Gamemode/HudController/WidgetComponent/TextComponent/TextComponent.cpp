@@ -34,6 +34,9 @@ const char* TextComponent::ToString()
 
 TextComponent::TextComponent() : WidgetComponent("Textcomponent", PulseEngine::Vector2(0.0f,0.0f))
 {
+    tr = PulseEngineInstance->graphicsAPI->CreateNewText();
+    tr->Init();
+    tr->SetScreenSize(1920, 1080);
 }
 
 TextComponent::TextComponent(const char *txt, PulseEngine::Vector2 location, PulseEngine::Vector2 anch) : WidgetComponent("textcomponent", location, anch), text(txt)

@@ -1,5 +1,6 @@
 #include "Gamemode.h"
 #include "PulseEngine/core/Gamemode/HudController/HudController.h"
+#include "PulseEngine/core/FileManager/Archive/Archive.h"
 
 PULSE_REGISTER_CLASS_CPP(Gamemode)
 

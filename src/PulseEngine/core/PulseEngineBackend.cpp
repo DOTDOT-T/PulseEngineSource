@@ -45,6 +45,8 @@
 #include "PulseEngine/core/PulseScript/utilities.h"
 
 #include "PulseEngine/core/PulseScript/NativeInit.h"
+#include "PulseEngine/core/FileManager/Archive/Archive.h"
+#include "PulseEngine/core/FileManager/Archive/DiskArchive.h"
 
 using namespace PulseEngine::FileSystem;
 using namespace PulseLibs;
@@ -138,6 +140,9 @@ int PulseEngineBackend::Initialize()
 
 
     gamemode = new Gamemode();
+    DiskArchive gmdar("enginegm.gamemode", Archive::Mode::Loading);
+    if(gmdar.IsArchiveOpen()) gamemode->Serialize(gmdar);
+    else EDITOR_WARN("Gamemode couldn't be loaded from [enginegm.gamemode]")
     InitNativeMethods();
 
     EDITOR_INFO("Finished the initialization of the engine.");

@@ -19,12 +19,12 @@ void WidgetComponent::Serialize(Archive& ar)
 {
     ar.Serialize("location.x", location.x);
     ar.Serialize("location.y", location.y);
-    ar.Serialize("location.z", location.z);
     ar.Serialize("size.x", size.x);
     ar.Serialize("size.y", size.y);
     ar.Serialize("widgetColor.x", color.x);
     ar.Serialize("widgetColor.y", color.y);
     ar.Serialize("widgetColor.z", color.z);
+    ar.Serialize("widgetColor.a", color.a);
     ar.Serialize("anchor.x", anchor.x);
     ar.Serialize("anchor.y", anchor.y);
     ar.Serialize("pivot.x", pivot.x);

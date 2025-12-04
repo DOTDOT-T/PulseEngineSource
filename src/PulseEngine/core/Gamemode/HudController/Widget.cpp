@@ -12,11 +12,25 @@ void Widget::Serialize(Archive& ar)
     {
         if(ar.IsSaving())
         {
+            std::string typeName = component[i]->GetTypeName();
+            EDITOR_INFO("Serialize of a widgetComponent[" << typeName << "]")
+            ar.Serialize("TypeName", typeName);
             component[i]->Serialize(ar);
         }
         else
         {
-            WidgetComponent* cmp = new WidgetComponent();
+            WidgetComponent* cmp;
+            std::string typeName;
+            ar.Serialize("TypeName", typeName);
+            cmp = TypeRegistry::CreateInstance<WidgetComponent>(typeName);
+            if(!cmp)
+            {
+                EDITOR_ERROR("WidgetComponent[" << typeName << "] couldn't be found in engine-type-register. Couldn't load widget safely.")
+                EDITOR_INFO("To solve : " << std::endl << 
+                    "- Delete HUD and recreate it from zero." << std::endl <<
+                    "- If WidgetComponent[" << typeName << "] was a custom, recreate it with the SAME name.")
+                return;
+            }
 
             cmp->Serialize(ar);
             component.push_back(cmp);

@@ -88,6 +88,8 @@ void WidgetEditor::RenderDetails()
     if(ImGui::Button("Save"))
     {        
         DiskArchive dar("enginegm.gamemode", Archive::Mode::Saving);
+        PulseEngineInstance->GetGamemode()->Serialize(dar);
+        dar.Finalize();
         
     }
     if (selectedWidget)
