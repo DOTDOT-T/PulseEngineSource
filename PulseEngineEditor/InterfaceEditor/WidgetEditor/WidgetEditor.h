@@ -13,6 +13,8 @@
 #include <memory>
 #include <vector>
 
+class Widget;
+
 class PULSE_ENGINE_DLL_API WidgetEditor : public PulseObject
 {
 PULSE_GEN_BODY(WidgetEditor)
@@ -22,6 +24,9 @@ public:
     void Update();
     void Render();
 
+    void OpenNewWidget(const std::string& newPath);
+
+    void SaveActualWidget();
 
 private:
     // Panels
@@ -45,6 +50,8 @@ private:
 private:
     std::vector<WidgetComponent*>* widgets = nullptr;
     WidgetComponent* selectedWidget = nullptr;
+    Widget* userSelectedWidget = nullptr;
+    std::string pathToWidget = std::string("");
 
 
     ImVec2 dragStart  = ImVec2(0,0);

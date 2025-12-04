@@ -16,6 +16,7 @@ void Widget::Serialize(Archive& ar)
             EDITOR_INFO("Serialize of a widgetComponent[" << typeName << "]")
             ar.Serialize("TypeName", typeName);
             component[i]->Serialize(ar);
+            EDITOR_SUCCESS("WidgetComponent[" << typeName << "] have been saved.")
         }
         else
         {
@@ -34,6 +35,7 @@ void Widget::Serialize(Archive& ar)
 
             cmp->Serialize(ar);
             component.push_back(cmp);
+            EDITOR_SUCCESS("WidgetComponent[" << typeName << "] have been loaded.")
         }
     }
 }

@@ -30,7 +30,7 @@ NewFileManager::NewFileManager()
 {    
     categories = {
         CategoryFiles("Scripts", {{"New Component", ".cpp/.h"}}),        
-        CategoryFiles("Assets", {{"Scene (.map)", ".pmap"}, {"Material", ".mat"}}),
+        CategoryFiles("Assets", {{"Scene (.map)", ".pmap"}, {"Material", ".mat"}, {"Widget", ".widget"}}),
         CategoryFiles("Entities", {{"Pulse Entity", ".pEntity"}}),
         CategoryFiles("Synapse", {{"Synapse File", ".synapse"}}),
         CategoryFiles("Directory", {{"Simple directory", "DIR"}})
@@ -129,6 +129,14 @@ void NewFileManager::RenderPopup(const std::filesystem::path &currentDir, std::f
                     uint64_t g = static_cast<uint64_t>(guid);
                     ar->Serialize("guid", g);
                     ar->Serialize("entitiesCount", entityCount);
+                    ar->Finalize();
+                    delete ar;
+                }
+                if (extension == ".widget")
+                {
+                    DiskArchive* ar = new DiskArchive((sanitizedDir / (fileNameStr + extension)).string(), Archive::Mode::Saving);
+                    int size = 0;
+                    ar->Serialize("size", size);
                     ar->Finalize();
                     delete ar;
                 }

@@ -119,6 +119,7 @@ public:
     }
 
     bool IsArchiveOpen() {return fileReader.IsOpen();}
+    bool IsArchiveEmpty() {return buffer.empty();}
 
 private:
     FileReader fileReader;
