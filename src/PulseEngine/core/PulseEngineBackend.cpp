@@ -97,7 +97,7 @@ int PulseEngineBackend::Initialize()
     
     #ifdef PULSE_GRAPHIC_OPENGL
     windowContext->SetGLFWWindow(static_cast<GLFWwindow*>(graphicsAPI->GetNativeHandle()));
-    #endifL
+    #endif
 
 
     coroutineManager = new CoroutineManager;
