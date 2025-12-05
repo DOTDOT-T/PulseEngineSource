@@ -24,7 +24,10 @@ public:
     static void Push(const std::string& msg)
     {
         GetMessages().push_back(msg);
+        scrollBot = true;
     }
+
+    static bool scrollBot;
 };
 
 #endif // __CONSOLE_H__

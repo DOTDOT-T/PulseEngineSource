@@ -1,5 +1,7 @@
 #include "Console.h"
 
+bool Console::scrollBot = false;
+
 void Console::Render()
 {
 ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoDecoration;
@@ -18,7 +20,11 @@ ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
         ImGui::PopStyleColor();
     }
     
-    ImGui::SetScrollHereY(1.0f);
+    if(scrollBot)
+    {
+        scrollBot = false;
+        ImGui::SetScrollHereY(1.0f);
+    }
     
     ImGui::EndChild();
     ImGui::End();
