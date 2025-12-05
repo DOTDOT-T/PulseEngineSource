@@ -48,6 +48,7 @@ class EntityEditor : public IModuleInterface
         bool isAddingMeshes = false;
         std::vector<ContextMenuItem> scriptsContextMenu;
         std::vector<ContextMenuItem> meshesContextMenu;
+        IScript* currentScript = nullptr;
 };
 
 #endif

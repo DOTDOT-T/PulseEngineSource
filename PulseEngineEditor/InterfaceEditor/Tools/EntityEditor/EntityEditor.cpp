@@ -1,4 +1,5 @@
 #include "EntityEditor.h"
+#include "PulseEngineEditor/InterfaceEditor/InterfaceEditor.h"
 #include "PulseEngineEditor/InterfaceEditor/InterfaceAPI/PulseInterfaceAPI.h"
 #include "PulseEngine/core/Entity/Entity.h"
 #include "PulseEngine/core/Math/MathUtils.h"
@@ -124,10 +125,8 @@ void EntityEditor::Render()
         }
 
         Material* currentMaterial = selectedEntity->GetMaterial();
-        if(currentMaterial)
-        {
         PulseInterfaceAPI::AddMaterialPreview(currentMaterial, PulseEngine::Vector2(50.0f, 50.0f), "Material Preview");
-        }
+        
 
         if (currentMaterial != selectedEntity->GetMaterial())
         {
@@ -142,6 +141,10 @@ void EntityEditor::Render()
     if (selectedData) 
     {
         PulseInterfaceAPI::AddTransformModifierForMesh(selectedData, "Entity Transform Modifier");
+    }
+    if(currentScript)
+    {
+        InterfaceEditor::DisplayScriptEditor(currentScript, 0);
     }
     PulseInterfaceAPI::EndChild();
     if(PulseInterfaceAPI::Button("Add to Entity", PulseEngine::Vector2((windowSize.x * 0.3f - 20) * 0.5f, 0.0f)))
@@ -495,7 +498,6 @@ void EntityEditor::EntityScriptManager()
     auto& scripts = selectedEntity->GetScripts();
 
     static bool hasOpenContextual = false;
-    static IScript* currentScript = nullptr;
     static int currentIndex = -1;
 
 
@@ -514,7 +516,6 @@ void EntityEditor::EntityScriptManager()
         }
         if(currentScript == script)
         {
-            EDITOR_LOG("Opening contextual menu for script: " + std::string(currentScript->GetName()));
             PulseInterfaceAPI::ShowContextMenu("Entity Script context menu",
             {
                 {

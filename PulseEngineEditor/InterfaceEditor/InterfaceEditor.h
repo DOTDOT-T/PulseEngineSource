@@ -42,6 +42,7 @@ class WidgetEditor;
 class Viewport;
 class Console;
 class EntityEditor;
+class IScript;
 
 struct LoadingPopupData
 {
@@ -92,8 +93,9 @@ public:
     void EngineConfigWindow();
     void EntityAnalyzerWindow();
     void GenerateSceneDataWindow();
-#pragma endregion
-
+    #pragma endregion
+    
+    static void DisplayScriptEditor(IScript* script, int scriptIndex);
     void Render();
     void DrawHierarchyNode(HierarchyEntity* node, Entity*& selectedEntity, std::vector<Entity*>& entitiesToDelete);
 

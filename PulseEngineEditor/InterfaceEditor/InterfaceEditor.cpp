@@ -568,94 +568,7 @@ void InterfaceEditor::EntityAnalyzerWindow()
     {
         if (!script) continue;
 
-        // --- Header ---
-             std::string headerLabel = script->GetName() + std::string("###") + script->GetName() + "_" + std::to_string(scriptIndex);
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
-        ImGui::PushStyleColor(ImGuiCol_Header,        ImVec4(0.20f, 0.25f, 0.30f, 1.0f));
-        ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.30f, 0.35f, 0.40f, 1.0f));
-        ImGui::PushStyleColor(ImGuiCol_HeaderActive,  ImVec4(0.35f, 0.40f, 0.45f, 1.0f));
-
-        bool open = ImGui::TreeNodeEx(headerLabel.c_str(),
-                                      ImGuiTreeNodeFlags_Framed |
-                                      ImGuiTreeNodeFlags_SpanAvailWidth |
-                                      ImGuiTreeNodeFlags_DefaultOpen,
-                                      "%s", script->GetName());
-
-        ImGui::PopStyleColor(3);
-        ImGui::PopStyleVar();
-
-        if (open)
-        {
-            ImGui::Indent(8.0f);
-            ImGui::Spacing();
-
-            if(!script->isEntityLinked)
-            {
-                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.6f, 0.2f, 1.0f));
-                ImGui::TextDisabled("Only on this entity");
-                ImGui::PopStyleColor();
-            }
-
-            // script->OnEditorDisplay();
-
-            // --- Variable listing ---
-            int varCounter = 0;
-            auto exposedVars = script->GetExposedVariables();
-
-            for (auto& var : exposedVars)
-            {
-             std::string label = var.name + std::string("###") + script->GetName() + "_" + std::to_string(varCounter);
-                ImGui::PushID(varCounter);
-
-                // subtle background
-                ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.15f, 0.15f, 0.18f, 1.0f));
-                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 4));
-
-                switch (var.type)
-                {
-                    case ExposedVariable::Type::INT:
-                        ImGui::TextColored(ImVec4(0.6f, 0.8f, 1.0f, 1.0f), "%s", var.name.c_str());
-                        ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
-                        ImGui::SetNextItemWidth(-1);
-                        ImGui::DragInt("##int", reinterpret_cast<int*>(var.ptr), 1.0f);
-                        break;
-
-                    case ExposedVariable::Type::FLOAT:
-                        ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s", var.name.c_str());
-                        ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
-                        ImGui::SetNextItemWidth(-1);
-                        ImGui::DragFloat("##float", reinterpret_cast<float*>(var.ptr), 0.1f);
-                        break;
-                    case ExposedVariable::Type::FLOAT3:
-                        ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s", var.name.c_str());
-                        ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
-                        ImGui::SetNextItemWidth(-1);
-                        ImGui::DragFloat3("##float3", reinterpret_cast<float*>(var.ptr), 0.1f);
-                        break;
-                    case ExposedVariable::Type::BOOL:
-                        ImGui::TextColored(ImVec4(1.0f, 0.85f, 0.4f, 1.0f), "%s", var.name.c_str());
-                        ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
-                        ImGui::Checkbox("##bool", reinterpret_cast<bool*>(var.ptr));
-                        break;
-
-                    case ExposedVariable::Type::STRING:
-                        ImGui::TextColored(ImVec4(0.8f, 0.6f, 1.0f, 1.0f), "%s", var.name.c_str());
-                        ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
-                        ImGui::SetNextItemWidth(-1);
-                        ImGui::InputText("##str", reinterpret_cast<char*>(var.ptr), 256);
-                        break;
-                }
-
-                ImGui::PopStyleVar();
-                ImGui::PopStyleColor();
-                ImGui::Spacing();
-                ImGui::PopID();
-                varCounter++;
-            }
-
-            ImGui::Unindent(8.0f);
-            ImGui::TreePop();
-        }
+        DisplayScriptEditor(script, scriptIndex);
 
         ImGui::Spacing();
         ImGui::Separator();
@@ -695,6 +608,98 @@ void InterfaceEditor::EntityAnalyzerWindow()
     }
 
     ImGui::End();
+}
+
+void InterfaceEditor::DisplayScriptEditor(IScript* script, int scriptIndex)
+{
+    // --- Header ---
+    std::string headerLabel = script->GetName() + std::string("###") + script->GetName() + "_" + std::to_string(scriptIndex);
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
+    ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.20f, 0.25f, 0.30f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.30f, 0.35f, 0.40f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.35f, 0.40f, 0.45f, 1.0f));
+
+    bool open = ImGui::TreeNodeEx(headerLabel.c_str(),
+                                  ImGuiTreeNodeFlags_Framed |
+                                      ImGuiTreeNodeFlags_SpanAvailWidth |
+                                      ImGuiTreeNodeFlags_DefaultOpen,
+                                  "%s", script->GetName());
+
+    ImGui::PopStyleColor(3);
+    ImGui::PopStyleVar();
+
+    if (open)
+    {
+        ImGui::Indent(8.0f);
+        ImGui::Spacing();
+
+        if (!script->isEntityLinked)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.6f, 0.2f, 1.0f));
+            ImGui::TextDisabled("Only on this entity");
+            ImGui::PopStyleColor();
+        }
+
+        // script->OnEditorDisplay();
+
+        // --- Variable listing ---
+        int varCounter = 0;
+        auto exposedVars = script->GetExposedVariables();
+
+        for (auto &var : exposedVars)
+        {
+            std::string label = var.name + std::string("###") + script->GetName() + "_" + std::to_string(varCounter);
+            ImGui::PushID(varCounter);
+
+            // subtle background
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.15f, 0.15f, 0.18f, 1.0f));
+            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 4));
+
+            switch (var.type)
+            {
+            case ExposedVariable::Type::INT:
+                ImGui::TextColored(ImVec4(0.6f, 0.8f, 1.0f, 1.0f), "%s", var.name.c_str());
+                ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
+                ImGui::SetNextItemWidth(-1);
+                ImGui::DragInt("##int", reinterpret_cast<int *>(var.ptr), 1.0f);
+                break;
+
+            case ExposedVariable::Type::FLOAT:
+                ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s", var.name.c_str());
+                ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
+                ImGui::SetNextItemWidth(-1);
+                ImGui::DragFloat("##float", reinterpret_cast<float *>(var.ptr), 0.1f);
+                break;
+            case ExposedVariable::Type::FLOAT3:
+                ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s", var.name.c_str());
+                ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
+                ImGui::SetNextItemWidth(-1);
+                ImGui::DragFloat3("##float3", reinterpret_cast<float *>(var.ptr), 0.1f);
+                break;
+            case ExposedVariable::Type::BOOL:
+                ImGui::TextColored(ImVec4(1.0f, 0.85f, 0.4f, 1.0f), "%s", var.name.c_str());
+                ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
+                ImGui::Checkbox("##bool", reinterpret_cast<bool *>(var.ptr));
+                break;
+
+            case ExposedVariable::Type::STRING:
+                ImGui::TextColored(ImVec4(0.8f, 0.6f, 1.0f, 1.0f), "%s", var.name.c_str());
+                ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
+                ImGui::SetNextItemWidth(-1);
+                ImGui::InputText("##str", reinterpret_cast<char *>(var.ptr), 256);
+                break;
+            }
+
+            ImGui::PopStyleVar();
+            ImGui::PopStyleColor();
+            ImGui::Spacing();
+            ImGui::PopID();
+            varCounter++;
+        }
+
+        ImGui::Unindent(8.0f);
+        ImGui::TreePop();
+    }
 }
 
 void InterfaceEditor::GenerateSceneDataWindow()
