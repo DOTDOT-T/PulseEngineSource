@@ -153,6 +153,7 @@ if(ENABLE_ENGINE_EDITOR)
         PulseEngineEditor/InterfaceEditor/ViewportRenderer.cpp
         PulseEngineEditor/InterfaceEditor/WidgetEditor/WidgetEditor.cpp
         PulseEngineEditor/InterfaceEditor/Console.cpp
+        PulseEngineEditor/InterfaceEditor/Tools/EntityEditor/EntityEditor.cpp
 
     )
 endif()
@@ -195,7 +196,7 @@ if(ENABLE_ENGINE_EDITOR)
 endif()
 
 target_link_libraries(PulseEngineAll PRIVATE
-    ${CMAKE_SOURCE_DIR}/external/assimp/build/lib/Debug/assimp-vc143-mtd.lib
+    ${CMAKE_SOURCE_DIR}/external/assimp/build/lib/Release/assimp-vc143-mt.lib
 )
 target_link_libraries(PulseEngineAll PUBLIC glfw)
 
@@ -301,7 +302,7 @@ target_include_directories(PulseGame PRIVATE
 # target_link_libraries(Renderer PRIVATE
 #     glfw
 #     opengl32
-#     ${CMAKE_SOURCE_DIR}/external/assimp/build/lib/Debug/assimp-vc143-mtd.lib
+#     ${CMAKE_SOURCE_DIR}/external/assimp/build/lib/Release/assimp-vc143-mtd.lib
 #     comdlg32
 #     ws2_32
 #     winmm

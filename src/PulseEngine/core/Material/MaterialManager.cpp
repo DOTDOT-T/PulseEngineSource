@@ -32,7 +32,7 @@ Material* MaterialManager::loadMaterial(const std::string &filePath)
 
     
     if(materials[jsonData["name"]]) return materials[jsonData["name"]];
-    Material* material = new Material("new material", new Shader(std::string(ASSET_PATH) + "shaders/basic.vert", std::string(ASSET_PATH) + "shaders/basic.frag", PulseEngineGraphicsAPI));
+    Material* material = new Material("new material", new Shader(std::string(ASSET_PATH) + "EngineConfig/shaders/basic.vert", std::string(ASSET_PATH) + "EngineConfig/shaders/basic.frag", PulseEngineGraphicsAPI));
     if (!file.is_open())
     {
         throw std::runtime_error("Failed to open material file: " + filePath);
