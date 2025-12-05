@@ -104,12 +104,14 @@ public:
     {
         InitShadowMap(2048);
         RecalculateLightSpaceMatrix();
+        SetName("Directional Light");
     }
 
     DirectionalLight() : LightData() 
     {
         InitShadowMap(2048);
         RecalculateLightSpaceMatrix();
+        SetName("Directional Light");
     }
 
     /**

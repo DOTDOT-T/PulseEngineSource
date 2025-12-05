@@ -1,3 +1,13 @@
+/**
+ * @file UiHelperTool.h
+ * @author Dorian LEXTERIAQUE (dlexteriaque@gmail.com)
+ * @brief helper class with static class to easily create UI-engine-style design.
+ * @version 0.1
+ * @date 2025-12-05
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 #ifndef __UIHELPERTOOL_H__
 #define __UIHELPERTOOL_H__
 

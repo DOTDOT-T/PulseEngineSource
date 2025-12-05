@@ -106,7 +106,7 @@ void TopBar::UpdateBar(PulseEngineBackend* engine, InterfaceEditor* editor)
         if (ImGui::BeginMenu("Add"))
         {
             
-            if (ImGui::BeginMenu("Primitive"))
+            if (false && ImGui::BeginMenu("Primitive"))
             {
                 if (ImGui::MenuItem("Cube"))
                 {
@@ -155,6 +155,8 @@ void TopBar::UpdateBar(PulseEngineBackend* engine, InterfaceEditor* editor)
                     5.0f,
                     50.0f
                 ));
+                engine->entities.push_back(engine->lights.back());                
+                SceneManager::GetInstance()->InsertEntity(engine->lights.back());
 
             }
             if (ImGui::MenuItem("Directional light"))
@@ -168,6 +170,8 @@ void TopBar::UpdateBar(PulseEngineBackend* engine, InterfaceEditor* editor)
                     1.0f,
                     10.0f
                 ));
+                engine->entities.push_back(engine->lights.back());                
+                SceneManager::GetInstance()->InsertEntity(engine->lights.back());
 
             }            
 

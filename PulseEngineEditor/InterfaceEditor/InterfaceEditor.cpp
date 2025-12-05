@@ -625,11 +625,11 @@ void InterfaceEditor::GenerateSceneDataWindow()
     ImGui::TextColored(ImVec4(0.1f, 0.6f, 0.9f, 1.0f), "Scene Hierarchy");
     ImGui::Separator();
 
-    if (ImGui::Button("Clear Scene", ImVec2(-1, 0)))
-    {
-        selectedEntity = nullptr;
-        PulseEngineInstance->ClearScene();
-    }
+    // if (ImGui::Button("Clear Scene", ImVec2(-1, 0)))
+    // {
+    //     selectedEntity = nullptr;
+    //     PulseEngineInstance->ClearScene();
+    // }
 
     ImGui::Spacing();
     ImGui::Text("Scene Contents");
