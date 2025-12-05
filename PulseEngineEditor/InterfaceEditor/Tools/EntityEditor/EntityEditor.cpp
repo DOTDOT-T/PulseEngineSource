@@ -161,119 +161,138 @@ void EntityEditor::Render()
     {
         PulseInterfaceAPI::OpenContextMenu("adding");
     }
-
-    PulseInterfaceAPI::ShowContextMenu("adding",
+PulseInterfaceAPI::ShowContextMenu("adding",
+{
+    {
+        "Add Script...",
+        [&]() mutable
         {
+            PulseInterfaceAPI::OpenContextMenu("AddingScripts");
+            isAddingToEntity = false;
+            isSeekingScripts  = true;
+            scriptsContextMenu.clear();
+
+            // ─────────────────────────────────────
+            //         HEADER (UE-style)
+            // ─────────────────────────────────────
             {
-                "Scripts",
-                [&]() mutable
-                {
-                    PulseInterfaceAPI::OpenContextMenu("AddingScripts");
-                    isAddingToEntity = false;
-                        isSeekingScripts = true;
-                    scriptsContextMenu.clear();
+                ContextMenuItem header;
+                header.label = "SCRIPTS";
+                header.type  = EditorWidgetComponent::TEXT;
+                header.style["color"] = { {"r",0.55f}, {"g",0.55f}, {"b",0.58f}, {"a",1.0f} };
+                header.style["padding_y"] = 4.0f;
+                scriptsContextMenu.push_back(header);
 
-                    ContextMenuItem header;
-                    header.label = "all scripts";
-                    header.type = EditorWidgetComponent::TEXT;
-                    header.style["color"]["r"] = 0.15f;
-                    header.style["color"]["g"] = 0.15f;
-                    header.style["color"]["b"] = 0.15f;
-                    header.style["color"]["a"] = 1;
-
-                    scriptsContextMenu.push_back(header);
-
-                    header.type = EditorWidgetComponent::SEPARATOR;
-                    scriptsContextMenu.push_back(header);
-
-
-                    for (const auto &[name, createFunc] : ScriptsLoader::scriptMap)
-                    {
-                        ContextMenuItem newMenu;
-                        newMenu.label = name;
-                        newMenu.type = EditorWidgetComponent::SELECTABLE;
-                        newMenu.onClick =[&]()
-                        {
-                            IScript *newScript = createFunc();
-
-                            //let's create a guid from script name and the date it was created
-                            std::string uniqueString = name + std::to_string(std::time(nullptr));
-                            newScript->SetGUID(GenerateGUIDFromPath(uniqueString));
-                            if (newScript)
-                            {
-                                selectedEntity->AddScript(newScript);
-                            }
-                            isSeekingScripts = false;
-                        };
-                        scriptsContextMenu.push_back(newMenu);
-                    }
-                },
-                EditorWidgetComponent::SELECTABLE
-         
-            },
-            {
-                "Mesh",
-                [&]() mutable
-                {
-                    PulseInterfaceAPI::OpenContextMenu("AddingMeshes");
-                    isAddingToEntity = false;
-                    isAddingMeshes = true;
-                    meshesContextMenu.clear();
-
-                    ContextMenuItem header;
-                    header.label = "all meshes";
-                    header.type = EditorWidgetComponent::TEXT;
-                    header.style["color"]["r"] = 0.15f;
-                    header.style["color"]["g"] = 0.15f;
-                    header.style["color"]["b"] = 0.15f;
-                    header.style["color"]["a"] = 1;
-
-                    meshesContextMenu.push_back(header);
-
-                    header.type = EditorWidgetComponent::SEPARATOR;
-                    meshesContextMenu.push_back(header);
-
-                    for (const auto& pr : GuidReader::GetAllAvailableFiles("guidCollectionMeshes.puid"))
-                    {
-
-                        EDITOR_LOG("first -> " << pr.first << " second -> " << pr.second)
-
-                        ContextMenuItem mesh;
-                        mesh.label = pr.second;
-                        mesh.type = EditorWidgetComponent::SELECTABLE;
-                        const std::string guidStr = pr.first;
-                        const std::string meshName = pr.second;
-
-                        mesh.onClick = [&, guidStr, meshName]() mutable
-                        {
-                            unsigned long long guidValue = 0;
-                            try
-                            {
-                                guidValue = std::stoull(guidStr);
-                            }
-                            catch (const std::exception& e)
-                            {
-                                EDITOR_ERROR("Invalid GUID string: " << guidStr << " (" << e.what() << ")");
-                                return;
-                            }
-                            RenderableMesh *newMesh = GuidReader::GetMeshFromGuid((guidValue));
-                            if (newMesh)
-                            {
-                                EDITOR_SUCCESS("Mesh[" << pr.second << "] loaded.")
-                                newMesh->SetGuid((guidValue));
-                                newMesh->SetName(meshName);
-                                selectedEntity->AddMesh(newMesh);
-                            }
-                            else EDITOR_ERROR("Engine ressources couldn't load RenderableMesh from guid[" << guidValue << "]")
-                            isAddingMeshes = false;
-                        };
-                        meshesContextMenu.push_back(mesh);
-
-                    }
-                },
-                EditorWidgetComponent::SELECTABLE
+                ContextMenuItem sep;
+                sep.type = EditorWidgetComponent::SEPARATOR;
+                sep.style["color"] = { {"r",0.20f}, {"g",0.20f}, {"b",0.21f}, {"a",1.0f} };
+                scriptsContextMenu.push_back(sep);
             }
-        });
+
+            // ─────────────────────────────────────
+            //             SCRIPT ITEMS
+            // ─────────────────────────────────────
+            for (const auto& [name, createFunc] : ScriptsLoader::scriptMap)
+            {
+                ContextMenuItem item;
+                item.label = name;
+                item.type  = EditorWidgetComponent::SELECTABLE;
+
+                // Style UE – hover doux, police blanche
+                item.style["color"]  = { {"r",0.85f}, {"g",0.88f}, {"b",0.92f}, {"a",1.0f} };
+                item.style["hover"]  = { {"r",0.18f}, {"g",0.18f}, {"b",0.19f}, {"a",1.0f} };
+                item.style["active"] = { {"r",0.24f}, {"g",0.24f}, {"b",0.25f}, {"a",1.0f} };
+
+                item.onClick = [&, name, createFunc]() mutable
+                {
+                    IScript* newScript = createFunc();
+                    if (newScript)
+                    {
+                        std::string uniqueString = name + std::to_string(std::time(nullptr));
+                        newScript->SetGUID(GenerateGUIDFromPath(uniqueString));
+                        selectedEntity->AddScript(newScript);
+                    }
+                    isSeekingScripts = false;
+                };
+
+                scriptsContextMenu.push_back(item);
+            }
+        },
+        EditorWidgetComponent::SELECTABLE
+    },
+
+    {
+        "Add Mesh...",
+        [&]() mutable
+        {
+            PulseInterfaceAPI::OpenContextMenu("AddingMeshes");
+            isAddingToEntity = false;
+            isAddingMeshes  = true;
+            meshesContextMenu.clear();
+
+            // ─────────────────────────────────────
+            //         HEADER (UE-style)
+            // ─────────────────────────────────────
+            {
+                ContextMenuItem header;
+                header.label = "MESHES";
+                header.type  = EditorWidgetComponent::TEXT;
+                header.style["color"] = { {"r",0.55f}, {"g",0.55f}, {"b",0.58f}, {"a",1.0f} };
+                header.style["padding_y"] = 4.0f;
+                meshesContextMenu.push_back(header);
+
+                ContextMenuItem sep;
+                sep.type = EditorWidgetComponent::SEPARATOR;
+                sep.style["color"] = { {"r",0.20f}, {"g",0.20f}, {"b",0.21f}, {"a",1.0f} };
+                meshesContextMenu.push_back(sep);
+            }
+
+            // ─────────────────────────────────────
+            //             MESH ITEMS
+            // ─────────────────────────────────────
+            for (const auto& pr : GuidReader::GetAllAvailableFiles("guidCollectionMeshes.puid"))
+            {
+                ContextMenuItem mesh;
+                mesh.label = pr.second;
+                mesh.type  = EditorWidgetComponent::SELECTABLE;
+
+                mesh.style["color"]  = { {"r",0.85f}, {"g",0.88f}, {"b",0.92f}, {"a",1.0f} };
+                mesh.style["hover"]  = { {"r",0.18f}, {"g",0.18f}, {"b",0.19f}, {"a",1.0f} };
+                mesh.style["active"] = { {"r",0.24f}, {"g",0.24f}, {"b",0.25f}, {"a",1.0f} };
+
+                const std::string guidStr  = pr.first;
+                const std::string meshName = pr.second;
+
+                mesh.onClick = [&, guidStr, meshName]() mutable
+                {
+                    unsigned long long guidValue = 0;
+
+                    try { guidValue = std::stoull(guidStr); }
+                    catch (const std::exception& e)
+                    {
+                        EDITOR_ERROR("Invalid GUID string: " << guidStr << " (" << e.what() << ")");
+                        return;
+                    }
+
+                    RenderableMesh* newMesh = GuidReader::GetMeshFromGuid(guidValue);
+                    if (newMesh)
+                    {
+                        newMesh->SetGuid(guidValue);
+                        newMesh->SetName(meshName);
+                        selectedEntity->AddMesh(newMesh);
+                        EDITOR_SUCCESS("Mesh[" << meshName << "] loaded.");
+                    }
+                    else EDITOR_ERROR("Unable to load RenderableMesh from GUID[" << guidValue << "]");
+
+                    isAddingMeshes = false;
+                };
+
+                meshesContextMenu.push_back(mesh);
+            }
+        },
+        EditorWidgetComponent::SELECTABLE
+    }
+});
 
     if(isSeekingScripts)
     {

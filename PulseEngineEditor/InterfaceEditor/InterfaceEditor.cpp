@@ -153,88 +153,87 @@ InterfaceEditor::InterfaceEditor()
     windowStates["widgetEditor"] = false;
 
     ImGuiStyle& style = ImGui::GetStyle();
-    style.WindowRounding = 6.0f;
-    style.FrameRounding = 5.0f;
-    style.GrabRounding = 5.0f;
-    style.ScrollbarRounding = 6.0f;
-    style.ChildRounding = 6.0f;
-    
-    style.FrameBorderSize = 1.0f;
+style.WindowPadding = ImVec2(12, 8);
+    style.FramePadding = ImVec2(8, 6);
+    style.ItemSpacing = ImVec2(8, 6);
+    style.ItemInnerSpacing = ImVec2(6, 4);
+
+    style.ScrollbarSize = 14.0f;
+
     style.WindowBorderSize = 1.0f;
+    style.ChildBorderSize = 1.0f;
+    style.PopupBorderSize = 1.0f;
+    style.FrameBorderSize = 1.0f;
     style.TabBorderSize = 1.0f;
-    
-    style.WindowPadding = ImVec2(12.0f, 12.0f);
-    style.FramePadding = ImVec2(8.0f, 6.0f);
-    style.ItemSpacing = ImVec2(10.0f, 8.0f);
-    style.ItemInnerSpacing = ImVec2(8.0f, 6.0f);
-    
-    
-ImVec4 orangeAccent      = ImVec4(1.00f, 0.55f, 0.20f, 1.00f); // Warm orange
-ImVec4 orangeAccentHover = ImVec4(1.00f, 0.65f, 0.30f, 1.00f); // Slightly brighter on hover
-ImVec4 orangeAccentActive= ImVec4(1.00f, 0.45f, 0.10f, 1.00f); // Slightly darker on press
-    // Couleurs
-// Textes
-style.Colors[ImGuiCol_Text]                   = ImVec4(0.92f, 0.95f, 1.00f, 1.00f); // Blanc bleuté, doux
-style.Colors[ImGuiCol_TextDisabled]           = ImVec4(0.50f, 0.55f, 0.65f, 1.00f);
 
-// Fond général
-style.Colors[ImGuiCol_WindowBg]               = ImVec4(0.04f, 0.05f, 0.07f, 1.00f); // Très sombre
-style.Colors[ImGuiCol_ChildBg]                = ImVec4(0.07f, 0.08f, 0.10f, 1.00f);
-style.Colors[ImGuiCol_PopupBg]                = ImVec4(0.05f, 0.06f, 0.07f, 0.98f);
+    // Minimal rounding, Slate-like
+    style.WindowRounding = 2.0f;
+    style.FrameRounding = 2.0f;
+    style.PopupRounding = 2.0f;
+    style.ScrollbarRounding = 2.0f;
+    style.TabRounding = 2.0f;
 
-// Bordures
-style.Colors[ImGuiCol_Border]                 = ImVec4(0.18f, 0.20f, 0.24f, 0.50f);
-style.Colors[ImGuiCol_BorderShadow]           = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+    style.GrabMinSize = 10.0f;
+    style.GrabRounding = 2.0f;
 
-// Cadres
-style.Colors[ImGuiCol_FrameBg]                = ImVec4(0.12f, 0.13f, 0.16f, 1.00f);
-style.Colors[ImGuiCol_FrameBgHovered]         = ImVec4(0.16f, 0.18f, 0.22f, 1.00f);
-style.Colors[ImGuiCol_FrameBgActive]          = ImVec4(0.18f, 0.20f, 0.25f, 1.00f);
+    // --- COLORS (UE5 Graphite Look) ---
+    ImVec4* colors = style.Colors;
 
-// Titres et barres
-style.Colors[ImGuiCol_TitleBg]                = ImVec4(0.06f, 0.07f, 0.08f, 1.00f);
-style.Colors[ImGuiCol_TitleBgActive]          = ImVec4(0.10f, 0.12f, 0.14f, 1.00f);
-style.Colors[ImGuiCol_TitleBgCollapsed]       = ImVec4(0.03f, 0.03f, 0.04f, 1.00f);
+    colors[ImGuiCol_Text]                   = ImVec4(0.85f, 0.88f, 0.92f, 1.00f);
+    colors[ImGuiCol_TextDisabled]           = ImVec4(0.55f, 0.58f, 0.60f, 1.00f);
 
-style.Colors[ImGuiCol_MenuBarBg]              = ImVec4(0.07f, 0.08f, 0.09f, 1.00f);
+    colors[ImGuiCol_WindowBg]               = ImVec4(0.07f, 0.07f, 0.08f, 1.00f);
+    colors[ImGuiCol_ChildBg]                = ImVec4(0.09f, 0.09f, 0.10f, 1.00f);
+    colors[ImGuiCol_PopupBg]                = ImVec4(0.07f, 0.07f, 0.08f, 1.00f);
 
-// Scrollbars
-style.Colors[ImGuiCol_ScrollbarBg]            = ImVec4(0.05f, 0.05f, 0.05f, 0.50f);
-style.Colors[ImGuiCol_ScrollbarGrab]          = ImVec4(0.26f, 0.36f, 0.56f, 0.90f);
-style.Colors[ImGuiCol_ScrollbarGrabHovered]   = ImVec4(0.36f, 0.46f, 0.66f, 0.90f);
-style.Colors[ImGuiCol_ScrollbarGrabActive]    = ImVec4(0.46f, 0.56f, 0.76f, 1.00f);
+    colors[ImGuiCol_Border]                 = ImVec4(0.18f, 0.18f, 0.19f, 1.00f);
+    colors[ImGuiCol_BorderShadow]           = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
 
-// Coche et sliders
-style.Colors[ImGuiCol_CheckMark]              = ImVec4(0.38f, 0.70f, 1.00f, 1.00f);
-style.Colors[ImGuiCol_SliderGrab]             = ImVec4(0.35f, 0.65f, 1.00f, 1.00f);
-style.Colors[ImGuiCol_SliderGrabActive]       = ImVec4(0.45f, 0.75f, 1.00f, 1.00f);
+    // Header (collapsibles à la UE)
+    colors[ImGuiCol_Header]                 = ImVec4(0.16f, 0.16f, 0.17f, 1.00f);
+    colors[ImGuiCol_HeaderHovered]          = ImVec4(0.22f, 0.22f, 0.24f, 1.00f);
+    colors[ImGuiCol_HeaderActive]           = ImVec4(0.25f, 0.25f, 0.27f, 1.00f);
 
-// Boutons
-style.Colors[ImGuiCol_Button]                 = ImVec4(0.16f, 0.18f, 0.22f, 1.00f);
-style.Colors[ImGuiCol_ButtonHovered]          = ImVec4(0.24f, 0.28f, 0.34f, 1.00f);
-style.Colors[ImGuiCol_ButtonActive]           = ImVec4(0.30f, 0.36f, 0.42f, 1.00f);
+    // Buttons
+    colors[ImGuiCol_Button]                 = ImVec4(0.16f, 0.16f, 0.17f, 1.00f);
+    colors[ImGuiCol_ButtonHovered]          = ImVec4(0.22f, 0.22f, 0.24f, 1.00f);
+    colors[ImGuiCol_ButtonActive]           = ImVec4(0.27f, 0.27f, 0.29f, 1.00f);
 
-// Headers (ex: TreeNode)
-style.Colors[ImGuiCol_Header]                 = ImVec4(0.20f, 0.22f, 0.26f, 1.00f);
-style.Colors[ImGuiCol_HeaderHovered]          = ImVec4(0.28f, 0.32f, 0.38f, 1.00f);
-style.Colors[ImGuiCol_HeaderActive]           = ImVec4(0.34f, 0.40f, 0.48f, 1.00f);
+    // Frames (inputs, drag, slider)
+    colors[ImGuiCol_FrameBg]                = ImVec4(0.12f, 0.12f, 0.13f, 1.00f);
+    colors[ImGuiCol_FrameBgHovered]         = ImVec4(0.16f, 0.16f, 0.17f, 1.00f);
+    colors[ImGuiCol_FrameBgActive]          = ImVec4(0.20f, 0.20f, 0.21f, 1.00f);
 
-// Séparateurs
-style.Colors[ImGuiCol_Separator]              = ImVec4(0.22f, 0.24f, 0.28f, 0.60f);
-style.Colors[ImGuiCol_SeparatorHovered]       = ImVec4(0.32f, 0.34f, 0.38f, 1.00f);
-style.Colors[ImGuiCol_SeparatorActive]        = ImVec4(0.38f, 0.40f, 0.46f, 1.00f);
+    // Tabs (UE-like)
+    colors[ImGuiCol_Tab]                    = ImVec4(0.10f, 0.10f, 0.11f, 1.00f);
+    colors[ImGuiCol_TabHovered]             = ImVec4(0.19f, 0.19f, 0.20f, 1.00f);
+    colors[ImGuiCol_TabActive]              = ImVec4(0.14f, 0.14f, 0.15f, 1.00f);
+    colors[ImGuiCol_TabUnfocused]           = ImVec4(0.10f, 0.10f, 0.11f, 1.00f);
+    colors[ImGuiCol_TabUnfocusedActive]     = ImVec4(0.14f, 0.14f, 0.15f, 1.00f);
 
-// Resize grip
-style.Colors[ImGuiCol_ResizeGrip]             = ImVec4(0.30f, 0.60f, 1.00f, 0.30f);
-style.Colors[ImGuiCol_ResizeGripHovered]      = ImVec4(0.30f, 0.60f, 1.00f, 0.60f);
-style.Colors[ImGuiCol_ResizeGripActive]       = ImVec4(0.30f, 0.60f, 1.00f, 0.90f);
+    // Sliders & grabs
+    colors[ImGuiCol_SliderGrab]             = ImVec4(0.35f, 0.35f, 0.38f, 1.00f);
+    colors[ImGuiCol_SliderGrabActive]       = ImVec4(0.45f, 0.45f, 0.47f, 1.00f);
 
-// Tabs
-style.Colors[ImGuiCol_Tab]                    = ImVec4(0.14f, 0.16f, 0.20f, 1.00f);
-style.Colors[ImGuiCol_TabHovered]             = ImVec4(0.24f, 0.28f, 0.32f, 1.00f);
-style.Colors[ImGuiCol_TabActive]              = orangeAccent;
-style.Colors[ImGuiCol_TabUnfocused]           = ImVec4(0.12f, 0.14f, 0.18f, 1.00f);
-style.Colors[ImGuiCol_TabUnfocusedActive]     = ImVec4(0.18f, 0.20f, 0.24f, 1.00f);
+    // Scrollbar
+    colors[ImGuiCol_ScrollbarBg]            = ImVec4(0.08f, 0.08f, 0.09f, 1.00f);
+    colors[ImGuiCol_ScrollbarGrab]          = ImVec4(0.16f, 0.16f, 0.17f, 1.00f);
+    colors[ImGuiCol_ScrollbarGrabHovered]   = ImVec4(0.22f, 0.22f, 0.23f, 1.00f);
+    colors[ImGuiCol_ScrollbarGrabActive]    = ImVec4(0.27f, 0.27f, 0.28f, 1.00f);
+
+    // Checkboxes / radios
+    colors[ImGuiCol_CheckMark]              = ImVec4(0.80f, 0.80f, 0.86f, 1.00f);
+
+    // Titles
+    colors[ImGuiCol_TitleBg]                = ImVec4(0.10f, 0.10f, 0.11f, 1.00f);
+    colors[ImGuiCol_TitleBgActive]          = ImVec4(0.16f, 0.16f, 0.17f, 1.00f);
+    colors[ImGuiCol_TitleBgCollapsed]       = ImVec4(0.10f, 0.10f, 0.11f, 0.70f);
+
+    // Drag-and-drop targets
+    colors[ImGuiCol_DragDropTarget]         = ImVec4(0.45f, 0.45f, 0.50f, 1.00f);
+
+    // Highlight selected rows
+    colors[ImGuiCol_Header]                 = ImVec4(0.16f, 0.16f, 0.17f, 1.00f);
 
 
 
@@ -612,94 +611,106 @@ void InterfaceEditor::EntityAnalyzerWindow()
 
 void InterfaceEditor::DisplayScriptEditor(IScript* script, int scriptIndex)
 {
-    // --- Header ---
+    // --- Header (UE-like section collapsible) ---
     std::string headerLabel = script->GetName() + std::string("###") + script->GetName() + "_" + std::to_string(scriptIndex);
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
-    ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.20f, 0.25f, 0.30f, 1.0f));
-    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.30f, 0.35f, 0.40f, 1.0f));
-    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.35f, 0.40f, 0.45f, 1.0f));
 
-    bool open = ImGui::TreeNodeEx(headerLabel.c_str(),
-                                  ImGuiTreeNodeFlags_Framed |
-                                      ImGuiTreeNodeFlags_SpanAvailWidth |
-                                      ImGuiTreeNodeFlags_DefaultOpen,
-                                  "%s", script->GetName());
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8, 6));
+    ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.16f, 0.16f, 0.17f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.20f, 0.20f, 0.22f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.23f, 0.23f, 0.25f, 1.0f));
+
+    bool open = ImGui::TreeNodeEx(
+        headerLabel.c_str(),
+        ImGuiTreeNodeFlags_Framed |
+        ImGuiTreeNodeFlags_SpanAvailWidth |
+        ImGuiTreeNodeFlags_DefaultOpen,
+        "%s", script->GetName()
+    );
 
     ImGui::PopStyleColor(3);
     ImGui::PopStyleVar();
 
-    if (open)
+    if (!open)
+        return;
+
+    // Inner indent
+    ImGui::Indent(12.0f);
+    ImGui::Spacing();
+
+    if (!script->isEntityLinked)
     {
-        ImGui::Indent(8.0f);
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.45f, 0.2f, 1.0f));
+        ImGui::Text("🎯 Only on this entity");
+        ImGui::PopStyleColor();
+        ImGui::Spacing();
+    }
+
+    // Small separator like UE attributes
+    ImGui::Separator();
+    ImGui::Spacing();
+
+    // --- Exposed Variables ---
+    int varCounter = 0;
+    auto exposedVars = script->GetExposedVariables();
+
+    for (auto& var : exposedVars)
+    {
+        ImGui::PushID(varCounter);
+
+        float fullWidth = ImGui::GetContentRegionAvail().x;
+        float labelWidth = fullWidth * 0.35f;
+        float fieldWidth = fullWidth - labelWidth - 10.0f;
+
+        // Label column
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.90f, 1.0f));
+        ImGui::Text("%s", var.name.c_str());
+        ImGui::PopStyleColor();
+
+        ImGui::SameLine(labelWidth);
+
+        // Field column
+        ImGui::SetNextItemWidth(fieldWidth);
+
+        // Unreal-like input zone background
+        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.11f, 0.11f, 0.12f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.14f, 0.14f, 0.15f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.15f, 0.15f, 0.16f, 1.0f));
+
+        switch (var.type)
+        {
+        case ExposedVariable::Type::INT:
+            ImGui::DragInt("##int", reinterpret_cast<int*>(var.ptr), 1.0f);
+            break;
+
+        case ExposedVariable::Type::FLOAT:
+            ImGui::DragFloat("##float", reinterpret_cast<float*>(var.ptr), 0.05f);
+            break;
+
+        case ExposedVariable::Type::FLOAT3:
+            ImGui::DragFloat3("##float3", reinterpret_cast<float*>(var.ptr), 0.05f);
+            break;
+
+        case ExposedVariable::Type::BOOL:
+            ImGui::Checkbox("##bool", reinterpret_cast<bool*>(var.ptr));
+            break;
+
+        case ExposedVariable::Type::STRING:
+            ImGui::InputText("##string", reinterpret_cast<char*>(var.ptr), 256);
+            break;
+        }
+
+        ImGui::PopStyleColor(3); // frame colors
+
+        ImGui::Spacing();
+        ImGui::Separator();      // thin line between properties
         ImGui::Spacing();
 
-        if (!script->isEntityLinked)
-        {
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.6f, 0.2f, 1.0f));
-            ImGui::TextDisabled("Only on this entity");
-            ImGui::PopStyleColor();
-        }
-
-        // script->OnEditorDisplay();
-
-        // --- Variable listing ---
-        int varCounter = 0;
-        auto exposedVars = script->GetExposedVariables();
-
-        for (auto &var : exposedVars)
-        {
-            std::string label = var.name + std::string("###") + script->GetName() + "_" + std::to_string(varCounter);
-            ImGui::PushID(varCounter);
-
-            // subtle background
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.15f, 0.15f, 0.18f, 1.0f));
-            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 4));
-
-            switch (var.type)
-            {
-            case ExposedVariable::Type::INT:
-                ImGui::TextColored(ImVec4(0.6f, 0.8f, 1.0f, 1.0f), "%s", var.name.c_str());
-                ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
-                ImGui::SetNextItemWidth(-1);
-                ImGui::DragInt("##int", reinterpret_cast<int *>(var.ptr), 1.0f);
-                break;
-
-            case ExposedVariable::Type::FLOAT:
-                ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s", var.name.c_str());
-                ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
-                ImGui::SetNextItemWidth(-1);
-                ImGui::DragFloat("##float", reinterpret_cast<float *>(var.ptr), 0.1f);
-                break;
-            case ExposedVariable::Type::FLOAT3:
-                ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s", var.name.c_str());
-                ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
-                ImGui::SetNextItemWidth(-1);
-                ImGui::DragFloat3("##float3", reinterpret_cast<float *>(var.ptr), 0.1f);
-                break;
-            case ExposedVariable::Type::BOOL:
-                ImGui::TextColored(ImVec4(1.0f, 0.85f, 0.4f, 1.0f), "%s", var.name.c_str());
-                ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
-                ImGui::Checkbox("##bool", reinterpret_cast<bool *>(var.ptr));
-                break;
-
-            case ExposedVariable::Type::STRING:
-                ImGui::TextColored(ImVec4(0.8f, 0.6f, 1.0f, 1.0f), "%s", var.name.c_str());
-                ImGui::SameLine(ImGui::GetWindowWidth() * 0.5f);
-                ImGui::SetNextItemWidth(-1);
-                ImGui::InputText("##str", reinterpret_cast<char *>(var.ptr), 256);
-                break;
-            }
-
-            ImGui::PopStyleVar();
-            ImGui::PopStyleColor();
-            ImGui::Spacing();
-            ImGui::PopID();
-            varCounter++;
-        }
-
-        ImGui::Unindent(8.0f);
-        ImGui::TreePop();
+        ImGui::PopID();
+        varCounter++;
     }
+
+    ImGui::Unindent(12.0f);
+    ImGui::TreePop();
 }
 
 void InterfaceEditor::GenerateSceneDataWindow()
