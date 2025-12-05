@@ -20,6 +20,7 @@
 #include "PulseEngine/core/Physics/Collider/BoxCollider.h"
 #include "PulseEngine/core/SceneManager/HierarchyNode.h"
 #include "PulseEngine/core/Entity/Entity.h"
+#include "PulseEngineEditor/InterfaceEditor/UiHelperTool/UiHelperTool.h"
 
 #include "Shader.h"
 #include "camera.h"
@@ -144,7 +145,7 @@ void EntityEditor::Render()
     }
     if(currentScript)
     {
-        InterfaceEditor::DisplayScriptEditor(currentScript, 0);
+        UiHelperTool::DisplayScriptEditor(currentScript, 0);
     }
     PulseInterfaceAPI::EndChild();
     if(PulseInterfaceAPI::Button("Add to Entity", PulseEngine::Vector2((windowSize.x * 0.3f - 20) * 0.5f, 0.0f)))
@@ -165,6 +166,7 @@ PulseInterfaceAPI::ShowContextMenu("adding",
 {
     {
         "Add Script...",
+        [](){},
         [&]() mutable
         {
             PulseInterfaceAPI::OpenContextMenu("AddingScripts");
@@ -176,17 +178,8 @@ PulseInterfaceAPI::ShowContextMenu("adding",
             //         HEADER (UE-style)
             // ─────────────────────────────────────
             {
-                ContextMenuItem header;
-                header.label = "SCRIPTS";
-                header.type  = EditorWidgetComponent::TEXT;
-                header.style["color"] = { {"r",0.55f}, {"g",0.55f}, {"b",0.58f}, {"a",1.0f} };
-                header.style["padding_y"] = 4.0f;
+                ContextMenuItem header = UiHelperTool::GenerateContextHeader("SCRIPTS");
                 scriptsContextMenu.push_back(header);
-
-                ContextMenuItem sep;
-                sep.type = EditorWidgetComponent::SEPARATOR;
-                sep.style["color"] = { {"r",0.20f}, {"g",0.20f}, {"b",0.21f}, {"a",1.0f} };
-                scriptsContextMenu.push_back(sep);
             }
 
             // ─────────────────────────────────────
@@ -223,6 +216,7 @@ PulseInterfaceAPI::ShowContextMenu("adding",
 
     {
         "Add Mesh...",
+        [](){},
         [&]() mutable
         {
             PulseInterfaceAPI::OpenContextMenu("AddingMeshes");
@@ -234,17 +228,8 @@ PulseInterfaceAPI::ShowContextMenu("adding",
             //         HEADER (UE-style)
             // ─────────────────────────────────────
             {
-                ContextMenuItem header;
-                header.label = "MESHES";
-                header.type  = EditorWidgetComponent::TEXT;
-                header.style["color"] = { {"r",0.55f}, {"g",0.55f}, {"b",0.58f}, {"a",1.0f} };
-                header.style["padding_y"] = 4.0f;
+                ContextMenuItem header = UiHelperTool::GenerateContextHeader("MESHES");
                 meshesContextMenu.push_back(header);
-
-                ContextMenuItem sep;
-                sep.type = EditorWidgetComponent::SEPARATOR;
-                sep.style["color"] = { {"r",0.20f}, {"g",0.20f}, {"b",0.21f}, {"a",1.0f} };
-                meshesContextMenu.push_back(sep);
             }
 
             // ─────────────────────────────────────
@@ -539,6 +524,7 @@ void EntityEditor::EntityScriptManager()
             {
                 {
                     "Delete",
+                    [](){},
                     [&]
                     {
                         hasOpenContextual = false;
@@ -550,6 +536,7 @@ void EntityEditor::EntityScriptManager()
                 },
                 {
                     "Cancel",
+                    [](){},
                     [&]
                     {
                         hasOpenContextual = false;

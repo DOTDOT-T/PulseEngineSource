@@ -95,7 +95,6 @@ public:
     void GenerateSceneDataWindow();
     #pragma endregion
     
-    static void DisplayScriptEditor(IScript* script, int scriptIndex);
     void Render();
     void DrawHierarchyNode(HierarchyEntity* node, Entity*& selectedEntity, std::vector<Entity*>& entitiesToDelete);
 

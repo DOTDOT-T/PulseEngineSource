@@ -154,7 +154,7 @@ if(ENABLE_ENGINE_EDITOR)
         PulseEngineEditor/InterfaceEditor/WidgetEditor/WidgetEditor.cpp
         PulseEngineEditor/InterfaceEditor/Console.cpp
         PulseEngineEditor/InterfaceEditor/Tools/EntityEditor/EntityEditor.cpp
-
+        PulseEngineEditor/InterfaceEditor/UiHelperTool/UiHelperTool.cpp
     )
 endif()
 

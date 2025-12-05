@@ -6,7 +6,8 @@
                 "${workspaceFolder}/include/**",
                 "${workspaceFolder}/src/**",
                 "${workspaceFolder}/src/PulseEngine/**",
-                "${workspaceFolder}/PulseEngineEditor/**"
+                "${workspaceFolder}/PulseEngineEditor/**",
+                "${workspaceFolder}/**"
             ],
             "compilerPath": "C:/msys64/mingw64/bin/gcc.exe",
             "cStandard": "${default}",

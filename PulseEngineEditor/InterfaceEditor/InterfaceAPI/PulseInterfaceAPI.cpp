@@ -370,17 +370,30 @@ bool PulseInterfaceAPI::ShowContextMenu(const char* popupId, const std::vector<C
     {
         for (auto item : items)
         {
-            ComponentBasedOnEnum(item);
-            if(item.output.isClicked)
+            // If this item uses a custom draw callback
+            if (item.type == EditorWidgetComponent::EMPTY && item.customDisplay)
             {
-                if (item.onClick) item.onClick();
+                item.customDisplay();
+            }
+            else
+            {
+                ComponentBasedOnEnum(item);
+            }
+
+            // Handle click
+            if (item.output.isClicked)
+            {
+                if (item.onClick)
+                    item.onClick();
             }
         }
+
         ImGui::EndPopup();
         return true;
     }
     return false;
 }
+
 
 void PulseInterfaceAPI::OpenContextMenu(const char *popupId)
 {
@@ -420,6 +433,8 @@ void PulseInterfaceAPI::ComponentBasedOnEnum(ContextMenuItem &item)
         break;
     case EditorWidgetComponent::SPACE:
         AddSpace(item.style.contains("amount") ? item.style["amount"].get<int>() : 1);
+        break;
+    case EditorWidgetComponent::EMPTY:
         break;
     }
 }

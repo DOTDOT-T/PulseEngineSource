@@ -54,6 +54,7 @@ enum EditorWidgetComponent
     MENU_ITEM,
     SEPARATOR,
     SPACE,
+    EMPTY,
 
     EDITOR_WIDGET__COMP_COUNT
 };
@@ -73,6 +74,7 @@ struct OutputContextMenuType
 struct ContextMenuItem
 {
     std::string label;
+    std::function<void()> customDisplay;
     std::function<void()> onClick;
     EditorWidgetComponent type;
     nlohmann::json style;
