@@ -337,6 +337,7 @@ void PulseInterfaceAPI::MaterialPicker(Material *&material)
             {
                 material = MaterialManager::loadMaterial(pr.second);
                 if(material) material->guid = pr.first;
+                EDITOR_INFO("material guid[" << material->guid << "]")
             }
         }
         ImGui::EndCombo();

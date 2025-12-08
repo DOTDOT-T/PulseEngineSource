@@ -42,6 +42,7 @@ class WidgetEditor;
 class Viewport;
 class Console;
 class EntityEditor;
+class MaterialEditor;
 class IScript;
 
 struct LoadingPopupData
@@ -75,6 +76,7 @@ private:
 
     WidgetEditor* wdgtEditor = nullptr;
     EntityEditor* entEditor = nullptr;
+    MaterialEditor* matEditor = nullptr;
 
     Viewport* vp = nullptr;
     Console* csl = nullptr;

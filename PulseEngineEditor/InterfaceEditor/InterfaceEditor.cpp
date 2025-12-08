@@ -31,6 +31,7 @@
 #include "PulseEngineEditor/InterfaceEditor/ViewportRenderer.h"
 #include "PulseEngineEditor/InterfaceEditor/Console.h"
 #include "PulseEngineEditor/InterfaceEditor/Tools/EntityEditor/EntityEditor.h"
+#include "PulseEngineEditor/InterfaceEditor/Tools/MaterialEditor/MaterialEditor.h"
 #include "PulseEngineEditor/InterfaceEditor/UiHelperTool/UiHelperTool.h"
 #include <glm/gtc/type_ptr.hpp>
 
@@ -112,6 +113,8 @@ InterfaceEditor::InterfaceEditor()
 
      }
      modules.push_back(new EntityEditor());
+     windowStates[modules.back()->GetName()] = false;
+     modules.push_back(new MaterialEditor());
      windowStates[modules.back()->GetName()] = false;
 
     fileClickedCallbacks.push_back(
