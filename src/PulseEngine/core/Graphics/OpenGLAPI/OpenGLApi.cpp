@@ -256,7 +256,7 @@ void OpenGLAPI::InitCubeMapFaceForRender(unsigned int *CubeMap, unsigned int fac
             GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex, *CubeMap, 0);
 }
 
-void OpenGLAPI::GenerateTextureMap(unsigned int *textureID, const std::string &filePath) const
+void OpenGLAPI::GenerateTextureMap(unsigned int *textureID, const std::string &filePath, bool hasFlip) const
 {
     glGenTextures(1, textureID);
     glBindTexture(GL_TEXTURE_2D, *textureID);
@@ -268,7 +268,7 @@ void OpenGLAPI::GenerateTextureMap(unsigned int *textureID, const std::string &f
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     int width, height, nrChannels;
-    stbi_set_flip_vertically_on_load(false); // Flip vertical selon besoin
+    stbi_set_flip_vertically_on_load(hasFlip);
     unsigned char* data = stbi_load((filePath).c_str(), &width, &height, &nrChannels, 0);
 
     if (data)
@@ -601,22 +601,29 @@ void OpenGLAPI::ActivateBackCull() const
     glCullFace(GL_BACK); 
 }
 
-void OpenGLAPI::GenerateFrameBuffer(unsigned int *previewFBO, unsigned int *previewTexture, unsigned int *rbo, unsigned int previewWidth,unsigned int previewHeight)
+void OpenGLAPI::GenerateFrameBuffer(unsigned int* previewFBO, unsigned int* previewTexture, unsigned int* rbo, unsigned int previewWidth, unsigned int previewHeight)
 {
-    if(*previewFBO == 0)
-        glGenFramebuffers(1, previewFBO);
+    // Delete old texture if it exists
+    if(*previewTexture != 0)
+        glDeleteTextures(1, previewTexture);
+
+    if(*rbo != 0)
+        glDeleteRenderbuffers(1, rbo);
+
+    if(*previewFBO != 0)
+        glDeleteFramebuffers(1, previewFBO);
+
+    glGenFramebuffers(1, previewFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, *previewFBO);
 
     glGenTextures(1, previewTexture);
-    
     glBindTexture(GL_TEXTURE_2D, *previewTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, previewWidth, previewHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *previewTexture, 0);
 
-    if(*rbo == 0)
-        glGenRenderbuffers(1, rbo);
+    glGenRenderbuffers(1, rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, *rbo);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, previewWidth, previewHeight);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, *rbo);

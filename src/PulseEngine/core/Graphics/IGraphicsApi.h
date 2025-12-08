@@ -235,7 +235,7 @@ public:
     virtual void GenerateDepthCubeMap(unsigned int* FBO, unsigned int* depthCubeMap) const = 0;
     virtual bool IsFrameBufferComplete() const = 0;
     virtual void InitCubeMapFaceForRender(unsigned int* CubeMap, unsigned int faceIndex) const = 0;
-    virtual void GenerateTextureMap(unsigned int* textureID, const std::string& filePath) const = 0;
+    virtual void GenerateTextureMap(unsigned int* textureID, const std::string& filePath, bool hasFlip) const = 0;
     virtual void GenerateShadowMap(unsigned int* shadowMap, unsigned int* FBO, int width, int height) const = 0;
     virtual void BindShadowFramebuffer(unsigned int* FBO) const = 0;
     virtual void UnbindShadowFramebuffer() const = 0;

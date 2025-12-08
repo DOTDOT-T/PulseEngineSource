@@ -68,7 +68,7 @@ public:
     void GenerateDepthCubeMap(unsigned int* FBO, unsigned int* depthCubeMap) const override;
     bool IsFrameBufferComplete() const override;
     void InitCubeMapFaceForRender(unsigned int* CubeMap, unsigned int faceIndex) const override;
-    void GenerateTextureMap(unsigned int* textureID, const std::string& filePath) const override;
+    void GenerateTextureMap(unsigned int* textureID, const std::string& filePath, bool hasFlip) const override;
     void GenerateShadowMap(unsigned int* shadowMap, unsigned int* FBO, int width, int height) const override;
     void BindShadowFramebuffer(unsigned int* FBO) const override;
     void UnbindShadowFramebuffer() const override;
