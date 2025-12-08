@@ -3,23 +3,37 @@ using namespace PulseEngine::FileSystem;
 
 FileReader::FileReader(const std::string &path)
 {
-        #ifdef ENGINE_EDITOR
+    #ifdef ENGINE_EDITOR
     EDITOR_LOG("inside engine editor")
     #else
     EDITOR_LOG("in game")
     #endif
-    filePath = path;
-    std::string definePath = std::string(ASSET_PATH) + path;
+
+    // Normalize path: remove leading "PulseEngineEditor/" or "\\" if present
+    std::string normalizedPath = path;
+    const std::string prefix1 = "PulseEngineEditor";
+    const std::string prefix2 = "\\";
+    const std::string prefix3 = "/";
+    
+    if (normalizedPath.rfind(prefix1, 0) == 0) // starts with prefix1
+        normalizedPath = normalizedPath.substr(prefix1.length());
+    else if (normalizedPath.rfind(prefix2, 0) == 0) // starts with prefix2
+        normalizedPath = normalizedPath.substr(prefix2.length());
+    else if (normalizedPath.rfind(prefix3, 0) == 0) // starts with prefix3
+        normalizedPath = normalizedPath.substr(prefix3.length());
+
+    filePath = normalizedPath;
+    std::string definePath = std::string(ASSET_PATH) + normalizedPath;
 
 #ifdef PULSE_WINDOWS
     std::filesystem::path p(definePath);
     if (!std::filesystem::exists(p))
     {
         EDITOR_LOG("File at path " + definePath + " does not exist. Creating it");
-    
-        auto parentDir = std::filesystem::path(definePath).parent_path();
+
+        auto parentDir = p.parent_path();
         std::filesystem::create_directories(parentDir);
-    
+
         std::ofstream createFile(definePath);
         createFile.close();
     }
