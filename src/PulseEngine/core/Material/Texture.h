@@ -10,7 +10,7 @@ class IGraphicsAPI;
 class PULSE_ENGINE_DLL_API Texture
 {
 public:
-    Texture(const std::string& filePath,IGraphicsAPI* graphics);
+    Texture(const std::string& filePath,IGraphicsAPI* graphics, bool hasFlip = false);
 
     void Bind(unsigned int slot = 0) const;
     void Unbind() const;

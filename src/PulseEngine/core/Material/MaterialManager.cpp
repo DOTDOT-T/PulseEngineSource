@@ -39,6 +39,11 @@ Material* MaterialManager::loadMaterial(const std::string &filePath)
     }
 
     material->SetPath(filePath);
+
+    if(jsonData.contains("flip"))
+    {
+        material->SetYflip(jsonData["flip"].get<bool>());
+    }
     
     if(jsonData.contains("name"))
     {
@@ -66,24 +71,24 @@ Material* MaterialManager::loadMaterial(const std::string &filePath)
 
     if(jsonData.contains("albedo"))
     {
-        Texture* albedoTexture = new Texture(jsonData["albedo"].get<std::string>(), PulseEngineGraphicsAPI);
+        Texture* albedoTexture = new Texture(jsonData["albedo"].get<std::string>(), PulseEngineGraphicsAPI, jsonData.value("flip", true));
         material->SetTexture("albedo", std::shared_ptr<Texture>(albedoTexture));
     }
     if(jsonData.contains("normal"))
     {
         
-        Texture* albedoTexture = new Texture(jsonData["normal"].get<std::string>(), PulseEngineGraphicsAPI);
+        Texture* albedoTexture = new Texture(jsonData["normal"].get<std::string>(), PulseEngineGraphicsAPI, jsonData.value("flip", true));
         material->SetTexture("normal", std::shared_ptr<Texture>(albedoTexture));
     }
     if(jsonData.contains("height"))
     {
         
-        Texture* albedoTexture = new Texture(jsonData["height"].get<std::string>(), PulseEngineGraphicsAPI);
+        Texture* albedoTexture = new Texture(jsonData["height"].get<std::string>(), PulseEngineGraphicsAPI, jsonData.value("flip", true));
         material->SetTexture("height", std::shared_ptr<Texture>(albedoTexture));
     }
     if(jsonData.contains("roughness"))
     {        
-        Texture* albedoTexture = new Texture(jsonData["roughness"].get<std::string>(), PulseEngineGraphicsAPI);
+        Texture* albedoTexture = new Texture(jsonData["roughness"].get<std::string>(), PulseEngineGraphicsAPI, jsonData.value("flip", true));
         material->SetTexture("roughness", std::shared_ptr<Texture>(albedoTexture));
     }
     if(jsonData.contains("guid"))

@@ -28,6 +28,7 @@ class MaterialEditor : public IModuleInterface
         Material* materialSelected;
         Shader* forRender;
         PulseEngine::Vector2 previewData;
+        std::vector<Entity*> entities;
         float distCam = 5.0f;
 };
 

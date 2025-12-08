@@ -202,10 +202,23 @@ void TopBar::UpdateBar(PulseEngineBackend* engine, InterfaceEditor* editor)
                             break;
                         case FileType::TEXTURE:
                             {
-                                std::filesystem::current_path(FileManager::workingDirectory);
-                                    std::string copyCommand = "xcopy \"" + std::string(filePath) + "\" \"" + assetPath + "\" /Y";
-                                    system(copyCommand.c_str());
+                                namespace fs = std::filesystem; 
+                                fs::current_path(FileManager::workingDirectory);
 
+                                try {
+                                    // Ensure the destination folder exists
+                                    fs::path destDir = assetPath;
+                                    if (!fs::exists(destDir.parent_path())) {
+                                        fs::create_directories(destDir.parent_path());
+                                    }
+                                
+                                    // Copy file, overwrite if it exists
+                                    fs::copy_file(filePath, destDir, fs::copy_options::overwrite_existing);
+                                
+                                } catch (const fs::filesystem_error& e) {
+                                    std::cerr << "Error copying file: " << e.what() << std::endl;
+                                }
+                                
                                 std::string fileStr = editor->currentDir.string() + "/" + name;
                                 std::string prefix = "PulseEngineEditor";
                                 DeletePrefix(fileStr, prefix, guidPath);

@@ -2,10 +2,10 @@
 #include "PulseEngine/core/Graphics/IGraphicsApi.h"
 #include "common/EditorDefines.h"
 
-Texture::Texture(const std::string &filePath, IGraphicsAPI* graphics)
+Texture::Texture(const std::string &filePath, IGraphicsAPI* graphics, bool hasFlip)
 {
     graphicsAPI = graphics;
-    graphicsAPI->GenerateTextureMap(&id, std::string(ASSET_PATH) + filePath);
+    graphicsAPI->GenerateTextureMap(&id, std::string(ASSET_PATH) + filePath, hasFlip);
     path = filePath;
 }
 

@@ -54,10 +54,15 @@ public:
     std::string GetPath() const {return path;}
     void SetPath(const std::string& path) { this->path = path; }
 
+    bool HasYFlip() {return needYFlip;}
+    bool* GetFlipPtr() {return &needYFlip;}
+    void SetYflip(bool hasFlip) {needYFlip = hasFlip;}
+
 private:
     Shader* shader;
     std::string name;
     std::string path;
+    bool needYFlip = false;
 
     std::unordered_map<std::string, std::shared_ptr<Texture>> textures; // "albedo", "normal", etc.
 };

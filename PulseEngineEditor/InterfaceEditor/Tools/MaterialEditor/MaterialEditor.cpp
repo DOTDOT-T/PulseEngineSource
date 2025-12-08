@@ -32,15 +32,28 @@ void MaterialEditor::Initialize()
     PulseInterfaceAPI::AddFunctionToFileClickedCallbacks(
         [this](const ClickedFileData &data)
         { this->NewFileClicked(data); });
-
-    cam = new Camera();
-    materialRenderer = new Entity("MaterialRenderer", PulseEngine::Vector3(0.0f, 0.0f, 0.0f), Primitive::Sphere(), materialSelected);
-    forRender = new Shader("PulseEngineEditor/EngineConfig/shaders/basic.vert", "PulseEngineEditor/EngineConfig/shaders/basic.frag", PulseEngineInstance->graphicsAPI);
+    
+    if(!cam) cam = new Camera();
+    if(!materialRenderer) materialRenderer = new Entity("MaterialRenderer", PulseEngine::Vector3(0.0f, 0.0f, 0.0f), Primitive::Sphere(), materialSelected);
+    if(!forRender) forRender = new Shader("PulseEngineEditor/EngineConfig/shaders/basic.vert", "PulseEngineEditor/EngineConfig/shaders/basic.frag", PulseEngineInstance->graphicsAPI);
+    entities = { materialRenderer };
     EDITOR_LOG("end of material interface init")
 }
 
 void MaterialEditor::Shutdown()
 {
+    if (cam) {
+        delete cam;
+        cam = nullptr;
+    }
+    if (materialRenderer) {
+        delete materialRenderer;
+        materialRenderer = nullptr;
+    }
+    if (forRender) {
+        delete forRender;
+        forRender = nullptr;
+    }
 }
 
 void MaterialEditor::Render()
@@ -113,7 +126,6 @@ void MaterialEditor::Render()
     {
         // Render material preview with camera
         ManageCamera();
-        std::vector<Entity*> entities = { materialRenderer };
         PulseInterfaceAPI::RenderCameraToInterface(&previewData, cam, "Material Editor", PulseEngine::Vector2(viewportSize.x, viewportSize.y), entities, forRender);
     }
 
@@ -131,6 +143,8 @@ void MaterialEditor::Render()
     {
         ImGui::SliderFloat("Specular", &materialSelected->specular, 0.0f, 1.0f);
 
+       ImGui::Checkbox("Has Y Flip", materialSelected->GetFlipPtr());
+
         float color[3] = { materialSelected->color.x, materialSelected->color.y, materialSelected->color.z };
         if (ImGui::ColorEdit3("Color", color))
         {
@@ -144,6 +158,7 @@ void MaterialEditor::Render()
         if (ImGui::Button("Save Material", ImVec2(-1.0f, 0.0f)))
         {
             nlohmann::json materialData;
+            materialData["flip"] = materialSelected->HasYFlip();
             materialData["name"] = materialSelected->GetName();
             materialData["guid"] = materialSelected->guid;
             materialData["specular"] = materialSelected->specular;
@@ -241,10 +256,10 @@ void MaterialEditor::TextureSelector(const std::string &textureName)
         {
             if (PulseInterfaceAPI::Selectable(pr.second, true))
             {
-                Texture *albedoTexture = new Texture(pr.second, PulseEngineInstance->graphicsAPI);
+                auto albedoTexture = std::make_shared<Texture>(pr.second, PulseEngineInstance->graphicsAPI);
                 if (albedoTexture)
                 {
-                    materialSelected->SetTexture(textureName, std::shared_ptr<Texture>(albedoTexture));
+                    materialSelected->SetTexture(textureName, albedoTexture);
                 }
             }
         }
