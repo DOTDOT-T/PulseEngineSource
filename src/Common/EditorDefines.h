@@ -130,6 +130,8 @@
     /// Logs an error message to standard error with a timestamp, editor tag, and function name.
     #define EDITOR_ERROR(msg) \
         std::cerr << "[" << GetCurrentDateTime() << "] [ERROR] [" << __FUNCTION__ << "]: " << msg << std::endl;
+    #define EDITOR_SUCCESS(msg) \
+        std::cerr << "[" << GetCurrentDateTime() << "] [SUCCESS] [" << __FUNCTION__ << "]: " << msg << std::endl;
 
 #endif // ENGINE_EDITOR
 

@@ -32,10 +32,10 @@ Entity *GuidReader::GetEntityFromGuid(std::size_t guid)
     Entity* entity = new Entity(name, PulseEngine::Vector3(0.0f), nullptr, MaterialManager::loadMaterial("Materials/cube.mat"));
 
     nlohmann::json guidCollection;
-    std::ifstream guidColFile(std::string(ASSET_PATH) +"Guid/guidCollectionEntities.puid");
+    std::ifstream guidColFile(std::string(ASSET_PATH) +"EngineConfig/Guid/guidCollectionEntities.puid");
     if(!guidColFile.is_open())
     {
-        EDITOR_ERROR("Guid collection file for entities couldn't be open : " + std::string(ASSET_PATH) +"Guid/guidCollectionEntities.puid")
+        EDITOR_ERROR("Guid collection file for entities couldn't be open : " + std::string(ASSET_PATH) +"EngineConfig/Guid/guidCollectionEntities.puid")
         delete entity;
         return nullptr;
     }
