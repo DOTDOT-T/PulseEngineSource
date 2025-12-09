@@ -66,7 +66,6 @@ void SceneLoader::LoadScene(const std::string &mapName, PulseEngineBackend* back
             po->SetMuid(muid);
             po->Serialize(dar);
 
-
             backend->entities.push_back(po);
             SceneManager::GetInstance()->InsertEntity(po);
             EDITOR_LOG("Spawning " << po->ToString() << " transform -> " << po->transform.ToString())
@@ -362,7 +361,13 @@ void SceneLoader::SaveSceneToFile(const std::string &mapName, const std::string&
     //~second implementation with pulseobject for test
 
     DiskArchive dar(mapPath, Archive::Mode::Saving);
-    int entitiesSize = (int)backend->entities.size();
+    int entitiesSize = 0;
+    for(Entity* en : backend->entities)
+    {
+        if(dynamic_cast<LightData*>(en) != nullptr) continue;
+        entitiesSize++;
+    }
+    
     std::string map = mapName;
     int guid;
     dar.Serialize("sceneName", map);
@@ -370,6 +375,7 @@ void SceneLoader::SaveSceneToFile(const std::string &mapName, const std::string&
     dar.Serialize("entitiesCount", entitiesSize);
     for(Entity* en : backend->entities)
     {
+        if(dynamic_cast<LightData*>(en) != nullptr) continue;
         std::string typeName(en->GetTypeName());
         std::uint64_t guid = en->GetGuid();
         std::uint64_t muid = en->GetMuid();
