@@ -125,10 +125,10 @@ void BoxCollider::OnUpdate()
 
     PulseEngine::Vector3 acceleration = totalForce / mass;
 
-    velocity += acceleration * PulseEngineInstance->GetDeltaTime();
+    velocity += acceleration * 1/60.0f;
 
 
-    // velocity *= (1.0f - std::min(0.99f, 0.05f + 0.85f * othersCollider.size()) * PulseEngineInstance->GetDeltaTime()); 
+    // velocity *= (1.0f - std::min(0.99f, 0.05f + 0.85f * othersCollider.size()) * 1/60.0f); 
 
     if (othersCollider.size() > 0)
     {
@@ -146,28 +146,28 @@ void BoxCollider::OnUpdate()
             tangent.Normalized();
 
             float mu = 0.8f;
-            float frictionMag = mu * 9.81f * PulseEngineInstance->GetDeltaTime();
+            float frictionMag = mu * 9.81f * 1/60.0f;
 
             frictionMag = std::min(frictionMag, tangentLen);
 
             velocity -= tangent * frictionMag;
         }
     }
-    velocity -= (velocity *0.1)*PulseEngineInstance->GetDeltaTime();
+    velocity -= (velocity *0.1)*1/60.0f;
     PulseEngine::Vector3 localInertia = PulseEngine::Vector3(
     1.0f / 12.0f * mass * (size.y*size.y + size.z*size.z),
     1.0f / 12.0f * mass * (size.x*size.x + size.z*size.z),
     1.0f / 12.0f * mass * (size.x*size.x + size.y*size.y)
     );
 
-    angularVelocity.x -= angularVelocity.x * PulseEngineInstance->GetDeltaTime() * 0.5f / localInertia.x;
-    angularVelocity.y -= angularVelocity.y * PulseEngineInstance->GetDeltaTime() * 0.5f / localInertia.y;
-    angularVelocity.z -= angularVelocity.z * PulseEngineInstance->GetDeltaTime() * 0.5f / localInertia.z;
+    angularVelocity.x -= angularVelocity.x * 1/60.0f * 0.5f / localInertia.x;
+    angularVelocity.y -= angularVelocity.y * 1/60.0f * 0.5f / localInertia.y;
+    angularVelocity.z -= angularVelocity.z * 1/60.0f * 0.5f / localInertia.z;
 
-    SetPosition(GetPosition() + velocity * PulseEngineInstance->GetDeltaTime());
+    SetPosition(GetPosition() + velocity * 1/60.0f);
 
 
-    owner->GetTransform()->AddWorldRotation(angularVelocity * (180.0f / M_PI) * PulseEngineInstance->GetDeltaTime());
+    owner->GetTransform()->AddWorldRotation(angularVelocity * (180.0f / M_PI) * 1/60.0f);
 
     force = PulseEngine::Vector3(0, 0, 0);
 }
