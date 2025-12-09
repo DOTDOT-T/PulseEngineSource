@@ -6,6 +6,7 @@
 #include "PulseEngine/core/Entity/Entity.h"
 #include "PulseEngine/CustomScripts/IScripts.h"
 
+
 class MaterialApi;
 
 namespace PulseEngine
@@ -106,6 +107,12 @@ namespace PulseEngine
             void AddScript(IScript* script) {entity->AddScript(script); }
 
             MaterialApi* GetMaterialApi();
+
+            void SetColliderSize(const PulseEngine::Vector3& size);
+
+            void SetColliderMass(float mass);
+
+            void SetColliderBody(int pb);
         
     };
 }

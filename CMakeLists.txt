@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+
 option(ENABLE_ENGINE_EDITOR "Enable Engine Editor features" ON)
 
 include(FetchContent)

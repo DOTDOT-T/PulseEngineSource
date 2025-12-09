@@ -164,10 +164,11 @@ void SceneManager::RenderScene()
 
         // drawable->DrawEntity();
         drawable->DrawMeshWithShader(shader);
-                drawable->collider->lineTraceShader->Use();
-                drawable->collider->lineTraceShader->SetMat4("view", PulseEngineInstance->view);
-                drawable->collider->lineTraceShader->SetMat4("projection", PulseEngineInstance->projection);
-                drawable->collider->OnRender();
+        drawable->collider->lineTraceShader->Use();
+        drawable->collider->lineTraceShader->SetMat4("view", PulseEngineInstance->view);
+        drawable->collider->lineTraceShader->SetMat4("projection", PulseEngineInstance->projection);
+        
+        drawable->collider->OnRender();
 
         ent->runtimeScripts->ExecuteMethodOnEachScript("Render", args);
     }

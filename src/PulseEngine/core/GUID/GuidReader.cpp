@@ -153,9 +153,10 @@ Entity* GuidReader::GetEntityFromJson(nlohmann::json& entityData, Entity* entity
     // ------------------------------
     if (entityData.contains("Scripts"))
     {
-        for (const auto& script : entityData["Scripts"])
+        for (auto script : entityData["Scripts"])
         {
-            IScript* scriptLoaded = ScriptsLoader::GetScriptFromCallName(script["Name"]);
+            EDITOR_LOG("Loading " << script["Name"].get<std::string>())
+            IScript* scriptLoaded = ScriptsLoader::GetScriptFromCallName(script["Name"].get<std::string>());
             if (!scriptLoaded)
                 continue;
 

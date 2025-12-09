@@ -93,6 +93,7 @@ void TopBar::UpdateBar(PulseEngineBackend* engine, InterfaceEditor* editor)
 
                 SceneLoader::SaveSceneToFile(PulseEngineInstance->actualMapName, PulseEngineInstance->actualMapPath, PulseEngineInstance);
                 PulseEngineInstance->ClearScene();
+                SceneManager::GetInstance()->CleanHierarchyFrom(SceneManager::GetInstance()->GetRoot());
                 CompileUserScripts(editor, "CustomScripts.dll");
                 ScriptsLoader::LoadDLL();
                 SceneLoader::LoadScene(PulseEngineInstance->actualMapPath, PulseEngineInstance);

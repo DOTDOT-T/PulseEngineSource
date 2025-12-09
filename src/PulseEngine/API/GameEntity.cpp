@@ -36,10 +36,10 @@ Entity *PulseEngine::GameEntity::Instantiate(const std::string &path, PulseEngin
         std::size_t muid = GenerateGUIDFromPathAndMap(path, PulseEngineInstance->actualMapPath + std::to_string(std::time(nullptr)));
         entity->SetMuid(muid);
         // entity->SetMaterial(MaterialManager::loadMaterial("Materials/cube.mat"));
-        for(IScript* script : entity->GetScripts())
-        {
-            script->OnStart();
-        }
+        // for(IScript* script : entity->GetScripts())
+        // {
+        //     script->OnStart();
+        // }
         PulseEngineInstance->entities.push_back(entity);
         SceneManager::GetInstance()->InsertEntity(entity);
     }

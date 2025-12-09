@@ -344,11 +344,6 @@ void PulseEngineBackend::Shutdown()
 
 void PulseEngineBackend::ClearScene()
 {
-    for(auto ent : entities)
-    {
-        delete ent;
-    }
-    
     entities.clear();
 }
 void PulseEngineBackend::DeleteEntity(Entity *entity)
