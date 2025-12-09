@@ -258,7 +258,7 @@ void NewFileManager::GenerateCppAndHeaderFiles(const std::filesystem::path & cur
                         ofs << "{\n";
                         ofs << "    // Your render code here\n";
                         ofs << "}\n\n";
-                        ofs << "void " << fileNameStr << "::OnEditorDisplay()()\n";
+                        ofs << "void " << fileNameStr << "::OnEditorDisplay()\n";
                         ofs << "{\n";
                         ofs << "    // Your render code for editor here\n";
                         ofs << "}\n\n";

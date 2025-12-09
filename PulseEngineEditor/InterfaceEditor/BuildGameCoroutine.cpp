@@ -63,12 +63,12 @@ bool BuildGameCoroutine::Update(float deltaTime)
             case Step4:
                 if (timer >= 0.5f)
                 {
-                    editor->ChangePorgressIn("Building Game", 0.8f);
-                    editor->ChangeProgressContent([]() {
-                        ImGui::Text("Generating executable for window...");
-                    }, "Building Game");
-                    topbar->GenerateExecutableForWindow(engine);
-                    EDITOR_LOG("Step 4 done\n");
+                    // editor->ChangePorgressIn("Building Game", 0.8f);
+                    // editor->ChangeProgressContent([]() {
+                    //     ImGui::Text("Generating executable for window...");
+                    // }, "Building Game");
+                    // topbar->GenerateExecutableForWindow(engine);
+                    // EDITOR_LOG("Step 4 done\n");
                     currentStep = Compile;
                     timer = 0;
                 }

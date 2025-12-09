@@ -386,40 +386,35 @@ void TopBar::BuildGameToWindow(PulseEngineBackend *engine, InterfaceEditor* edit
     engine->coroutineManager->Add(std::move(buildCoroutine));
 }
 
-void TopBar::CompileUserScripts(InterfaceEditor * editor, std::string output )
+void TopBar::CompileUserScripts(InterfaceEditor* editor, std::string output)
 {
-                    //Lets work on the custom files scripts now
-                std::string compiler = "g++";
-                std::string stdVersion = "-std=c++17";
-                std::string defines = "-DBUILDING_DLL -DPULSE_GRAPHIC_OPENGL -DPULSE_WINDOWS";
-                std::string flags = "-shared -Wall -g -mconsole " + defines;
-                std::string includeDirs = R"(-IUserScripts -Idist\src\PulseEngine\CustomScripts -Idist\include -Idist\src -Idist/src/dllexport -Ldist)";
-                std::string libs = "-Ldist -l:libPulseLib.InputSystem.a -l:libPulseEngine.CoreBackend.a -l:libPulseEngine.Registery.a -l:libPulseEngine.FileSystem.a -l:libPulseEngine.Renderer.a -lws2_32 -lwinmm -lmswsock";
+    const std::string srcDir = ".";
+    const std::string buildDir = "buildUserScriptDll/";
 
-                // Gather source files
-                std::string sources;
-                for (const auto& entry : std::filesystem::directory_iterator("PulseEngineEditor"))
-                {
-                    AnalyzeEntry(entry, sources);
-                }
-            
-                // Final compilation command
-                std::string compileCommand = compiler + " " + stdVersion +
-                                             " -o " + output + " " + sources +
-                                             includeDirs + " " + libs + " " + flags;
-        
-            
-                int result = system(compileCommand.c_str());
+    // 1. Run CMake configure step
+    std::string configureCmd = "cmake -S " + srcDir + " -B " + buildDir;
+    int resConfig = system(configureCmd.c_str());
 
-                editor->ChangePorgressIn("Building Game", 1.0f);
-                if (result != 0)
-                {
-                    EDITOR_ERROR("Compilation failed.\n");
-                }
-                else
-                {
-                    EDITOR_LOG("DLL generated: " << output << "\n");
-                }
+    if (resConfig != 0)
+    {
+        EDITOR_ERROR("CMake configuration failed.\n");
+        return;
+    }
+
+    // 2. Build the DLL
+    std::string buildCmd = "cmake --build " + buildDir + " --config Release";
+    int resBuild = system(buildCmd.c_str());
+
+    editor->ChangePorgressIn("Building Game", 1.0f);
+
+    if (resBuild != 0)
+    {
+        EDITOR_ERROR("Build failed.\n");
+    }
+    else
+    {
+        EDITOR_LOG("DLL generated: " << output << "\n");
+    }
 }
 
 void TopBar::AnalyzeEntry(const std::filesystem::directory_entry & entry, std::string &sources)
