@@ -189,7 +189,7 @@ Entity* GuidReader::GetEntityFromJson(nlohmann::json& entityData, Entity* entity
         {
             if (material.first == entityData["Material"].get<std::string>())
             {
-                EDITOR_SUCCESS("Material guid[" << material.first << "] found.")
+                // EDITOR_SUCCESS("Material guid[" << material.first << "] found.")
                 mat = MaterialManager::loadMaterial(material.second);
                 break;
             }

@@ -403,7 +403,7 @@ void TopBar::CompileUserScripts(InterfaceEditor* editor, std::string output)
     }
 
     // 2. Build the DLL
-    std::string buildCmd = "cmake --build " + buildDir + " --config Release";
+    std::string buildCmd = "cmake --build " + buildDir + " --config Debug";
     int resBuild = system(buildCmd.c_str());
 
     editor->ChangePorgressIn("Building Game", 1.0f);

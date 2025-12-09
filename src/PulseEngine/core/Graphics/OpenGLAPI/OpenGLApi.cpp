@@ -755,6 +755,12 @@ unsigned int OpenGLAPI::CompileShader(unsigned int type, const char* source)
 
 unsigned int OpenGLAPI::LinkProgram(unsigned int vertexShader, unsigned int fragmentShader)
 {
+    if (vertexShader == 0 || fragmentShader == 0) 
+    {
+    EDITOR_ERROR("Invalid shader handle passed to LinkProgram()")
+    return -1;
+    }
+
     unsigned int program = glCreateProgram();
     glAttachShader(program, vertexShader);
     glAttachShader(program, fragmentShader);
