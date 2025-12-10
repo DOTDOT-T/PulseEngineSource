@@ -35,6 +35,8 @@ namespace PulseEngine
         static std::vector<Entity*> GetAllEntitiesByTag(const std::string& tag);
 
         static std::vector<Entity*> GetAllEntitiesContainingName(const std::string& name);
+
+        static CameraAPI* GetActiveCamera();
     };
 }
 

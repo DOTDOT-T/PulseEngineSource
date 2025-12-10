@@ -97,6 +97,8 @@ set(PE_ALL_SOURCES
     src/PulseEngine/core/Graphics/OpenGLAPI/TextRendererGl.cpp
     src/PulseEngine/core/Graphics/stb_truetype_impl.cpp
     src/glad.c
+    src/PulseEngine/API/CameraAPI/CameraAPI.cpp
+    src/PulseEngine/API/InputAPI/InputAPI.cpp
 )
 
 # --- ImGui + TextEditor conditionnel ---

@@ -214,7 +214,10 @@ namespace PulseEngine
             }
         }
     };
-
+    /**
+     * @brief vector of 4 int
+     * 
+     */
     struct iVector4
     {
         int x, y, z, a;

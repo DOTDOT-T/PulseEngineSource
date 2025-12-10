@@ -77,3 +77,8 @@ std::vector<Entity*> PulseEngine::GameEntity::GetAllEntitiesContainingName(const
     }
     return entitiesWithTag;
 }
+
+CameraAPI *PulseEngine::GameEntity::GetActiveCamera()
+{
+    return new CameraAPI(PulseEngineInstance->GetActiveCamera());
+}

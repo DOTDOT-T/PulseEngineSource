@@ -50,8 +50,8 @@ public:
     void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true);
     void ProcessMouseScroll(float yoffset);
 
-private:
     void UpdateCameraVectors();
+private:
 };
 
 #endif

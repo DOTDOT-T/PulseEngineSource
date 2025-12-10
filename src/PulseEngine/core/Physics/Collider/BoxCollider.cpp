@@ -215,7 +215,7 @@ PulseEngine::Vector3 BoxCollider::GetOrientedSize(const PulseEngine::Vector3& ro
         PulseEngine::Mat3 rx = PulseEngine::Mat3::RotationX(radX);
         PulseEngine::Mat3 ry = PulseEngine::Mat3::RotationY(radY);
         PulseEngine::Mat3 rz = PulseEngine::Mat3::RotationZ(radZ);
-        PulseEngine::Mat3 R = rx * ry * rz;
+        PulseEngine::Mat3 R = rz * ry * rx;
         PulseEngine::Vector3 a0 = R * PulseEngine::Vector3(1,0,0);
         PulseEngine::Vector3 a1 = R * PulseEngine::Vector3(0,1,0);
         PulseEngine::Vector3 a2 = R * PulseEngine::Vector3(0,0,1);
@@ -254,9 +254,9 @@ bool BoxCollider::CheckPositionCollision(const PulseEngine::Vector3& pos)
     // Convert world point to local OBB space
 
     PulseEngine::Mat4 rotationMatrix = PulseEngine::MathUtils::Matrix::Identity();
-    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateZ(rotationMatrix, PulseEngine::MathUtils::ToRadians(-rotation->z));
-    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateY(rotationMatrix, PulseEngine::MathUtils::ToRadians(-rotation->y));
-    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateX(rotationMatrix, PulseEngine::MathUtils::ToRadians(-rotation->x));
+    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateZ(rotationMatrix, PulseEngine::MathUtils::ToRadians(rotation->z));
+    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateY(rotationMatrix, PulseEngine::MathUtils::ToRadians(rotation->y));
+    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateX(rotationMatrix, PulseEngine::MathUtils::ToRadians(rotation->x));
 
     PulseEngine::Vector3 local = PulseEngine::MathUtils::Matrix::Transpose(rotationMatrix) * (pos - *position);
 
@@ -467,14 +467,14 @@ PulseEngine::Vector3 BoxCollider::GetHalfSize() const
 
 PulseEngine::Vector3 BoxCollider::GetAxis(int index) const
 {
-    float radX = (-rotation->x) * (M_PI / 180.0f);
-    float radY = (-rotation->y) * (M_PI / 180.0f);
-    float radZ = (-rotation->z) * (M_PI / 180.0f);
+    float radX = (rotation->x) * (M_PI / 180.0f);
+    float radY = (rotation->y) * (M_PI / 180.0f);
+    float radZ = (rotation->z) * (M_PI / 180.0f);
 
     PulseEngine::Mat4 rotationMatrix = PulseEngine::MathUtils::Matrix::Identity();
-    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateZ(rotationMatrix, PulseEngine::MathUtils::ToRadians(-rotation->z));
-    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateY(rotationMatrix, PulseEngine::MathUtils::ToRadians(-rotation->y));
-    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateX(rotationMatrix, PulseEngine::MathUtils::ToRadians(-rotation->x));
+    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateZ(rotationMatrix, PulseEngine::MathUtils::ToRadians(rotation->z));
+    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateY(rotationMatrix, PulseEngine::MathUtils::ToRadians(rotation->y));
+    rotationMatrix = PulseEngine::MathUtils::Matrix::RotateX(rotationMatrix, PulseEngine::MathUtils::ToRadians(rotation->x));
     
 
     switch (index)
@@ -532,8 +532,10 @@ bool BoxCollider::SAT_MinimumTranslation(const BoxCollider& B, PulseEngine::Vect
         float ra = halfA[i];
         float rb = halfB.x * AbsR[i][0] + halfB.y * AbsR[i][1] + halfB.z * AbsR[i][2];
         float dist = std::abs(t[i]);
-        float overlap = ra + rb - dist;
+        const float EPSILON = 0.01f; // ajustable selon ton échelle
+        float overlap = ra + rb - dist + EPSILON;
         if (overlap < 0.0f) return false;
+
         if (overlap < minPen) { minPen = overlap; minAxis = Aaxes[i]; }
         return true;
     };
@@ -562,7 +564,7 @@ bool BoxCollider::SAT_MinimumTranslation(const BoxCollider& B, PulseEngine::Vect
             // axis in world space
             PulseEngine::Vector3 axis = PulseEngine::Cross(Aaxes[i], Baxes[j]);
             float axisLen2 = axis.x*axis.x + axis.y*axis.y + axis.z*axis.z;
-            float threshold = 1e-6f * (halfA.GetMagnitude() + halfB.GetMagnitude());
+            float threshold = 1e-3f * (halfA.GetMagnitude() + halfB.GetMagnitude());
             if (axisLen2 < threshold*threshold) continue;
 
             // Express axis in A-frame for projection of t

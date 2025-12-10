@@ -16,6 +16,7 @@
 
 #include "PulseEngine/core/PulseEngineBackend.h"
 #include "PulseEngine/API/EntityApi/EntityApi.h"
+#include "PulseEngine/API/CameraAPI/CameraAPI.h"
 
 class Entity;
 

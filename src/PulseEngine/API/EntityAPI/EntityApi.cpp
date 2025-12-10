@@ -26,3 +26,18 @@ void PulseEngine::EntityApi::SetColliderBody(int pb)
 {
     entity->collider->physicBody = pb;
 }
+
+void PulseEngine::EntityApi::AddVelocity(const PulseEngine::Vector3 &a)
+{
+    entity->collider->velocity += a;
+}
+
+bool PulseEngine::EntityApi::IsVelocityLowerThan(float value)
+{
+    return entity->collider->velocity.GetMagnitude() < value;
+}
+
+void PulseEngine::EntityApi::AddAngularVelocity(const PulseEngine::Vector3 & a)
+{
+    entity->collider->angularVelocity += a;
+}

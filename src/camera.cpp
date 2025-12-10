@@ -1,16 +1,23 @@
 #include <cmath>
+#include <algorithm>
 #include "camera.h"
+
 
 void Camera::LookAt(const PulseEngine::Vector3& target)
 {
     PulseEngine::Vector3 direction = (target - Position).Normalized();
-    Front = direction;
-    // Calculate yaw and pitch from direction
+
     const float RAD2DEG = 180.0f / 3.14159265358979323846f;
-    Yaw = atan2(direction.z, direction.x) * RAD2DEG - 90.0f;
-    Pitch = asin(direction.y) * RAD2DEG;
+
+    Yaw   = std::atan2(direction.z, direction.x) * RAD2DEG;
+    Pitch = std::asin(direction.y) * RAD2DEG;
+
+    Pitch = std::clamp(Pitch, -89.0f, 89.0f);
+
     UpdateCameraVectors();
 }
+
+
 
 Camera::Camera(PulseEngine::Vector3 position, PulseEngine::Vector3 up, float yaw, float pitch)
     : Front(PulseEngine::Vector3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)

@@ -61,6 +61,31 @@ namespace PulseEngine
             return Quaternion(w, -x, -y, -z);
         }
 
+        
+        Vector3 ToEuler() const
+        {
+            Vector3 euler;
+        
+            // Pitch (x-axis rotation)
+            float sinp = 2.0f * (w * x + y * z);
+            float cosp = 1.0f - 2.0f * (x * x + y * y);
+            euler.x = std::atan2(sinp, cosp);
+        
+            // Yaw (y-axis rotation)
+            float siny = 2.0f * (w * y - z * x);
+            if (std::abs(siny) >= 1)
+                euler.y = std::copysign(3.1415f / 2, siny); // use 90° if out of range
+            else
+                euler.y = std::asin(siny);
+        
+            // Roll (z-axis rotation)
+            float sinr = 2.0f * (w * z + x * y);
+            float cosr = 1.0f - 2.0f * (y * y + z * z);
+            euler.z = std::atan2(sinr, cosr);
+        
+            return euler;
+        }
+
         // Inverse
         Quaternion Inverse() const
         {

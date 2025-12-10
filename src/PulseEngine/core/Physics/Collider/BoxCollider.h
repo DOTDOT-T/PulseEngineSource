@@ -148,6 +148,7 @@ public:
     bool constraintRotation[3] = {false, false ,false};
     bool constraintLocation[3] = {false, false, false};
 
+    PulseEngine::Vector3 angularVelocity = PulseEngine::Vector3(0.0f);
 private:
     PulseEngine::Vector3* position;    ///< Pointer to the position vector.
     PulseEngine::Vector3* rotation;    ///< Pointer to the rotation vector.
@@ -159,7 +160,6 @@ private:
     std::vector<unsigned int> meshIndices;
     
     PulseEngine::Color boxColor = PulseEngine::Color(1.0f, 0.0f, 0.0f);
-    PulseEngine::Vector3 angularVelocity = PulseEngine::Vector3(0.0f);
 
     // PulseEngine::Vector3 decalPosition; 
 };
