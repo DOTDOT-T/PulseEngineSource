@@ -5,6 +5,7 @@
 #include "json.hpp"
 #include "PulseEngine/core/GUID/GuidCollection.h"
 #include "PulseEngine/core/Material/Texture.h"
+#include "PulseEngine/core/Material/ShaderManager.h"
 
 std::unordered_map<std::string, Material*> MaterialManager::materials;
 
@@ -32,7 +33,9 @@ Material* MaterialManager::loadMaterial(const std::string &filePath)
 
     
     if(materials[jsonData["name"]]) return materials[jsonData["name"]];
-    Material* material = new Material("new material", new Shader(std::string(ASSET_PATH) + "EngineConfig/shaders/basic.vert", std::string(ASSET_PATH) + "EngineConfig/shaders/basic.frag", PulseEngineGraphicsAPI));
+
+    Shader* shader = ShaderManager::GetInstance().GetShaderInstance(jsonData.value("shader", "0"));
+    Material* material = new Material("new material", shader);
     if (!file.is_open())
     {
         throw std::runtime_error("Failed to open material file: " + filePath);

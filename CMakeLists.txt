@@ -99,6 +99,7 @@ set(PE_ALL_SOURCES
     src/glad.c
     src/PulseEngine/API/CameraAPI/CameraAPI.cpp
     src/PulseEngine/API/InputAPI/InputAPI.cpp
+    src/PulseEngine/core/Material/ShaderManager.cpp
 )
 
 # --- ImGui + TextEditor conditionnel ---

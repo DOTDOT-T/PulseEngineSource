@@ -15,6 +15,7 @@
 #include "camera.h"
 #include <windows.h>
 #include "json.hpp"
+#include "PulseEngine/core/Material/ShaderManager.h"
 
 std::string MaterialEditor::GetName() const
 {
@@ -145,11 +146,13 @@ void MaterialEditor::Render()
 
        ImGui::Checkbox("Has Y Flip", materialSelected->GetFlipPtr());
 
-        float color[3] = { materialSelected->color.x, materialSelected->color.y, materialSelected->color.z };
-        if (ImGui::ColorEdit3("Color", color))
-        {
-            materialSelected->color = PulseEngine::Vector3(color[0], color[1], color[2]);
-        }
+       ShaderSelector();
+
+       float color[3] = {materialSelected->color.x, materialSelected->color.y, materialSelected->color.z};
+       if (ImGui::ColorEdit3("Color", color))
+       {
+           materialSelected->color = PulseEngine::Vector3(color[0], color[1], color[2]);
+       }
 
         std::vector<std::string> textureTypes = { "albedo", "normal", "roughness" };
         for (const auto& type : textureTypes)
@@ -163,7 +166,7 @@ void MaterialEditor::Render()
             materialData["guid"] = materialSelected->guid;
             materialData["specular"] = materialSelected->specular;
             materialData["color"] = { materialSelected->color.x, materialSelected->color.y, materialSelected->color.z };
-
+            materialData["shader"] = materialSelected->GetShader()->guid;
             for (const auto& tex : materialSelected->GetAllTextures())
                 if (tex.second && !tex.second->GetPath().empty())
                     materialData[tex.first] = tex.second->GetPath();
@@ -180,6 +183,23 @@ void MaterialEditor::Render()
     ImGui::EndChild(); // properties
 
     ImGui::End(); // Material Editor window
+}
+
+void MaterialEditor::ShaderSelector()
+{
+    PulseInterfaceAPI::BeginChild("Vertex shader Selector", PulseEngine::Vector2(0.0f, 160.0f), true);
+    if (PulseInterfaceAPI::BeginCombo(materialSelected->GetShader()->shaderName + " Texture", materialSelected->GetShader()->shaderName))
+    {
+        for (const auto pr : ShaderManager::GetInstance().GetAllShaders())
+        {
+            if (ImGui::Selectable(pr.second.name.c_str(), pr.second.name == materialSelected->GetShader()->shaderName, ImGuiSelectableFlags_SpanAvailWidth, ImVec2(0.0f, 25.0f)))
+            {
+                materialSelected->SetShader(ShaderManager::GetInstance().GetShaderInstance(pr.first));
+            }
+        }
+        PulseInterfaceAPI::EndCombo();
+    }
+    PulseInterfaceAPI::EndChild();
 }
 
 void MaterialEditor::NotSelectedDesign()

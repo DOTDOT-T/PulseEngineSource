@@ -17,6 +17,7 @@ class MaterialEditor : public IModuleInterface
         void Initialize() override;
         void Shutdown() override;
         void Render() override;
+        void ShaderSelector();
         void NotSelectedDesign();
         void TextureSelector(const std::string &textureName);
         void ManageCamera();

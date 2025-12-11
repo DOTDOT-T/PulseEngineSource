@@ -19,8 +19,16 @@ GuidCollection::GuidCollection(const std::string &collectionPath)
     EDITOR_LOG("Loading GUID collection: " + collectionPath);
     for (auto& [key, value] : jsonData.items())
     {
-        files[key] = value;
-        EDITOR_LOG("Loaded GUID: " + key + " -> " + value.get<std::string>());
+        if(value.is_string())
+        {
+            files[key] = value;
+            EDITOR_LOG("Loaded GUID: " + key + " -> " + value.get<std::string>());
+        }
+        else
+        {
+            files[key] = value.dump();
+            EDITOR_LOG("Loaded GUID: " + key + " -> " + value.dump());
+        }
     }
 }
 

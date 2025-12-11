@@ -3,7 +3,8 @@
 #include "PulseEngine/core/Graphics/IGraphicsApi.h"
 
 
-Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath, IGraphicsAPI* graphicApi) {
+Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath, IGraphicsAPI* graphicApi)
+{
     // Charger et compiler les shaders
     graphics = graphicApi;
     EDITOR_LOG("Loading shader from: " << vertexPath << " and " << fragmentPath)
@@ -18,6 +19,11 @@ Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath, c
     EDITOR_LOG("Loading shader from: " << vertexPath << " and " << fragmentPath)
     shaderID = graphics->CreateShader(vertexPath, fragmentPath, geometryPath);
     EDITOR_LOG("Shader program linked with ID: " << shaderID)
+}
+
+Shader::~Shader()
+{
+    // TODO : delete shader in the graphic API
 }
 
 void Shader::Use() const

@@ -16,6 +16,8 @@ class PULSE_ENGINE_DLL_API Shader {
 public:
     Shader(const std::string& vertexPath, const std::string& fragmentPath, IGraphicsAPI* graphicApi);
     Shader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath, IGraphicsAPI* graphicApi);
+    ~Shader();
+    
     unsigned int getProgramID() const { return shaderID; }
     void Use() const;
     void SetMat4(const std::string& name, const PulseEngine::Mat4& mat) const;
@@ -28,6 +30,9 @@ public:
 
 
     IGraphicsAPI* graphics = nullptr;
+
+    std::string shaderName;
+    std::string guid;
 private:
     unsigned int shaderID;
 
