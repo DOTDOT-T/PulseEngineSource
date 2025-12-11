@@ -10,6 +10,34 @@ option(ENABLE_ENGINE_EDITOR "Enable Engine Editor features" ON)
 
 include(FetchContent)
 
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Distribution")
+
+set(DOUBLE_PRECISION OFF)
+set(GENERATE_DEBUG_SYMBOLS ON)
+set(OVERRIDE_CXX_FLAGS ON)
+set(CROSS_PLATFORM_DETERMINISTIC OFF)
+set(INTERPROCEDURAL_OPTIMIZATION ON)
+set(FLOATING_POINT_EXCEPTIONS_ENABLED OFF)
+set(CPP_EXCEPTIONS_ENABLED OFF)
+set(CPP_RTTI_ENABLED OFF)
+set(OBJECT_LAYER_BITS 16)
+set(USE_SSE4_1 ON)
+set(USE_SSE4_2 ON)
+set(USE_AVX ON)
+set(USE_AVX2 ON)
+set(USE_AVX512 OFF)
+set(USE_LZCNT ON)
+set(USE_TZCNT ON)
+set(USE_F16C ON)
+set(USE_FMADD ON)
+set(JOLT_BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
+
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)          # statique
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")  # runtime statique
 # --- External -------------------------------------
 FetchContent_Declare(
     glfw
@@ -17,6 +45,29 @@ FetchContent_Declare(
     GIT_TAG 3.3.10
 )
 FetchContent_MakeAvailable(glfw)
+
+FetchContent_Declare(
+        JoltPhysics
+        GIT_REPOSITORY "https://github.com/jrouwe/JoltPhysics"
+        GIT_TAG "v5.4.0"
+		SOURCE_SUBDIR "Build"
+)
+FetchContent_MakeAvailable(JoltPhysics)
+
+
+if (MSVC)
+
+	set(CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE "x64")
+
+
+	if (USE_STATIC_MSVC_RUNTIME_LIBRARY)
+		set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+	endif()
+
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /Gm- /MP /nologo /diagnostics:classic /FC /fp:except- /Zc:inline")
+endif()
+
+set(CMAKE_EXE_LINKER_FLAGS_DISTRIBUTION "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 
 
 # ===========================================================
@@ -100,6 +151,7 @@ set(PE_ALL_SOURCES
     src/PulseEngine/API/CameraAPI/CameraAPI.cpp
     src/PulseEngine/API/InputAPI/InputAPI.cpp
     src/PulseEngine/core/Material/ShaderManager.cpp
+    src/PulseEngine/core/Physics/PhysicManager.cpp
 )
 
 # --- ImGui + TextEditor conditionnel ---
@@ -185,7 +237,9 @@ set(PE_ALL_INCLUDES
 
 add_library(PulseEngineAll SHARED ${PE_ALL_SOURCES})
 
-target_include_directories(PulseEngineAll PUBLIC ${PE_ALL_INCLUDES})
+target_include_directories(PulseEngineAll 
+PUBLIC ${PE_ALL_INCLUDES}
+    ${JoltPhysics_SOURCE_DIR}/..)
 
 target_compile_definitions(PulseEngineAll PRIVATE
     BUILDING_DLL
@@ -202,6 +256,7 @@ endif()
 
 target_link_libraries(PulseEngineAll PRIVATE
     ${CMAKE_SOURCE_DIR}/external/assimp/build/lib/Release/assimp-vc143-mt.lib
+    Jolt
 )
 target_link_libraries(PulseEngineAll PUBLIC glfw)
 
@@ -261,7 +316,7 @@ if(ENABLE_ENGINE_EDITOR)
 endif()
 
 
-target_link_libraries(PulseGame PRIVATE PulseEngineAll)
+target_link_libraries(PulseGame PRIVATE PulseEngineAll Jolt)
 
 target_include_directories(PulseGame PRIVATE
     ${CMAKE_SOURCE_DIR}/include
@@ -270,52 +325,6 @@ target_include_directories(PulseGame PRIVATE
     ${CMAKE_SOURCE_DIR}/include/imgui/backends
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/.
+    ${JoltPhysics_SOURCE_DIR}/..
 
 )
-
-# ===========================================================
-#  Renderer DLL
-# ===========================================================
-
-# set(RENDERER_SOURCES
-#     src/PulseEngine/core/Graphics/OpenGLAPI/OpenGLApi.cpp
-#     src/PulseEngine/core/Graphics/OpenGLAPI/TextRendererGl.cpp
-#     src/PulseEngine/core/Graphics/stb_truetype_impl.cpp
-#     src/glad.c
-# )
-
-# add_library(Renderer SHARED ${RENDERER_SOURCES})
-
-# target_include_directories(Renderer PUBLIC
-#     ${CMAKE_SOURCE_DIR}/include
-#     ${CMAKE_SOURCE_DIR}/src
-#     ${CMAKE_SOURCE_DIR}/external/assimp/include
-#     ${CMAKE_SOURCE_DIR}/external/assimp/build/include
-# )
-
-# target_compile_definitions(Renderer PRIVATE
-#     BUILDING_DLL
-#     PULSE_WINDOWS
-#     PULSE_GRAPHIC_OPENGL
-#     IMGUI_IMPL_OPENGL_LOADER_GLAD
-#     ZEP_FEATURE_CPP_FILE_SYSTEM
-# )
-
-# if(ENABLE_ENGINE_EDITOR)
-#     target_compile_definitions(Renderer PRIVATE ENGINE_EDITOR)
-# endif()
-# target_link_libraries(Renderer PRIVATE
-#     glfw
-#     opengl32
-#     ${CMAKE_SOURCE_DIR}/external/assimp/build/lib/Release/assimp-vc143-mtd.lib
-#     comdlg32
-#     ws2_32
-#     winmm
-#     mswsock
-# )
-
-# set_target_properties(Renderer PROPERTIES
-#     OUTPUT_NAME "Renderer"
-#     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/EngineBuilder/Build/Modules"
-#     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/EngineBuilder/Build/Modules"
-# )

@@ -42,6 +42,8 @@ class Account;
 class PulseScriptsManager;
 class Gamemode;
 
+class PhysicManager;
+
 /**
  * @brief PulseEngineBackend is the main class of the Pulse Engine.
  * 
@@ -155,6 +157,7 @@ private:
     PulseExecutable* discordLauncher = nullptr; 
 
     Account* account;
+    PhysicManager* physicManager = nullptr;
 
 
     void ProcessInput(GLFWwindow* window);

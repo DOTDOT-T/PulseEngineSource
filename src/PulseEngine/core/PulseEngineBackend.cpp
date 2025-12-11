@@ -47,6 +47,7 @@
 #include "PulseEngine/core/PulseScript/NativeInit.h"
 #include "PulseEngine/core/FileManager/Archive/Archive.h"
 #include "PulseEngine/core/FileManager/Archive/DiskArchive.h"
+#include "PulseEngine/core/Physics/PhysicManager.h"
 
 using namespace PulseEngine::FileSystem;
 using namespace PulseLibs;
@@ -135,6 +136,8 @@ int PulseEngineBackend::Initialize()
 
     runtimeScript = new PulseScriptsManager();
 
+    physicManager->InitializePhysicSystem();
+
 
     gamemode = new Gamemode();
     DiskArchive gmdar("enginegm.gamemode", Archive::Mode::Loading);
@@ -202,6 +205,7 @@ void PulseEngineBackend::Update()
     args.push_back(deltaVar);
 
     gamemode->Update();
+    physicManager->UpdatePhysicSystem();
 }
 
 void PulseEngineBackend::Render()
@@ -340,6 +344,8 @@ void PulseEngineBackend::Shutdown()
 {    
     graphicsAPI->ShutdownApi();
     if(discordLauncher) discordLauncher->Terminate();
+
+    physicManager->ShutdownPhysicSystem();
 }
 
 void PulseEngineBackend::ClearScene()
