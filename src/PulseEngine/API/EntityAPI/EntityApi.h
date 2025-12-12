@@ -3,9 +3,8 @@
 
 #include "Common/common.h"
 #include "Common/dllExport.h"
-#include "PulseEngine/core/Entity/Entity.h"
 #include "PulseEngine/CustomScripts/IScripts.h"
-
+#include "PulseEngine/core/Physics/PhysicAPI/PhysicAPI.h"
 class MaterialApi;
 
 namespace PulseEngine
@@ -24,13 +23,13 @@ namespace PulseEngine
     class PULSE_ENGINE_DLL_API EntityApi
     {
     private:
-        /// Pointer to the underlying engine-side entity.
-        Entity* entity;
 
         /// Lazily created material API interface for this entity.
         MaterialApi* materialApi;
 
     public:
+        /// Pointer to the underlying engine-side entity.
+        Entity* entity;
 
         /**
          * @brief Constructs an EntityApi wrapper for a given engine entity.
@@ -42,56 +41,52 @@ namespace PulseEngine
          * @brief Returns the world-space position of the entity.
          * @return A Vector3 representing the entity position.
          */
-        PulseEngine::Vector3 GetPosition() { return entity->GetPosition(); }
+        PulseEngine::Vector3 GetPosition();
 
         /**
          * @brief Returns the world-space rotation of the entity.
          * @return A Vector3 representing rotation (Euler angles).
          */
-        PulseEngine::Vector3 GetRotation() { return entity->GetRotation(); }
+        PulseEngine::Vector3 GetRotation() ;
 
         /**
          * @brief Sets the world-space position of the entity.
          * @param pos New position to apply.
          */
-        void SetPosition(const PulseEngine::Vector3& pos) { entity->SetPosition(pos); }
+        void SetPosition(const PulseEngine::Vector3& pos) ;
 
         /**
          * @brief Sets the world-space rotation of the entity.
          * @param rot Euler angles in degrees.
          */
-        void SetRotation(const PulseEngine::Vector3& rot) { entity->SetRotation(rot); }
+        void SetRotation(const PulseEngine::Vector3& rot) ;
 
         /**
          * @brief Applies an incremental rotation to the entity.
          * @param rot Rotation delta to apply (Euler angles).
          */
-        void Rotate(const PulseEngine::Vector3& rot)
-        {
-            entity->SetRotation(entity->GetRotation() + rot);
-        }
+        void Rotate(const PulseEngine::Vector3& rot);
+        
 
         /**
          * @brief Translates the entity by the given offset.
          * @param move Translation vector to apply.
          */
-        void Move(const PulseEngine::Vector3& move)
-        {
-            entity->transform.position += move;
-        }
+        void Move(const PulseEngine::Vector3& move);
+
 
         /**
          * @brief Gives access to the underlying Transform struct.
          * @return Pointer to the entity Transform.
          */
-        Transform* GetTransform() { return &entity->transform; }
+        Transform* GetTransform() ;
 
         /**
          * @brief Gives direct access to the raw engine Entity object.
          * @warning Use with care. Prefer API-level functions when possible.
          * @return Pointer to the underlying Entity.
          */
-        Entity* GetEntity() { return entity; }
+        Entity* GetEntity() ;
 
         /**
          * @brief Retrieves the first component of the requested script type.
@@ -102,85 +97,85 @@ namespace PulseEngine
          * @tparam ClassScript The script class to search for.
          * @return Pointer to the component if found, nullptr otherwise.
          */
-        template <typename ClassScript>
-        ClassScript* GetComponent()
-        {
-            for (auto* script : entity->GetScripts())
-            {
-                if (auto* ptr = dynamic_cast<ClassScript*>(script))
-                    return ptr;
-            }
-            return nullptr;
-        }
+        // template <typename ClassScript>
+        // ClassScript* GetComponent()
+        // {
+        //     for (auto* script : entity->GetScripts())
+        //     {
+        //         if (auto* ptr = dynamic_cast<ClassScript*>(script))
+        //             return ptr;
+        //     }
+        //     return nullptr;
+        // }
 
-        /**
-         * @brief Retrieves a mesh whose name exactly matches the provided string.
-         * @param name The mesh name to search for.
-         * @return Pointer to the mesh, or nullptr if not found.
-         */
-        RenderableMesh* GetMeshByName(const std::string& name)
-        {
-            for (auto& mesh : entity->GetMeshes())
-            {
-                if (mesh->GetName() == name)
-                    return mesh;
-            }
-            return nullptr;
-        }
+        // /**
+        //  * @brief Retrieves a mesh whose name exactly matches the provided string.
+        //  * @param name The mesh name to search for.
+        //  * @return Pointer to the mesh, or nullptr if not found.
+        //  */
+        // RenderableMesh* GetMeshByName(const std::string& name)
+        // {
+        //     for (auto& mesh : entity->GetMeshes())
+        //     {
+        //         if (mesh->GetName() == name)
+        //             return mesh;
+        //     }
+        //     return nullptr;
+        // }
 
-        /**
-         * @brief Retrieves all meshes whose name contains the given substring.
-         * @param namePart Substring to match.
-         * @return List of matching meshes (possibly empty).
-         */
-        std::vector<RenderableMesh*> GetMeshesContainingName(const std::string& namePart)
-        {
-            std::vector<RenderableMesh*> matchingMeshes;
-            for (auto& mesh : entity->GetMeshes())
-            {
-                if (mesh->GetName().find(namePart) != std::string::npos)
-                    matchingMeshes.push_back(mesh);
-            }
-            return matchingMeshes;
-        }
+        // /**
+        //  * @brief Retrieves all meshes whose name contains the given substring.
+        //  * @param namePart Substring to match.
+        //  * @return List of matching meshes (possibly empty).
+        //  */
+        // std::vector<RenderableMesh*> GetMeshesContainingName(const std::string& namePart)
+        // {
+        //     std::vector<RenderableMesh*> matchingMeshes;
+        //     for (auto& mesh : entity->GetMeshes())
+        //     {
+        //         if (mesh->GetName().find(namePart) != std::string::npos)
+        //             matchingMeshes.push_back(mesh);
+        //     }
+        //     return matchingMeshes;
+        // }
 
-        /**
-         * @brief Retrieves the first mesh whose name contains the specified substring.
-         * @param namePart Substring to look for.
-         * @return Pointer to the first matching mesh, or nullptr if none.
-         */
-        RenderableMesh* GetMeshContainingName(const std::string& namePart)
-        {
-            for (auto& mesh : entity->GetMeshes())
-            {
-                if (mesh->GetName().find(namePart) != std::string::npos)
-                    return mesh;
-            }
-            return nullptr;
-        }
+        // /**
+        //  * @brief Retrieves the first mesh whose name contains the specified substring.
+        //  * @param namePart Substring to look for.
+        //  * @return Pointer to the first matching mesh, or nullptr if none.
+        //  */
+        // RenderableMesh* GetMeshContainingName(const std::string& namePart)
+        // {
+        //     for (auto& mesh : entity->GetMeshes())
+        //     {
+        //         if (mesh->GetName().find(namePart) != std::string::npos)
+        //             return mesh;
+        //     }
+        //     return nullptr;
+        // }
 
-        /**
-         * @brief Adds a new script component of the given type to the entity.
-         *
-         * The script must derive from IScript. Memory is owned by the entity
-         * after insertion.
-         *
-         * @tparam ClassScript The script class to instantiate.
-         * @return Pointer to the created script instance.
-         */
-        template <typename ClassScript>
-        ClassScript* AddComponent()
-        {
-            ClassScript* newScript = new ClassScript();
-            entity->AddScript(newScript);
-            return newScript;
-        }
+        // /**
+        //  * @brief Adds a new script component of the given type to the entity.
+        //  *
+        //  * The script must derive from IScript. Memory is owned by the entity
+        //  * after insertion.
+        //  *
+        //  * @tparam ClassScript The script class to instantiate.
+        //  * @return Pointer to the created script instance.
+        //  */
+        // template <typename ClassScript>
+        // ClassScript* AddComponent()
+        // {
+        //     ClassScript* newScript = new ClassScript();
+        //     entity->AddScript(newScript);
+        //     return newScript;
+        // }
 
-        /**
-         * @brief Adds a script component already allocated externally.
-         * @param script Script instance to attach.
-         */
-        void AddScript(IScript* script) { entity->AddScript(script); }
+        // /**
+        //  * @brief Adds a script component already allocated externally.
+        //  * @param script Script instance to attach.
+        //  */
+        // void AddScript(IScript* script) { entity->AddScript(script); }
 
         /**
          * @brief Provides access to the material API for this entity.

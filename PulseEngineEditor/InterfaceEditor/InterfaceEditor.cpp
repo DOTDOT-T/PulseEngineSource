@@ -513,20 +513,20 @@ void InterfaceEditor::EntityAnalyzerWindow()
 
             ImGui::TreePop();
         }
-        bool b = selectedEntity->collider->physicBody == 1;
-        if(ImGui::Checkbox("IsDynamic", &b))
-        {
-            if(selectedEntity->collider->physicBody == 1)
-            {
-                selectedEntity->collider->physicBody = 0;
-                PulseEngineInstance->physicManager->SetBodyDynamic(selectedEntity->bodyID, false);
-            }
-            else
-            {
-                selectedEntity->collider->physicBody = 1;
-                PulseEngineInstance->physicManager->SetBodyDynamic(selectedEntity->bodyID, true);
-            }
-        }
+        // bool b = selectedEntity->collider->physicBody == 1;
+        // if(ImGui::Checkbox("IsDynamic", &b))
+        // {
+        //     if(selectedEntity->collider->physicBody == 1)
+        //     {
+        //         selectedEntity->collider->physicBody = 0;
+        //         PulseEngineInstance->physicManager->SetBodyDynamic(selectedEntity->bodyID, false);
+        //     }
+        //     else
+        //     {
+        //         selectedEntity->collider->physicBody = 1;
+        //         PulseEngineInstance->physicManager->SetBodyDynamic(selectedEntity->bodyID, true);
+        //     }
+        // }
 
         //support for lights
 

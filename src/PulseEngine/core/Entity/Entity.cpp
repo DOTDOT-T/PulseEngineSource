@@ -14,6 +14,8 @@
 #include "PulseEngine/core/PulseScript/PulseScriptsManager.h"
 #include "PulseEngine/core/PulseScript/utilities.h"
 #include "PulseEngine/core/Physics/PhysicManager.h"
+#include <Jolt/Jolt.h>
+#include <Jolt/Physics/Body/BodyID.h>
 
 #include <algorithm>
 
@@ -38,10 +40,7 @@ void Entity::Serialize(Archive &ar)
     //     collider->Serialize(ar);
     // }
 
-    if(name.find("Tank") != std::string::npos)
-        bodyID = PulseEngineInstance->physicManager->CreateBox(JPH::Vec3(transform.position.x, transform.position.y, transform.position.z), JPH::Vec3(3.0f/2,2.0f/2,3.5f/2), true);
-    else
-        bodyID = PulseEngineInstance->physicManager->CreateBox(JPH::Vec3(transform.position.x, transform.position.y, transform.position.z), JPH::Vec3(50.0f,0.1f,50.0f), false);
+        bodyID = PulseEngineInstance->physicManager->CreateBox(JPH::Vec3(transform.position.x, transform.position.y, transform.position.z), JPH::Vec3(0.5f,0.5f,0.5f), false);
 
     }
 

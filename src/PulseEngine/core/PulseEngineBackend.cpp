@@ -78,16 +78,7 @@ int PulseEngineBackend::Initialize()
     windowContext = new WindowContext();
     activeCamera = new Camera();
 
-    // load the graphic API based on the platform
-    //some platform can have multiple graphic API possible.
-    // graphicsAPI = dynamic_cast<IGraphicsAPI*>(ModuleLoader::GetModuleFromPath("Modules/Renderer.dll"));
-    /**
-     * @note For renderer, we wont use dynamic DLL to load the graphic API, we will use inside the game engine dll one. So we need to create a game engine dll for each platform.
-     * 
-     */
-    // #ifdef PULSE_GRAPHIC_OPENGL
     graphicsAPI = new OpenGLAPI();
-    // #endif
 
     if(graphicsAPI == nullptr)
     {
@@ -205,12 +196,14 @@ void PulseEngineBackend::Update()
     args.push_back(deltaVar);
 
     gamemode->Update();
-    physicManager->UpdatePhysicSystem(deltaTime);
+    LateUpdate();
 }
 
 void PulseEngineBackend::LateUpdate()
 {
-    
+    #ifndef ENGINE_EDITOR
+    physicManager->UpdatePhysicSystem(deltaTime);
+    #endif    
 }
 
 void PulseEngineBackend::Render()

@@ -16,7 +16,9 @@
 #include "PulseEngine/core/PulseObject/PulseObject.h"
 #include "PulseEngine/core/PulseObject/TypeRegister/TypeRegister.h"
 
-class PhysicManager : public PulseObject
+#include "Common/dllExport.h"
+
+class PULSE_ENGINE_DLL_API PhysicManager : public PulseObject
 {
 PULSE_GEN_BODY(PhysicManager)
 PULSE_REGISTER_CLASS_HEADER(PhysicManager)
