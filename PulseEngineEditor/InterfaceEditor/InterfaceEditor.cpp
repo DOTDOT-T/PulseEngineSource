@@ -33,6 +33,7 @@
 #include "PulseEngineEditor/InterfaceEditor/Tools/EntityEditor/EntityEditor.h"
 #include "PulseEngineEditor/InterfaceEditor/Tools/MaterialEditor/MaterialEditor.h"
 #include "PulseEngineEditor/InterfaceEditor/UiHelperTool/UiHelperTool.h"
+#include "PulseEngine/core/Physics/PhysicManager.h"
 #include <glm/gtc/type_ptr.hpp>
 
 #include "zep/filesystem.h"
@@ -511,6 +512,20 @@ void InterfaceEditor::EntityAnalyzerWindow()
             }
 
             ImGui::TreePop();
+        }
+        bool b = selectedEntity->collider->physicBody == 1;
+        if(ImGui::Checkbox("IsDynamic", &b))
+        {
+            if(selectedEntity->collider->physicBody == 1)
+            {
+                selectedEntity->collider->physicBody = 0;
+                PulseEngineInstance->physicManager->SetBodyDynamic(selectedEntity->bodyID, false);
+            }
+            else
+            {
+                selectedEntity->collider->physicBody = 1;
+                PulseEngineInstance->physicManager->SetBodyDynamic(selectedEntity->bodyID, true);
+            }
         }
 
         //support for lights

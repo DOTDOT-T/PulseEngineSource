@@ -65,6 +65,7 @@ public:
     bool IsRunning(); 
     void PollEvents(); 
     void Update(); 
+    void LateUpdate();
     void Render(); 
     void SpecificRender(Camera* cam, int specificVBO, std::vector<Entity*> entitiesToRender, 
         PulseEngine::Vector2 viewportSize = PulseEngine::Vector2(800,600),
@@ -115,6 +116,7 @@ public:
 
     static IGraphicsAPI* graphicsAPI;
     CoroutineManager* coroutineManager = nullptr;
+    PhysicManager* physicManager = nullptr;
 
     // #ifdef ENGINE_EDITOR
         static InterfaceEditor* editor;
@@ -157,7 +159,6 @@ private:
     PulseExecutable* discordLauncher = nullptr; 
 
     Account* account;
-    PhysicManager* physicManager = nullptr;
 
 
     void ProcessInput(GLFWwindow* window);

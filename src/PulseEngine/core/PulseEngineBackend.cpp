@@ -103,6 +103,8 @@ int PulseEngineBackend::Initialize()
 
     coroutineManager = new CoroutineManager;
     inputSystem = new PulseLibs::InputSystem;
+    physicManager = new PhysicManager();
+    physicManager->InitializePhysicSystem();
 
     shadowShader = new Shader(std::string(ASSET_PATH) + "EngineConfig/shaders/directionalDepth/dirDepth.vert", std::string(ASSET_PATH) + "EngineConfig/shaders/directionalDepth/dirDepth.frag", graphicsAPI);
     pointLightShadowShader = new Shader(std::string(ASSET_PATH) + "EngineConfig/shaders/pointDepth/pointDepth.vert", std::string(ASSET_PATH) + "EngineConfig/shaders/pointDepth/pointDepth.frag", std::string(ASSET_PATH) + "EngineConfig/shaders/pointDepth/pointDepth.glsl", graphicsAPI);
@@ -135,8 +137,6 @@ int PulseEngineBackend::Initialize()
     }
 
     runtimeScript = new PulseScriptsManager();
-
-    physicManager->InitializePhysicSystem();
 
 
     gamemode = new Gamemode();
@@ -205,7 +205,12 @@ void PulseEngineBackend::Update()
     args.push_back(deltaVar);
 
     gamemode->Update();
-    physicManager->UpdatePhysicSystem();
+    physicManager->UpdatePhysicSystem(deltaTime);
+}
+
+void PulseEngineBackend::LateUpdate()
+{
+    
 }
 
 void PulseEngineBackend::Render()

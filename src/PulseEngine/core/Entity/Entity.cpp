@@ -13,6 +13,7 @@
 #include "PulseEngine/core/FileManager/Archive/Archive.h"
 #include "PulseEngine/core/PulseScript/PulseScriptsManager.h"
 #include "PulseEngine/core/PulseScript/utilities.h"
+#include "PulseEngine/core/Physics/PhysicManager.h"
 
 #include <algorithm>
 
@@ -36,7 +37,13 @@ void Entity::Serialize(Archive &ar)
     // {
     //     collider->Serialize(ar);
     // }
-}
+
+    if(name.find("Tank") != std::string::npos)
+        bodyID = PulseEngineInstance->physicManager->CreateBox(JPH::Vec3(transform.position.x, transform.position.y, transform.position.z), JPH::Vec3(3.0f/2,2.0f/2,3.5f/2), true);
+    else
+        bodyID = PulseEngineInstance->physicManager->CreateBox(JPH::Vec3(transform.position.x, transform.position.y, transform.position.z), JPH::Vec3(50.0f,0.1f,50.0f), false);
+
+    }
 
 void Entity::Deserialize(Archive &ar)
 {
@@ -91,26 +98,68 @@ void Entity::UpdateModelMatrix(PulseEngine::Mat4 parentMatrix)
     }
 }
 
+void Entity::SetPosition(const PulseEngine::Vector3 &position)
+{ 
+    this->transform.position = position;
+    forcedPosition = true;
+    // PulseEngineInstance->physicManager->SetBodyPosition(bodyID, JPH::Vec3(position.x, position.y, position.z));
+}
 
-void Entity::SetMaterial(Material * material) { this->material = material; }
+void Entity::SetRotation(const PulseEngine::Vector3 &rotation)
+{ 
+    this->transform.rotation = rotation;
+    forcedRotation = true;
+    // PulseEngineInstance->physicManager->SetBodyRotation(bodyID, JPH::Vec3(rotation.x, rotation.y, rotation.z));
+}
+void Entity::SetMaterial(Material *material) { this->material = material; }
 
 void Entity::UpdateEntity(PulseEngine::Mat4 parentMatrix)
 {
     PROFILE_TIMER_FUNCTION;
+
+    GetBackPhysicPosAndRot();
+
+    CallOthersUpdate(parentMatrix);
+
+    if(bodyID.IsInvalid())
+        return;
+
+    //inform physics of the new position and rotation
+    PulseEngineInstance->physicManager->SetBodyPosition(bodyID, JPH::Vec3(transform.position.x, transform.position.y, transform.position.z));
+    PulseEngineInstance->physicManager->SetBodyRotation(
+        bodyID, 
+            JPH::Vec3(
+            PulseEngine::MathUtils::ToRadians(transform.rotation.x),
+            PulseEngine::MathUtils::ToRadians(transform.rotation.y),
+            PulseEngine::MathUtils::ToRadians(transform.rotation.z))        
+    );
+
+}
+
+void Entity::CallOthersUpdate(const PulseEngine::Mat4 &parentMatrix)
+{
     internalClock += PulseEngineInstance->GetDeltaTime();
     UpdateModelMatrix(parentMatrix);
     collider->SetRotation(transform.rotation);
     IN_GAME_ONLY(
-        for (size_t i = 0; i < scripts.size(); ++i)
-        {
+        for (size_t i = 0; i < scripts.size(); ++i) {
             scripts[i]->OnUpdate();
-        }
-    )
+        })
     for (const auto &mesh : meshes)
     {
         mesh->Update();
     }
+}
 
+void Entity::GetBackPhysicPosAndRot()
+{
+    JPH::Vec3 pos = PulseEngineInstance->physicManager->GetBodyPosition(bodyID);
+    JPH::Vec3 rot = PulseEngineInstance->physicManager->GetBodyRotation(bodyID).GetEulerAngles();
+    if (!forcedPosition) SetPosition(PulseEngine::Vector3(pos.GetX(), pos.GetY(), pos.GetZ()));
+    if (!forcedRotation) SetRotation(PulseEngine::Vector3(PulseEngine::MathUtils::ToDegrees(rot.GetX()), PulseEngine::MathUtils::ToDegrees(rot.GetY()), PulseEngine::MathUtils::ToDegrees(rot.GetZ())));
+
+    forcedPosition = false;
+    forcedRotation = false;
 }
 
 void Entity::DrawEntity() const

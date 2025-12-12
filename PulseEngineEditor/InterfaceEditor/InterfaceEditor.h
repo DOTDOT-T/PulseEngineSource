@@ -21,6 +21,8 @@
 #include "PulseEngineEditor/InterfaceEditor/Synapse/Node.h"
 #include "PulseEngine/core/SceneManager/SceneManager.h"
 #include "PulseEngine/core/PulseScript/PulseScript.h"
+#include "PulseEngine/core/Physics/Collider/Collider.h"
+#include "PulseEngine/core/Physics/Collider/BoxCollider.h"
 #include <unordered_map>
 #include <filesystem>
 
@@ -28,6 +30,8 @@
 #include "zep/imgui/editor_imgui.h"
 #include "zep/imgui/display_imgui.h"
 #include "zep/imgui/console_imgui.h"
+#include <Jolt/Jolt.h>
+#include <Jolt/Physics/Body/BodyID.h>
 
 
 class PulseEngineBackend;

@@ -28,6 +28,8 @@
 #include <string>
 #include <vector>
 #include <iostream> // Temporary: consider wrapping with logging macros.
+#include <Jolt/Jolt.h>
+#include <Jolt/Physics/Body/BodyID.h>
 
 class Mesh;
 class Shader;
@@ -81,10 +83,10 @@ public:
     // ------------------------------------------------------------------------
 
     /// Sets the world position and updates the model matrix.
-    void SetPosition(const PulseEngine::Vector3& position) { this->transform.position = position;}
+    void SetPosition(const PulseEngine::Vector3& position);
 
     /// Sets the rotation and updates the model matrix.
-    void SetRotation(const PulseEngine::Vector3& rotation) { this->transform.rotation = rotation;}
+    void SetRotation(const PulseEngine::Vector3& rotation);
 
     /// Sets the scale and updates the model matrix.
     void SetScale(const PulseEngine::Vector3& scale) {this->transform.scale = scale;}
@@ -100,6 +102,12 @@ public:
      * @param deltaTime Time elapsed since the last frame.
      */
     void UpdateEntity(PulseEngine::Mat4 parentMatrix);
+
+    void CallOthersUpdate(const PulseEngine::Mat4 &parentMatrix);
+
+    void CallOhtersUpdate(const PulseEngine::Mat4 &parentMatrix);
+
+    void GetBackPhysicPosAndRot();
 
     /**
      * @brief Draws the entity using its current mesh/material/shader.
@@ -183,6 +191,7 @@ public:
     // Collider (public for now, consider getter/setter)
     // ------------------------------------------------------------------------
     BoxCollider* collider = nullptr;
+    JPH::BodyID bodyID;
 
     void AddTag(const std::string& tag);
     void RemoveTag(const std::string& tag);
@@ -230,6 +239,9 @@ private:
 
     /// Updates the entity's world transformation matrix.
     void UpdateModelMatrix(PulseEngine::Mat4 parentMatrix);
+
+    bool forcedPosition = false;
+    bool forcedRotation = false;
 };
 
 #endif // ENTITY_H
