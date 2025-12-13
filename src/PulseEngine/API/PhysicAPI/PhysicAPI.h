@@ -13,8 +13,9 @@ class PULSE_ENGINE_DLL_API PhysicAPI
 public:
     static void SetBodyType(PulseEngine::EntityApi* ent, bool dynamic);
     static void SetBodySize(PulseEngine::EntityApi* ent, const PulseEngine::Vector3& newHalfExtents);
-
     static void AddVelocity(PulseEngine::EntityApi* ent, const PulseEngine::Vector3& velocity);
+    static void AddAngularVelocityEuler(PulseEngine::EntityApi* ent, const PulseEngine::Vector3& eulerDegrees);
+    static void AddAngularVelocityFromVectors(PulseEngine::EntityApi* ent, const PulseEngine::Vector3& start, const PulseEngine::Vector3& end, float factor = 1.0f);
 
 private:
 };

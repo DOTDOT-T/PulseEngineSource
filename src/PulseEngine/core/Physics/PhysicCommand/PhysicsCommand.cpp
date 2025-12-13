@@ -25,3 +25,13 @@ bool SetBodyDynamicCommand::Execute(PhysicManager* physicsSystem)
 {
     return physicsSystem->SetBodyDynamic(bodyID, dynamic);
 }
+
+bool SetAngularVelocityEulerCommand::Execute(PhysicManager * physicsSystem)
+{
+    return physicsSystem->SetAngularVelocityEuler(bodyID, eulerDegrees);
+}
+
+bool SetAngularVelocityFromVectorsCommand::Execute(PhysicManager *physicsSystem)
+{
+    return physicsSystem->SetAngularVelocityFromVectors(bodyID, startVector, endVector, factor);
+}

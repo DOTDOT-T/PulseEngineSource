@@ -87,7 +87,7 @@ void PhysicManager::InitializePhysicSystem()
 // ================================================
 void PhysicManager::UpdatePhysicSystem(float dt)
 {
-    physicsSystem.Update(dt, 1, tempAllocator.get(), jobSystem.get());
+    physicsSystem.Update(1/60.0f, 1, tempAllocator.get(), jobSystem.get());
 
     // Exécuter toutes les commandes thread-safe après la simulation
     std::queue<std::unique_ptr<PhysicsCommand>> commandsCopy;
@@ -319,6 +319,98 @@ void PhysicManager::UpdateBodyTransform(JPH::BodyID id, const JPH::Vec3& newPos,
         bodyInterface->ActivateBody(id);
     }
 }
+
+// ================================================
+// SET ANGULAR VELOCITY
+// ================================================
+
+// Appliquer une angular velocity depuis des angles Euler en degrés
+bool PhysicManager::SetAngularVelocityEuler(JPH::BodyID id, const JPH::Vec3& eulerDegrees)
+{
+    if (!bodyInterface || id.IsInvalid())
+        return false;
+
+    // Convert degrees -> radians
+    Vec3 euler = eulerDegrees * (3.14159265359f / 180.0f);
+
+    // Convert Euler XYZ -> quaternion
+    JPH::Quat targetRot;
+    float cy = cos(euler.GetZ() * 0.5f);
+    float sy = sin(euler.GetZ() * 0.5f);
+    float cp = cos(euler.GetY() * 0.5f);
+    float sp = sin(euler.GetY() * 0.5f);
+    float cr = cos(euler.GetX() * 0.5f);
+    float sr = sin(euler.GetX() * 0.5f);
+
+    targetRot.SetW(cr*cp*cy + sr*sp*sy);
+    targetRot.SetX(sr*cp*cy - cr*sp*sy);
+    targetRot.SetY(cr*sp*cy + sr*cp*sy);
+    targetRot.SetZ(cr*cp*sy - sr*sp*cy);
+
+    // Calculer la quaternion delta
+    JPH::Quat currentRot = bodyInterface->GetRotation(id);
+    JPH::Quat deltaRot = targetRot * currentRot.Inversed();
+    deltaRot = deltaRot.Normalized();
+
+    // Extraire axis-angle
+    float angle = 2.0f * acosf(deltaRot.GetW());
+    float s = sqrtf(1.0f - deltaRot.GetW() * deltaRot.GetW());
+    Vec3 axis = (s < 0.001f) ? Vec3(1,0,0) : Vec3(deltaRot.GetX()/s, deltaRot.GetY()/s, deltaRot.GetZ()/s);
+
+    // Angular velocity = axis * angle / dt (ici dt = 1/60)
+    Vec3 angularVel = axis * (angle / (1/60.0f));
+
+    bodyInterface->SetAngularVelocity(id, RVec3(angularVel));
+    bodyInterface->ActivateBody(id);
+    return true;
+}
+
+// Appliquer angular velocity pour tourner un vecteur start vers end
+bool PhysicManager::SetAngularVelocityFromVectors(JPH::BodyID id, const JPH::Vec3& start, const JPH::Vec3& end, float factor)
+{
+    if (!bodyInterface || id.IsInvalid())
+        return false;
+
+    Vec3 v0 = start.Normalized();
+    Vec3 v1 = end.Normalized();
+
+    // Calcul quaternion rotation de v0 vers v1
+    Vec3 c = v0.Cross(v1);
+    float d = v0.Dot(v1);
+
+    if (d >= 1.0f) // vecteurs alignés
+    {
+        bodyInterface->SetAngularVelocity(id, RVec3(0,0,0));
+        return true;
+    }
+    if (d <= -1.0f) // vecteurs opposés
+    {
+        Vec3 ortho = Vec3(1,0,0).Cross(v0);
+        if (ortho.LengthSq() < 0.0001f)
+            ortho = Vec3(0,1,0).Cross(v0);
+        ortho = ortho.Normalized();
+        bodyInterface->SetAngularVelocity(id, RVec3(ortho * 3.14159265359f / (1/60.0f)));
+        return true;
+    }
+
+    float s = sqrt((1+d)*2);
+    JPH::Quat q(c.GetX()/s, c.GetY()/s, c.GetZ()/s, s/2.0f);
+    q = q.Normalized();
+
+    // Axis-angle
+    float angle = 2.0f * acosf(q.GetW());
+    float axisS = sqrtf(1.0f - q.GetW()*q.GetW());
+    Vec3 axis = (axisS < 0.001f) ? Vec3(1,0,0) : Vec3(q.GetX()/axisS, q.GetY()/axisS, q.GetZ()/axisS);
+
+    Vec3 angularVel = axis * (angle / (1/60.0f));
+    angularVel /= 100.0f;
+    angularVel *= factor;
+
+    bodyInterface->SetAngularVelocity(id, RVec3(angularVel));
+    bodyInterface->ActivateBody(id);
+    return true;
+}
+
 
 
 void PhysicManager::EnqueueCommand(std::unique_ptr<PhysicsCommand> cmd)

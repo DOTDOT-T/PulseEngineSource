@@ -56,6 +56,10 @@ public:
 
     void EnqueueCommand(std::unique_ptr<PhysicsCommand> cmd);
 
+    bool SetAngularVelocityEuler(JPH::BodyID id, const JPH::Vec3& eulerDegrees);
+    bool SetAngularVelocityFromVectors(JPH::BodyID id, const JPH::Vec3& start, const JPH::Vec3& end, float factor = 1.0f);
+
+
 private:
     static const JPH::ObjectLayer NON_MOVING = 0;
     static const JPH::ObjectLayer MOVING     = 1;

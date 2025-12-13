@@ -6,7 +6,7 @@
 #include "PulseEngine/core/Math/Mat4.h"
 #include "PulseEngine/core/Math/Vector.h"
 #include "PulseEngine/core/Meshes/Vertex.h"
-#include "PulseEngine/API/EngineApi.h"
+#include "PulseEngine/API/EntityAPI/EntityApi.h"
 
 #include <vector>
 

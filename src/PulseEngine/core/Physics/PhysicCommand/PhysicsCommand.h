@@ -71,6 +71,30 @@ struct SetBoxSizeCommand : public PhysicsCommand
     bool Execute(PhysicManager* physicsSystem) override;
 };
 
+struct SetAngularVelocityEulerCommand : public PhysicsCommand
+{
+    JPH::BodyID bodyID;
+    JPH::Vec3 eulerDegrees;
+
+    SetAngularVelocityEulerCommand(JPH::BodyID id, const JPH::Vec3& euler)
+        : bodyID(id), eulerDegrees(euler) {}
+
+    bool Execute(PhysicManager* physicsSystem) override;
+};
+
+struct SetAngularVelocityFromVectorsCommand : public PhysicsCommand
+{
+    JPH::BodyID bodyID;
+    JPH::Vec3 startVector;
+    JPH::Vec3 endVector;
+    float factor = 1.0f;
+
+    SetAngularVelocityFromVectorsCommand(JPH::BodyID id, const JPH::Vec3& start, const JPH::Vec3& end, float f = 1.0f)
+        : bodyID(id), startVector(start), endVector(end), factor(f) {}
+
+    bool Execute(PhysicManager* physicsSystem) override;
+};
+
 struct SetBodyDynamicCommand : public PhysicsCommand
 {
     JPH::BodyID bodyID;

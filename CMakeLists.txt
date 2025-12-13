@@ -112,7 +112,6 @@ set(PE_ALL_SOURCES
     src/PulseEngine/core/Physics/CollisionManager.cpp
     src/PulseEngine/core/coroutine/CoroutineManager.cpp
     src/PulseEngine/ModuleLoader/ModuleLoader.cpp
-    src/PulseEngine/API/EngineApi.cpp
     src/PulseEngine/API/GameEntity.cpp
     src/PulseEngine/core/Math/Transform/Transform.cpp
     src/PulseEngine/core/GUID/GuidCollection.cpp
@@ -152,7 +151,7 @@ set(PE_ALL_SOURCES
     src/PulseEngine/API/InputAPI/InputAPI.cpp
     src/PulseEngine/core/Material/ShaderManager.cpp
     src/PulseEngine/core/Physics/PhysicManager.cpp
-    src/PulseEngine/core/Physics/PhysicAPI/PhysicAPI.cpp
+    src/PulseEngine/API/PhysicAPI/PhysicAPI.cpp
     src/PulseEngine/core/Physics/PhysicCommand/PhysicsCommand.cpp
 )
 

@@ -4,7 +4,7 @@
 #include "Common/common.h"
 #include "Common/dllExport.h"
 #include "PulseEngine/CustomScripts/IScripts.h"
-#include "PulseEngine/core/Physics/PhysicAPI/PhysicAPI.h"
+#include "PulseEngine/API/PhysicAPI/PhysicAPI.h"
 class MaterialApi;
 
 namespace PulseEngine
