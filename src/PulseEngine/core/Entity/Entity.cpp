@@ -115,6 +115,20 @@ void Entity::SetMaterial(Material *material) { this->material = material; }
 void Entity::UpdateEntity(PulseEngine::Mat4 parentMatrix)
 {
     PROFILE_TIMER_FUNCTION;
+    
+    for(auto it = delayedScript.begin(); it != delayedScript.end(); )
+    {
+        it->second -= PulseEngineInstance->GetDeltaTime();
+        if(it->second <= 0.0f)
+        {
+            it->first->OnStart();
+            it = delayedScript.erase(it); 
+        }
+        else
+        {
+            ++it;
+        }
+    }
 
     GetBackPhysicPosAndRot();
 
@@ -154,9 +168,14 @@ void Entity::GetBackPhysicPosAndRot()
 {
     JPH::Vec3 pos = PulseEngineInstance->physicManager->GetBodyPosition(bodyID);
     JPH::Vec3 rot = PulseEngineInstance->physicManager->GetBodyRotation(bodyID).GetEulerAngles();
-    if (!forcedPosition) SetPosition(PulseEngine::Vector3(pos.GetX(), pos.GetY(), pos.GetZ()));
-    if (!forcedRotation) SetRotation(PulseEngine::Vector3(PulseEngine::MathUtils::ToDegrees(rot.GetX()), PulseEngine::MathUtils::ToDegrees(rot.GetY()), PulseEngine::MathUtils::ToDegrees(rot.GetZ())));
 
+    #ifdef ENGINE_EDITOR
+    if (forcedPosition) SetPosition(PulseEngine::Vector3(pos.GetX(), pos.GetY(), pos.GetZ()));
+    if (forcedRotation) SetRotation(PulseEngine::Vector3(PulseEngine::MathUtils::ToDegrees(rot.GetX()), PulseEngine::MathUtils::ToDegrees(rot.GetY()), PulseEngine::MathUtils::ToDegrees(rot.GetZ())));
+    #else
+    SetPosition(PulseEngine::Vector3(pos.GetX(), pos.GetY(), pos.GetZ()));
+    SetRotation(PulseEngine::Vector3(PulseEngine::MathUtils::ToDegrees(rot.GetX()), PulseEngine::MathUtils::ToDegrees(rot.GetY()), PulseEngine::MathUtils::ToDegrees(rot.GetZ())));
+    #endif
     forcedPosition = false;
     forcedRotation = false;
 }
@@ -366,7 +385,7 @@ void Entity::AddScript(IScript *script)
     if(!script) return;
     scripts.push_back(script);
     script->owner = new PulseEngine::EntityApi(this);
-    script->OnStart();
+    delayedScript.push_back(std::make_pair(script, 0.1f));
 }
 
 void Entity::RemoveScript(IScript* script)

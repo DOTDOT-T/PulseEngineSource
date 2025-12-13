@@ -57,6 +57,7 @@ struct LoadingPopupData
 };
 
 
+Entity *Instantiate(const std::string &path, PulseEngine::Vector3 position, PulseEngine::Vector3 rotation, PulseEngine::Vector3 scale);
 
 class PULSE_ENGINE_DLL_API InterfaceEditor
 {

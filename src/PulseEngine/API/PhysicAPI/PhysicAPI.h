@@ -12,6 +12,9 @@ class PULSE_ENGINE_DLL_API PhysicAPI
 {
 public:
     static void SetBodyType(PulseEngine::EntityApi* ent, bool dynamic);
+    static void SetBodySize(PulseEngine::EntityApi* ent, const PulseEngine::Vector3& newHalfExtents);
+
+    static void AddVelocity(PulseEngine::EntityApi* ent, const PulseEngine::Vector3& velocity);
 
 private:
 };

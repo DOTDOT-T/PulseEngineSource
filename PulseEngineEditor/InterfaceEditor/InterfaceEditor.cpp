@@ -46,8 +46,56 @@ using namespace PulseEngine::FileSystem;
 namespace ed = ax::NodeEditor;
 namespace fs = std::filesystem;
 
+// THIS IS TEMPORARY
 
+#include "PulseEngine/API/EngineApi.h"
+#include "PulseEngine/API/GameEntity.h"
+#include "PulseEngine/core/Entity/Entity.h"
+#include "PulseEngine/core/GUID/GuidGenerator.h"
+#include "PulseEngine/core/GUID/GuidReader.h"
+#include "PulseEngine/core/Material/MaterialManager.h"
+#include "PulseEngine/core/Material/Material.h"
+#include "PulseEngine/CustomScripts/IScripts.h"
+#include "PulseEngine/core/GUID/GuidGenerator.h"
+#include "PulseEngine/core/GUID/GuidCollection.h"
+#include "PulseEngine/core/SceneManager/SceneManager.h"
 
+Entity *Instantiate(const std::string &path, PulseEngine::Vector3 position, PulseEngine::Vector3 rotation, PulseEngine::Vector3 scale)
+{
+    Entity* entity = new Entity("TempEntity", PulseEngine::Vector3(0.0f), nullptr, MaterialManager::loadMaterial("EngineConfig/Materials/StandardLit.mat"));
+    nlohmann::json_abi_v3_12_0::json jsonData;
+    std::ifstream pathContent(std::string(ASSET_PATH) + path);
+    if(!pathContent.is_open())
+    {
+        EDITOR_ERROR("Path couldn't be open : " + std::string(ASSET_PATH) + path);
+        return nullptr;
+    }
+    pathContent >> jsonData;
+    entity = GuidReader::GetEntityFromJson(jsonData, entity);
+    EDITOR_LOG("no error parsing entity")
+    if(entity)
+    {    
+        //base data we have through parameter
+        entity->SetName(path);
+        entity->SetPosition(position);
+        entity->SetRotation(rotation);
+        entity->SetScale(scale);
+        std::size_t muid = GenerateGUIDFromPathAndMap(path, PulseEngineInstance->actualMapPath + std::to_string(std::time(nullptr)));
+        entity->SetMuid(muid);
+        // entity->SetMaterial(MaterialManager::loadMaterial("Materials/cube.mat"));
+        // for(IScript* script : entity->GetScripts())
+        // {
+        //     script->OnStart();
+        // }
+        PulseEngineInstance->entities.push_back(entity);
+        SceneManager::GetInstance()->InsertEntity(entity);
+    }
+    else
+    {
+        EDITOR_ERROR("No entity could have been instantiated from path: " + std::string(ASSET_PATH) + path);
+    }
+    return entity;
+}
 
 InterfaceEditor::InterfaceEditor()
 {    
@@ -133,7 +181,7 @@ InterfaceEditor::InterfaceEditor()
                 if (pos != std::string::npos) {
                     instantiatePath.erase(pos, std::string("PulseEngineEditor\\").length());
                 }
-                PulseEngine::GameEntity::Instantiate(instantiatePath, PulseEngine::Vector3(0.0f, 0.0f, 0.0f), PulseEngine::Vector3(0.0f, 0.0f, 0.0f), PulseEngine::Vector3(1.0f, 1.0f, 1.0f));
+                Instantiate(instantiatePath, PulseEngine::Vector3(0.0f, 0.0f, 0.0f), PulseEngine::Vector3(0.0f, 0.0f, 0.0f), PulseEngine::Vector3(1.0f, 1.0f, 1.0f));
             }
         }
 

@@ -1,7 +1,10 @@
 #ifndef GAMEENTITY_H
 #define GAMEENTITY_H
 
-#include "PulseEngine/API/EngineApi.h"
+// #include "PulseEngine/API/EngineApi.h"
+
+#include "PulseEngine/API/CameraAPI/CameraAPI.h"
+#include "PulseEngine/API/EntityAPI/EntityApi.h"
 
 namespace PulseEngine
 {
@@ -24,7 +27,7 @@ namespace PulseEngine
          * @param scale Scale of the entity, we recommend to use the same scalar on each axis to keep the entity uniform.
          * @return Entity* The pointer to the entity instantiate in the world. You can directly modify it after the instantiation.
          */
-        static Entity* Instantiate(const std::string& path, PulseEngine::Vector3 position = PulseEngine::Vector3(0.0f, 0.0f, 0.0f), PulseEngine::Vector3 rotation = PulseEngine::Vector3(0.0f, 0.0f, 0.0f), PulseEngine::Vector3 scale = PulseEngine::Vector3(1.0f, 1.0f, 1.0f));
+         static PulseEngine::EntityApi* Instantiate(const std::string& path, PulseEngine::Vector3 position = PulseEngine::Vector3(0.0f, 0.0f, 0.0f), PulseEngine::Vector3 rotation = PulseEngine::Vector3(0.0f, 0.0f, 0.0f), PulseEngine::Vector3 scale = PulseEngine::Vector3(1.0f, 1.0f, 1.0f));
     
         /**
          * @brief Get the All Entities By Tag object. All entities can have multiple tags on them.
@@ -32,9 +35,9 @@ namespace PulseEngine
          * @param tag the tag has it is written on the tag list of the editor.
          * @return a simple list of entities.
          */
-        static std::vector<Entity*> GetAllEntitiesByTag(const std::string& tag);
+        // static std::vector<Entity*> GetAllEntitiesByTag(const std::string& tag);
 
-        static std::vector<Entity*> GetAllEntitiesContainingName(const std::string& name);
+        // static std::vector<Entity*> GetAllEntitiesContainingName(const std::string& name);
 
         static CameraAPI* GetActiveCamera();
     };

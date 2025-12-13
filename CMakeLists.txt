@@ -153,6 +153,7 @@ set(PE_ALL_SOURCES
     src/PulseEngine/core/Material/ShaderManager.cpp
     src/PulseEngine/core/Physics/PhysicManager.cpp
     src/PulseEngine/core/Physics/PhysicAPI/PhysicAPI.cpp
+    src/PulseEngine/core/Physics/PhysicCommand/PhysicsCommand.cpp
 )
 
 # --- ImGui + TextEditor conditionnel ---

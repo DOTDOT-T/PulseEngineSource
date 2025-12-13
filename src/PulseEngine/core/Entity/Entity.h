@@ -235,6 +235,8 @@ private:
     std::vector<HierarchyNode<RenderableMesh>*> meshHierarchy;
     std::vector<IScript*> scripts;
 
+    std::vector<std::pair<IScript*, float>> delayedScript;
+
     float internalClock = 0.0f;
 
     /// Updates the entity's world transformation matrix.

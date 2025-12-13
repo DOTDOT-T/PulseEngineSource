@@ -1,6 +1,5 @@
 #ifndef __PHYSICMANAGER_H__
 #define __PHYSICMANAGER_H__
-
 #include <Jolt/Jolt.h>
 #include <Jolt/RegisterTypes.h>
 #include <Jolt/Core/Factory.h>
@@ -8,6 +7,7 @@
 #include <Jolt/Core/JobSystemThreadPool.h>
 
 #include <Jolt/Physics/Body/Body.h>
+#include <Jolt/Physics/Body/BodyLock.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
@@ -17,6 +17,16 @@
 #include "PulseEngine/core/PulseObject/TypeRegister/TypeRegister.h"
 
 #include "Common/dllExport.h"
+
+#include <thread>
+#include <cassert>
+#include <mutex>
+#include <queue>
+#include <memory>
+
+#include "PulseEngine/core/Physics/PhysicCommand/PhysicsCommand.h"
+
+
 
 class PULSE_ENGINE_DLL_API PhysicManager : public PulseObject
 {
@@ -36,13 +46,15 @@ public:
     JPH::Quat GetBodyRotation(JPH::BodyID id);
     void UpdateBodyTransform(JPH::BodyID id, const JPH::Vec3& newPos, const JPH::Quat& newRot);
 
-    void SetBodyPosition(JPH::BodyID id, const JPH::Vec3& newPosition);
-    void SetBodyRotation(JPH::BodyID id, const JPH::Vec3& eulerAngles);
+    bool SetBodyPosition(JPH::BodyID id, const JPH::Vec3& newPosition);
+    bool SetBodyRotation(JPH::BodyID id, const JPH::Vec3& eulerAngles);
 
-    void SetBoxSize(JPH::BodyID id, const JPH::Vec3& newHalfExtents);
-    void SetBodyDynamic(JPH::BodyID id, bool dynamic);
+    bool SetBoxSize(JPH::BodyID id, const JPH::Vec3& newHalfExtents);
+    bool SetBodyDynamic(JPH::BodyID id, bool dynamic);
 
+    bool AddVelocity(JPH::BodyID id, const JPH::Vec3& velocityDelta);
 
+    void EnqueueCommand(std::unique_ptr<PhysicsCommand> cmd);
 
 private:
     static const JPH::ObjectLayer NON_MOVING = 0;
@@ -54,6 +66,10 @@ private:
     std::unique_ptr<JPH::JobSystemThreadPool> jobSystem;
 
     JPH::BodyInterface* bodyInterface = nullptr;
+
+    
+    std::mutex commandQueueMutex;
+    std::queue<std::unique_ptr<PhysicsCommand>> commandQueue;
 };
 
 #endif

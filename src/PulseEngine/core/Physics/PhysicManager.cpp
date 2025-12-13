@@ -1,5 +1,4 @@
 #include "PhysicManager.h"
-#include <thread>
 
 using namespace JPH;
 
@@ -88,8 +87,47 @@ void PhysicManager::InitializePhysicSystem()
 // ================================================
 void PhysicManager::UpdatePhysicSystem(float dt)
 {
-    physicsSystem.Update(1/60.0f, 1, tempAllocator.get(), jobSystem.get());
+    physicsSystem.Update(dt, 1, tempAllocator.get(), jobSystem.get());
+
+    // Exécuter toutes les commandes thread-safe après la simulation
+    std::queue<std::unique_ptr<PhysicsCommand>> commandsCopy;
+    {
+        std::lock_guard<std::mutex> lock(commandQueueMutex);
+        std::swap(commandsCopy, commandQueue); // swap pour éviter de garder le lock pendant l'exécution
+    }
+
+    std::queue<std::unique_ptr<PhysicsCommand>> remaining;
+
+    while (!commandsCopy.empty())
+    {
+        auto cmd = std::move(commandsCopy.front()); // move vers une variable locale
+        commandsCopy.pop();
+        EDITOR_INFO("trying physic command " << typeid(*cmd).name() << ".");
+
+        if(cmd->Execute(this))
+        {
+            EDITOR_INFO("physic command " << typeid(*cmd).name() << " executed successfully.");
+        }
+        else
+        {
+            remaining.push(std::move(cmd)); // remet la commande dans la queue pour retry
+        }
+    }
+
+    // Remet les commandes restantes dans la queue principale
+    if(!remaining.empty())
+    {
+        EDITOR_INFO("physic command " << typeid(*remaining.front()).name() << "is remaining.");
+        std::lock_guard<std::mutex> lock(commandQueueMutex);
+        while(!remaining.empty())
+        {
+            commandQueue.push(std::move(remaining.front()));
+            remaining.pop();
+        }
+    }
 }
+
+
 
 // ================================================
 // SHUTDOWN
@@ -152,14 +190,34 @@ Quat PhysicManager::GetBodyRotation(BodyID id)
     return bodyInterface->GetRotation(id);
 }
 
-void PhysicManager::SetBodyPosition(JPH::BodyID id, const JPH::Vec3 &newPosition)
+bool PhysicManager::SetBodyPosition(JPH::BodyID id, const JPH::Vec3 &newPosition)
 {
-    Quat currentRot = bodyInterface->GetRotation(id);
+    using namespace JPH;
+
+    // On récupère les vitesses AVANT toute modif
+    Vec3 oldLinVel  = bodyInterface->GetLinearVelocity(id);
+    Vec3 oldAngVel  = bodyInterface->GetAngularVelocity(id);
+    Quat oldRot     = bodyInterface->GetRotation(id);
+
+    // Téléportation via la version qui ne reset pas l'état inertiel
     RVec3 newPos(newPosition.GetX(), newPosition.GetY(), newPosition.GetZ());
-    bodyInterface->SetPosition(id, newPos, EActivation::Activate);
+    bodyInterface->SetPositionAndRotationWhenChanged(
+        id,
+        newPos,
+        oldRot,
+        EActivation::DontActivate
+    );
+
+    // On restaure les vitesses du body
+    bodyInterface->SetLinearVelocity(id, oldLinVel);
+    bodyInterface->SetAngularVelocity(id, oldAngVel);
+
+    // Optionnel : réactiver le body si tu veux qu'il continue la simu immédiatement
+    bodyInterface->ActivateBody(id);
+    return true;
 }
 
-void PhysicManager::SetBodyRotation(JPH::BodyID id, const JPH::Vec3& eulerAngles)
+bool PhysicManager::SetBodyRotation(JPH::BodyID id, const JPH::Vec3& eulerAngles)
 {
     // Convert Euler XYZ to quaternion
     Quat q;
@@ -176,47 +234,57 @@ void PhysicManager::SetBodyRotation(JPH::BodyID id, const JPH::Vec3& eulerAngles
     q.SetZ(cr*cp*sy - sr*sp*cy);
 
     bodyInterface->SetRotation(id, q, EActivation::Activate);
+    return true;
 }
 
 
 
-void PhysicManager::SetBoxSize(JPH::BodyID id, const JPH::Vec3& newHalfExtents)
+bool PhysicManager::SetBoxSize(JPH::BodyID id, const JPH::Vec3& newHalfExtents)
 {
-    BodyLockWrite lock(physicsSystem.GetBodyLockInterface(), id);
-    if (!lock.Succeeded())
-        return;
-
-    Body& body = lock.GetBody();
-
     RefConst<Shape> newShape = new BoxShape(newHalfExtents);
 
     bodyInterface->SetShape(id, newShape, true, EActivation::Activate);
 
     bodyInterface->ActivateBody(id);
+    return true;
 }
 
-void PhysicManager::SetBodyDynamic(JPH::BodyID id, bool dynamic)
+bool PhysicManager::SetBodyDynamic(JPH::BodyID id, bool dynamic)
 {
     BodyLockWrite lock(physicsSystem.GetBodyLockInterface(), id);
     if (!lock.Succeeded())
-        return;
+        return false;
 
     Body& body = lock.GetBody();
-
-    if (!body.GetMotionProperties() && dynamic)
-    {
-        EDITOR_WARN("Cannot make static body dynamic: mAllowDynamicOrKinematic not set at creation\n");
-        return;
-    }
-
-    EMotionType newType = dynamic ? EMotionType::Dynamic : EMotionType::Static;
-
-    if (body.GetMotionType() != newType)
-    {
-        body.SetMotionType(newType);
-        bodyInterface->ActivateBody(id);
-    }
+    body.SetMotionType(dynamic ? EMotionType::Dynamic : EMotionType::Static);
+    return false;
 }
+
+bool PhysicManager::AddVelocity(JPH::BodyID id, const JPH::Vec3 & velocityDelta)
+{
+    RVec3 currentVel = bodyInterface->GetLinearVelocity(id);
+    RVec3 newVel = currentVel + RVec3(velocityDelta);
+    bodyInterface->SetLinearVelocity(id, newVel);
+    JPH::EMotionType motion = bodyInterface->GetMotionType(id);
+    const char* motionStr = "Unknown";
+
+    switch(motion)
+    {
+        case JPH::EMotionType::Static:    motionStr = "Static"; break;
+        case JPH::EMotionType::Dynamic:   motionStr = "Dynamic"; break;
+        case JPH::EMotionType::Kinematic: motionStr = "Kinematic"; break;
+    }
+
+    EDITOR_LOG("New velocity : "
+        << newVel.GetX() << " : "
+        << newVel.GetY() << " : "
+        << newVel.GetZ() << " de body type : "
+        << motionStr);
+
+    return true;
+
+}
+
 
 void PhysicManager::UpdateBodyTransform(JPH::BodyID id, const JPH::Vec3& newPos, const JPH::Quat& newRot)
 {
@@ -250,4 +318,11 @@ void PhysicManager::UpdateBodyTransform(JPH::BodyID id, const JPH::Vec3& newPos,
         bodyInterface->SetAngularVelocity(id, RVec3(angularVel));
         bodyInterface->ActivateBody(id);
     }
+}
+
+
+void PhysicManager::EnqueueCommand(std::unique_ptr<PhysicsCommand> cmd)
+{
+    std::lock_guard<std::mutex> lock(commandQueueMutex);
+    commandQueue.push(std::move(cmd));
 }
