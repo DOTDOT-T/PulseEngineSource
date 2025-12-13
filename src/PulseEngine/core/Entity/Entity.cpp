@@ -78,6 +78,9 @@ void Entity::BaseConstructor()
     runtimeScripts = new PulseScriptsManager();
     scripts.push_back(collider);
 
+    forcedPosition = true;
+    forcedRotation = true;
+
 
 }
 
@@ -169,13 +172,9 @@ void Entity::GetBackPhysicPosAndRot()
     JPH::Vec3 pos = PulseEngineInstance->physicManager->GetBodyPosition(bodyID);
     JPH::Vec3 rot = PulseEngineInstance->physicManager->GetBodyRotation(bodyID).GetEulerAngles();
 
-    #ifdef ENGINE_EDITOR
-    if (forcedPosition) SetPosition(PulseEngine::Vector3(pos.GetX(), pos.GetY(), pos.GetZ()));
-    if (forcedRotation) SetRotation(PulseEngine::Vector3(PulseEngine::MathUtils::ToDegrees(rot.GetX()), PulseEngine::MathUtils::ToDegrees(rot.GetY()), PulseEngine::MathUtils::ToDegrees(rot.GetZ())));
-    #else
-    SetPosition(PulseEngine::Vector3(pos.GetX(), pos.GetY(), pos.GetZ()));
-    SetRotation(PulseEngine::Vector3(PulseEngine::MathUtils::ToDegrees(rot.GetX()), PulseEngine::MathUtils::ToDegrees(rot.GetY()), PulseEngine::MathUtils::ToDegrees(rot.GetZ())));
-    #endif
+    if (!forcedPosition) SetPosition(PulseEngine::Vector3(pos.GetX(), pos.GetY(), pos.GetZ()));
+    if (!forcedRotation) SetRotation(PulseEngine::Vector3(PulseEngine::MathUtils::ToDegrees(rot.GetX()), PulseEngine::MathUtils::ToDegrees(rot.GetY()), PulseEngine::MathUtils::ToDegrees(rot.GetZ())));
+
     forcedPosition = false;
     forcedRotation = false;
 }
