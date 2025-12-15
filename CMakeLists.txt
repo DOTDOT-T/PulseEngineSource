@@ -327,5 +327,34 @@ target_include_directories(PulseGame PRIVATE
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/.
     ${JoltPhysics_SOURCE_DIR}/..
+)
 
+add_custom_command(TARGET PulseGame POST_BUILD
+    COMMAND ${CMAKE_COMMAND}
+            -DSOURCE_DIR=${CMAKE_SOURCE_DIR}/src
+            -DTARGET_DIR=$<TARGET_FILE_DIR:PulseGame>/dist/src
+            -P ${CMAKE_SOURCE_DIR}/cmake/copy_and_strip_cpp.cmake
+)
+
+add_custom_command(TARGET PulseGame POST_BUILD
+    COMMAND ${CMAKE_COMMAND}
+            -DTARGET_DIR=$<TARGET_FILE_DIR:PulseGame>
+            -P ${CMAKE_SOURCE_DIR}/cmake/copy_dll_lib.cmake
+)
+
+add_custom_command(TARGET PulseGame POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_SOURCE_DIR}/src/main.cpp
+            $<TARGET_FILE_DIR:PulseGame>/dist/main.cpp
+)
+add_custom_command(TARGET PulseGame POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/CMake/GenerateGames
+            $<TARGET_FILE_DIR:PulseGame>/dist/GenerateGames
+)
+
+add_custom_command(TARGET PulseGame POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/CMake/GenerateUserDll
+            $<TARGET_FILE_DIR:PulseGame>/dist/GenerateUserDll
 )
