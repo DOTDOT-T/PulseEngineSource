@@ -112,9 +112,5 @@ int main(int argc, char **argv)
     delete editor;
 #endif
 
-    while (true)
-    {
-    }
-
     return 0;
 }
